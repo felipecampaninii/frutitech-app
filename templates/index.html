@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrutiTech Pro</title>
+    <link rel="stylesheet" href="{{ url_with_static_folder if false else '/static/css/style.css' }}">
+</head>
+<body>
+    <div class="phone">
+        
+        <div id="telaAuth" class="tela active">
+            <div class="header-auth">
+                <h2>FrutiTech Pro</h2>
+                <p>Manejo Inteligente de Citros</p>
+            </div>
+            
+            <div id="boxLogin">
+                <h3>Acessar Conta</h3>
+                <input type="text" id="loginUser" placeholder="Usuário">
+                <input type="password" id="loginSenha" placeholder="Senha">
+                <button onclick="realizarLogin()">Entrar</button>
+                <p class="switch-auth">Não tem conta? <span onclick="alternarAbasAuth('cadastro')">Cadastre-se</span></p>
+            </div>
+
+            <div id="boxCadastro" style="display: none;">
+                <h3>Criar Nova Conta</h3>
+                <input type="text" id="cadUser" placeholder="Escolha um Usuário único">
+                <input type="password" id="cadSenha" placeholder="Digite a Senha">
+                <input type="password" id="cadSenhaConfirma" placeholder="Confirme a Senha">
+                <button onclick="realizarCadastro()">Registrar Conta</button>
+                <p class="switch-auth">Já possui conta? <span onclick="alternarAbasAuth('login')">Faça Login</span></p>
+            </div>
+        </div>
+
+        <div id="home" class="tela">
+            <div class="header-clima">
+                <h2>FrutiTech Pro</h2>
+                <div class="usuario-logado">Olá, <span id="lblNomeUsuario"></span>! <button class="btn-sair" onclick="fazerLogout()">Sair</button></div>
+                <div class="temp">--°C <small>Hoje: Chuva --mm</small></div>
+            </div>
+            <h3>Ferramentas de Gestão</h3>
+            <div class="grid-cards">
+                <div class="card-menu" onclick="mudarTela('adubacao')">Simulador</div>
+                <div class="card-menu" onclick="mudarTela('historico'); mostrarHistorico()">Histórico</div>
+                <div class="card-menu" onclick="mudarTela('climaTab')">Clima</div>
+                <div class="card-menu" onclick="mudarTela('diagnostico')">Diagnóstico</div>
+            </div>
+        </div>
+
+        <div id="adubacao" class="tela">
+            <div id="passo1">
+                <h3>Simulador de Adubação</h3>
+                <label>Produtividade Esperada (t/ha):</label>
+                <input type="number" id="producao" placeholder="Ex: 40">
+                <label>Área do Talhão (ha):</label>
+                <input type="number" id="areaTalhao" placeholder="Ex: 5">
+                <label>Quantidade de Árvores:</label>
+                <input type="number" id="arvores" placeholder="Ex: 2000">
+                <button onclick="mostrarPasso2()">Avançar</button>
+            </div>
+            
+            <div id="passo2" style="display:none;">
+                <label>Tipo de Análise:</label>
+                <select id="tipoAnalise">
+                    <option value="manutencao">Manutenção</option>
+                    <option value="producao">Altas Produtividades</option>
+                </select>
+                <label>Nutriente Alvo:</label>
+                <select id="nutrienteSelect">
+                    <option value="n">Nitrogênio (N)</option>
+                    <option value="p">Fósforo (P)</option>
+                    <option value="k">Potássio (K)</option>
+                </select>
+                <label>Concentração no Adubo (%):</label>
+                <input type="number" id="concentracao" value="20">
+                <div class="botoes-alinhados">
+                    <button onclick="document.getElementById('passo2').style.display='none'; document.getElementById('passo1').style.display='block';">Voltar</button>
+                    <button onclick="calcularAdubacao()">Calcular</button>
+                </div>
+                <div id="resultado"></div>
+            </div>
+        </div>
+
+        <div id="historico" class="tela">
+            <h3>Histórico (Salvo na Nuvem)</h3>
+            <div id="listaHistorico"></div>
+        </div>
+
+        <div id="climaTab" class="tela"><h3>Previsão do Tempo</h3><p>Módulo de integração com API Climatológica.</p></div>
+        <div id="diagnostico" class="tela"><h3>Diagnóstico por Imagem (IA)</h3><p>Envie a foto da folha para identificar pragas.</p></div>
+
+        <nav class="bottom-nav" id="menuInferior" style="display: none;">
+            <button onclick="mudarTela('home')">Início</button>
+            <button onclick="mudarTela('adubacao')">Simulador</button>
+            <button onclick="mudarTela('historico'); mostrarHistorico()">Histórico</button>
+            <button onclick="mudarTela('diagnostico')">IA</button>
+        </nav>
+    </div>
+
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/calculo.js"></script>
+    <script src="/static/js/historico.js"></script>
+</body>
+</html>
