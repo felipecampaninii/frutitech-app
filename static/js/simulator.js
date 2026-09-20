@@ -87,6 +87,19 @@ const FONTES_COMERCIAIS = {
             nome: "Octaborato de Sódio (20% B)",
             concentracao: 20
         }
+    ],
+
+    Cu: [
+        { nome: "Oxicloreto de Cobre (50% Cu)", concentracao: 50 },
+        { nome: "Sulfato de Cobre (25% Cu)", concentracao: 25 }
+    ],
+
+    Mg: [
+        { nome: "Sulfato de Magnésio (9% Mg)", concentracao: 9 }
+    ],
+
+    S: [
+        { nome: "Sulfato de Magnésio (13% S)", concentracao: 13 }
     ]
 };
 
@@ -463,6 +476,59 @@ function calcularTRV(
     )
     /
     espacamentoLinhas;
+}
+
+function calcularTRVPorHectare(altura, largura, espacamentoLinhas) {
+    return calcularTRV(altura, largura, 1, espacamentoLinhas);
+}
+
+function avaliarPhAgua(ph) {
+    ph = Number(ph);
+    if (!Number.isFinite(ph) || ph <= 0) return { status: "não informado", mensagem: "Informe o pH para avaliar o condicionamento da água." };
+    if (ph > 6.5) return { status: "acima do ideal", mensagem: "pH acima de 6,5. Avalie a correção com acidificante compatível antes de preparar a calda." };
+    if (ph < 5.5) return { status: "abaixo do ideal", mensagem: "pH abaixo de 5,5. Confirme a compatibilidade da fonte e evite acidificar ainda mais a calda." };
+    return { status: "adequado", mensagem: "pH dentro da faixa de referência de 5,5 a 6,5." };
+}
+
+function recomendarAdjuvante(estagioFoliar, escolha) {
+    if (escolha && escolha !== "nao-informado") return escolha.replaceAll("-", " ");
+    return estagioFoliar === "jovens"
+        ? "priorizar espalhante não iônico em dose de rótulo; folhas jovens são mais sensíveis"
+        : "selecionar espalhante compatível com a fonte e conforme o rótulo";
+}
+
+function lerNumeroClima(id) {
+    const texto = document.getElementById(id)?.textContent || "";
+    const valor = parseFloat(texto.replace(",", ".").replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(valor) ? valor : null;
+}
+
+function avaliarJanelaClimatica() {
+    const temperatura = lerNumeroClima("clima-temp");
+    const umidade = lerNumeroClima("clima-umidade");
+    const vento = lerNumeroClima("clima-vento");
+    if (temperatura === null || umidade === null || vento === null) return { nivel: "amarelo", titulo: "VERIFICAR CLIMA", mensagem: "Dados meteorológicos indisponíveis. Consulte o painel da Home antes da pulverização." };
+    const apto = temperatura < 30 && umidade > 55 && vento >= 3 && vento <= 10;
+    if (apto) return { nivel: "verde", titulo: "APTO PARA PULVERIZAÇÃO", mensagem: `Temperatura ${temperatura} °C, umidade ${umidade}% e vento ${vento} km/h dentro das faixas de referência.` };
+    return { nivel: "vermelho", titulo: "NÃO APTO PARA PULVERIZAÇÃO", mensagem: `Condições atuais: ${temperatura} °C, ${umidade}% de umidade e vento de ${vento} km/h. Referências: temperatura < 30 °C, umidade > 55% e vento entre 3 e 10 km/h.` };
+}
+
+function atualizarAlertasAplicacao() {
+    const alerta = document.getElementById("alertaPhAgua");
+    const ph = numero("simPhAgua");
+    if (alerta) {
+        const avaliacao = avaliarPhAgua(ph);
+        alerta.style.display = ph > 0 ? "block" : "none";
+        alerta.textContent = avaliacao.mensagem;
+    }
+    const painel = document.getElementById("statusPulverizacao");
+    if (painel) {
+        const clima = avaliarJanelaClimatica();
+        const cores = { verde:["#dcfce7","#166534","#22c55e"], amarelo:["#fef3c7","#854d0e","#eab308"], vermelho:["#fee2e2","#991b1b","#ef4444"] }[clima.nivel];
+        painel.style.background = cores[0]; painel.style.color = cores[1];
+        const ponto = painel.querySelector(".spray-dot"); if (ponto) ponto.style.background = cores[2];
+        const texto = painel.querySelector("span:last-child"); if (texto) texto.textContent = `${clima.titulo}: ${clima.mensagem}`;
+    }
 }
 
 
@@ -1254,10 +1320,12 @@ function mostrarResultados(
         volumeCopa,
         volumeCopasTalhao,
         trv,
+        trvPorHectare,
 
         recomendacao,
 
         volumeCalda,
+        volumeCaldaHa,
 
         massaMicronutriente,
 
@@ -1269,7 +1337,12 @@ function mostrarResultados(
 
         nutrienteEntregue,
 
-        statusSelecionado
+        statusSelecionado,
+        avaliacaoPh,
+        condutividade,
+        recomendacaoAdjuvante,
+        estagioFoliar,
+        janelaClimatica
 
     } = resultados;
 
@@ -1323,7 +1396,7 @@ function mostrarResultados(
 
 
     if (
-        ["Zn", "Mn", "B"]
+        ["Zn", "Mn", "B", "Cu", "Mg", "S"]
             .includes(elemento)
     ) {
 
@@ -1440,6 +1513,8 @@ function mostrarResultados(
 
                 </li>
 
+                <li><i class="fa-solid fa-chart-area"></i><strong> TRV por hectare:</strong> ${formatarNumero(trvPorHectare)} m³/ha</li>
+
             </ul>
 
         </div>
@@ -1511,20 +1586,12 @@ function mostrarResultados(
             </div>
 
 
+            <div class="result-volume-grid">
+                <div class="result-volume-item"><span>Volume por hectare</span><strong>${formatarNumero(volumeCaldaHa,0)} L/ha</strong></div>
+                <div class="result-volume-item"><span>Volume total do talhão</span><strong>${formatarNumero(volumeCalda,0)} L</strong></div>
+            </div>
+
             <ul class="recom-list">
-
-                <li>
-
-                    <strong>
-                        Volume de calda de referência:
-                    </strong>
-
-                    ${formatarNumero(
-                        volumeCalda,
-                        0
-                    )} L
-
-                </li>
 
 
                 <li>
@@ -1544,6 +1611,10 @@ function mostrarResultados(
                 ${textoDose}
 
                 ${textoMicro}
+
+                <li><i class="fa-solid fa-vial"></i><strong> Qualidade da água:</strong> ${avaliacaoPh.mensagem} CE: ${condutividade > 0 ? formatarNumero(condutividade,2) + " dS/m" : "não informada"}.</li>
+                <li><i class="fa-solid fa-leaf"></i><strong> Estágio foliar:</strong> ${estagioFoliar === "jovens" ? "folhas jovens" : "folhas maduras"}. Adjuvante: ${recomendacaoAdjuvante}.</li>
+                <li><i class="fa-solid fa-wind"></i><strong> ${janelaClimatica.titulo}:</strong> ${janelaClimatica.mensagem}</li>
 
             </ul>
 
@@ -1636,6 +1707,11 @@ function validarDadosSimulacao(
         return false;
     }
 
+    if (dados.espacamentoPlantas <= 0) {
+        alert("Informe o espaçamento entre plantas na linha.");
+        return false;
+    }
+
 
     if (
         dados.produtividadeTon <= 0
@@ -1722,6 +1798,9 @@ async function salvarECalcular() {
     const espacamento =
         numero("simEspacamento");
 
+    const espacamentoPlantas =
+        numero("simEspacamentoPlantas");
+
 
 
     // ======================================================
@@ -1792,6 +1871,15 @@ async function salvarECalcular() {
             "simConcentracaoMgL"
         );
 
+    const bFoliar = numero("simBFoliar");
+    const znFoliar = numero("simZnFoliar");
+    const mnFoliar = numero("simMnFoliar");
+    const cuFoliar = numero("simCuFoliar");
+    const phAgua = numero("simPhAgua");
+    const condutividade = numero("simCondutividade");
+    const estagioFoliar = document.getElementById("simEstagioFoliar")?.value || "maduras";
+    const adjuvante = document.getElementById("simAdjuvante")?.value || "nao-informado";
+
 
 
     if (
@@ -1820,6 +1908,7 @@ async function salvarECalcular() {
         alturaCaule,
 
         espacamento,
+        espacamentoPlantas,
 
         produtividadeTon
     };
@@ -1887,6 +1976,9 @@ async function salvarECalcular() {
             espacamento
         );
 
+    const trvPorHectare =
+        calcularTRVPorHectare(alturaUtil, diametroMedio, espacamento);
+
 
 
     // ======================================================
@@ -1913,6 +2005,11 @@ async function salvarECalcular() {
             area
         );
 
+    const volumeCaldaHa = 2000;
+    const avaliacaoPh = avaliarPhAgua(phAgua);
+    const recomendacaoAdjuvante = recomendarAdjuvante(estagioFoliar, adjuvante);
+    const janelaClimatica = avaliarJanelaClimatica();
+
 
 
     // ======================================================
@@ -1923,7 +2020,7 @@ async function salvarECalcular() {
 
 
     if (
-        ["Zn", "Mn", "B"]
+        ["Zn", "Mn", "B", "Cu", "Mg", "S"]
             .includes(elemento)
     ) {
 
@@ -2054,10 +2151,12 @@ async function salvarECalcular() {
         volumeCopasTalhao,
 
         trv,
+        trvPorHectare,
 
         recomendacao,
 
         volumeCalda,
+        volumeCaldaHa,
 
         massaMicronutriente,
 
@@ -2069,7 +2168,12 @@ async function salvarECalcular() {
 
         nutrienteEntregue,
 
-        statusSelecionado
+        statusSelecionado,
+        avaliacaoPh,
+        condutividade,
+        recomendacaoAdjuvante,
+        estagioFoliar,
+        janelaClimatica
     });
 
 
@@ -2141,6 +2245,9 @@ async function salvarECalcular() {
         espacamento_linhas:
             espacamento,
 
+        espacamento_plantas:
+            espacamentoPlantas,
+
         diametro_medio:
             diametroMedio,
 
@@ -2155,6 +2262,9 @@ async function salvarECalcular() {
 
         trv:
             trv,
+
+        trv_por_hectare:
+            trvPorHectare,
 
 
         // ANÁLISE NUTRICIONAL
@@ -2174,6 +2284,11 @@ async function salvarECalcular() {
         k_trocavel:
             kTrocavel,
 
+        b_foliar: bFoliar,
+        zn_foliar: znFoliar,
+        mn_foliar: mnFoliar,
+        cu_foliar: cuFoliar,
+
 
         // APLICAÇÃO
 
@@ -2192,11 +2307,20 @@ async function salvarECalcular() {
         concentracao_mg_l:
             concentracaoMgL,
 
+        ph_agua: phAgua,
+        condutividade_eletrica: condutividade,
+        estagio_foliar: estagioFoliar,
+        adjuvante: adjuvante,
+        status_pulverizacao: janelaClimatica.titulo,
+
 
         // VOLUME / MICRO
 
         volume:
             volumeCalda,
+
+        volume_por_hectare:
+            volumeCaldaHa,
 
         massa_micronutriente:
             massaMicronutriente,
@@ -2409,6 +2533,10 @@ document.addEventListener(
                 }
             );
         }
+
+        const phAgua = document.getElementById("simPhAgua");
+        if (phAgua) phAgua.addEventListener("input", atualizarAlertasAplicacao);
+        atualizarAlertasAplicacao();
 
 
 
