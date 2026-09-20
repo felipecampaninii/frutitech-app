@@ -1234,7 +1234,16 @@ body{
     .app-container{border-radius:0}
 }
 
-</style>
+        /* Melhorias agronômicas do simulador */
+        .agro-diagram{position:relative;height:210px;margin:14px 0 18px;border:1px solid #cde7d4;border-radius:18px;background:linear-gradient(180deg,#effaf2 0 72%,#d9edcf 72%);overflow:hidden}
+        .agro-tree{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);width:128px;height:142px}
+        .agro-tree::before{content:"";position:absolute;left:57px;bottom:0;width:14px;height:58px;border-radius:8px;background:#8a5a35}
+        .agro-tree::after{content:"";position:absolute;inset:0 0 34px;border-radius:48% 52% 45% 55%;background:radial-gradient(circle at 30% 30%,#78c850 0 5%,transparent 6%),radial-gradient(circle at 65% 38%,#f59e0b 0 4%,transparent 5%),#278a4a;box-shadow:-22px 22px 0 -7px #2f9a53,22px 20px 0 -8px #227a40}
+        .measure-line{position:absolute;color:#135b31;font-size:10px;font-weight:800;z-index:2}.measure-height{left:calc(50% + 76px);bottom:32px;height:140px;border-left:2px dashed #135b31;padding:58px 0 0 7px}.measure-width{left:calc(50% - 72px);bottom:78px;width:144px;border-top:2px dashed #135b31;text-align:center;padding-top:5px}.measure-row{left:18px;right:18px;bottom:8px;border-top:2px dashed #397b4c;text-align:center;padding-top:3px}
+        .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field-grid .form-group{margin:0}.agro-subsection{margin-top:15px;padding-top:14px;border-top:1px solid #e2e8e4}.agro-subtitle{font-size:12px;font-weight:800;color:#124d2b;margin-bottom:10px}.agro-help{font-size:9px;line-height:1.5;color:#66756c;margin-top:5px}
+        .water-alert{display:none;margin-top:10px;padding:10px;border-radius:10px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-size:10px;font-weight:700;line-height:1.45}.spray-status{display:flex;align-items:center;gap:9px;margin-top:12px;padding:11px;border-radius:12px;background:#fef3c7;color:#854d0e;font-size:10px;font-weight:800}.spray-dot{width:11px;height:11px;border-radius:50%;background:#eab308;box-shadow:0 0 0 4px rgba(234,179,8,.15)}
+        .result-volume-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.result-volume-item{padding:11px;border-radius:12px;background:#edf8f0;border:1px solid #c9e8d1}.result-volume-item span{display:block;font-size:9px;color:#607067}.result-volume-item strong{display:block;margin-top:3px;font-size:15px;color:#125a30}@media(max-width:420px){.field-grid,.result-volume-grid{grid-template-columns:1fr}}
+    </style>
 </head>
 <body>
 
@@ -1597,6 +1606,15 @@ body{
 
         </div>
 
+        <div class="form-group">
+            <label>Estágio das Folhas</label>
+            <select id="simEstagioFoliar">
+                <option value="jovens">Folhas jovens (lançamento/primavera)</option>
+                <option value="maduras" selected>Folhas maduras (cultura estabelecida)</option>
+            </select>
+            <p class="agro-help">O estágio foliar ajusta a orientação de espalhamento e absorção da calda.</p>
+        </div>
+
     </article>
 
 
@@ -1624,6 +1642,10 @@ body{
             o diâmetro da copa, o volume geométrico e o TRV do talhão.
 
         </p>
+
+        <div class="agro-diagram" aria-label="Diagrama didático das medidas da copa">
+            <div class="agro-tree"></div><div class="measure-line measure-height">Altura H</div><div class="measure-line measure-width">D1 e D2 da copa</div><div class="measure-line measure-row">Espaçamento entre linhas</div>
+        </div>
 
 
         <!-- MEDIDA D1 -->
@@ -1718,6 +1740,11 @@ body{
                 placeholder="Ex: 7"
             >
 
+        </div>
+
+        <div class="form-group">
+            <label>Espaçamento entre Plantas na Linha (m)</label>
+            <input type="number" id="simEspacamentoPlantas" step="0.01" min="0" placeholder="Ex: 4">
         </div>
 
 
@@ -1896,6 +1923,17 @@ body{
 
         </div>
 
+        <div class="agro-subsection">
+            <div class="agro-subtitle"><i class="fa-solid fa-microscope"></i> Teores Foliares de Micronutrientes</div>
+            <p class="result-hint">Preencha os resultados da análise foliar quando disponíveis. Valores em mg/kg.</p>
+            <div class="field-grid">
+                <div class="form-group"><label>Boro (B)</label><input type="number" id="simBFoliar" step="0.01" min="0" placeholder="mg/kg"></div>
+                <div class="form-group"><label>Zinco (Zn)</label><input type="number" id="simZnFoliar" step="0.01" min="0" placeholder="mg/kg"></div>
+                <div class="form-group"><label>Manganês (Mn)</label><input type="number" id="simMnFoliar" step="0.01" min="0" placeholder="mg/kg"></div>
+                <div class="form-group"><label>Cobre (Cu)</label><input type="number" id="simCuFoliar" step="0.01" min="0" placeholder="mg/kg"></div>
+            </div>
+        </div>
+
     </article>
 
 
@@ -1991,6 +2029,10 @@ body{
                     Boro (B)
                 </option>
 
+                <option value="Cu">Cobre (Cu)</option>
+                <option value="Mg">Magnésio (Mg)</option>
+                <option value="S">Enxofre (S)</option>
+
             </select>
 
         </div>
@@ -2051,6 +2093,17 @@ body{
                 min="0"
             >
 
+        </div>
+
+        <div class="agro-subsection">
+            <div class="agro-subtitle"><i class="fa-solid fa-glass-water-droplet"></i> Parâmetros do Tanque e da Calda</div>
+            <div class="field-grid">
+                <div class="form-group"><label>pH da Água</label><input type="number" id="simPhAgua" step="0.1" min="0" max="14" placeholder="Ideal: 5,5 a 6,5"></div>
+                <div class="form-group"><label>Condutividade Elétrica (dS/m)</label><input type="number" id="simCondutividade" step="0.01" min="0" placeholder="Ex: 0,50"></div>
+            </div>
+            <div id="alertaPhAgua" class="water-alert"></div>
+            <div class="form-group"><label>Adjuvante / Espalhante</label><select id="simAdjuvante"><option value="nao-informado">Selecionar conforme rótulo e orientação técnica</option><option value="nao-ionico">Espalhante não iônico</option><option value="organossiliconado">Organossiliconado</option><option value="oleo-mineral">Óleo mineral</option></select><p class="agro-help">A indicação final depende da compatibilidade com a fonte escolhida. Evite recomendar óleo automaticamente com sais que possam aumentar o risco de fitotoxicidade.</p></div>
+            <div id="statusPulverizacao" class="spray-status"><span class="spray-dot"></span><span>Condições climáticas: consulte o painel da Home antes da aplicação.</span></div>
         </div>
 
 
