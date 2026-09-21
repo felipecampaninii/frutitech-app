@@ -1463,6 +1463,29 @@ body{
                                 <div><i class="fa-solid fa-cloud-rain"></i> Chuva: <strong id="clima-chuva">--%</strong></div>
                             </div>
                         </div>
+
+                        <div
+                            id="clima-pulverizacao-status"
+                            class="spray-status"
+                            role="status"
+                            aria-live="polite"
+                        >
+                            <span class="spray-dot"></span>
+
+                            <div>
+                                <strong class="spray-status-title">
+                                    AGUARDANDO DADOS CLIMÁTICOS
+                                </strong>
+
+                                <div class="spray-status-summary">
+                                    Ainda não é possível recomendar a pulverização.
+                                </div>
+
+                                <small class="spray-status-detail">
+                                    Aguarde a atualização da estação meteorológica da cidade.
+                                </small>
+                            </div>
+                        </div>
                     </article>
 
                     <!-- Atalho para diagnóstico, sem alterar a função existente -->
@@ -2103,7 +2126,14 @@ body{
             </div>
             <div id="alertaPhAgua" class="water-alert"></div>
             <div class="form-group"><label>Adjuvante / Espalhante</label><select id="simAdjuvante"><option value="nao-informado">Selecionar conforme rótulo e orientação técnica</option><option value="nao-ionico">Espalhante não iônico</option><option value="organossiliconado">Organossiliconado</option><option value="oleo-mineral">Óleo mineral</option></select><p class="agro-help">A indicação final depende da compatibilidade com a fonte escolhida. Evite recomendar óleo automaticamente com sais que possam aumentar o risco de fitotoxicidade.</p></div>
-            <div id="statusPulverizacao" class="spray-status"><span class="spray-dot"></span><span>Condições climáticas: consulte o painel da Home antes da aplicação.</span></div>
+            <div id="statusPulverizacao" class="spray-status" role="status" aria-live="polite">
+                <span class="spray-dot"></span>
+                <div>
+                    <strong class="spray-status-title">AGUARDANDO DADOS CLIMÁTICOS</strong>
+                    <div class="spray-status-summary">Ainda não é possível recomendar a pulverização.</div>
+                    <small class="spray-status-detail">Aguarde a atualização da estação meteorológica da cidade.</small>
+                </div>
+            </div>
         </div>
 
 
