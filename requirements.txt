@@ -1,7 +1,6 @@
 Flask
 flask-cors
 mysql-connector-python
-Pillow
-google-genai
-werkzeug
-gunicorn
+Werkzeug
+python-dotenv
+inference-sdk
