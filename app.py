@@ -1,11 +1,11 @@
 import os
-import io
+import tempfile
+from pathlib import Path
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import mysql.connector
-from PIL import Image
-from google import genai
 from werkzeug.security import generate_password_hash, check_password_hash
+from inference_sdk import InferenceConfiguration, InferenceHTTPClient
 
 app = Flask(__name__)
 CORS(app)
@@ -15,12 +15,36 @@ def pagina_inicial():
     return render_template('index.html')
 
 # =========================================================
-# CONFIGURAÇÃO DA API GEMINI E BANCO DE DADOS LOCAL
+# CONFIGURAÇÃO ROBOFLOW / DATASETHLB E BANCO DE DADOS
 # =========================================================
-# Recomendado: definir a chave no ambiente.
-# Windows PowerShell: $env:GEMINI_API_KEY="SUA_CHAVE"
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AQ.Ab8RN6KFH_eYwZmalDvUwSrhRyFRsNsnOtj5Hp7BYNxxYG_gHA")
-client = genai.Client(api_key=GEMINI_API_KEY)
+
+ROBOFLOW_API_KEY = "erqLp3ThRAuBHyMzJP2X"
+WORKSPACE_NAME = "marias-workspace-lthtr"
+WORKFLOW_ID = "datasethlb-5opve"
+
+CONFIANCA_MINIMA = 0.5
+TAMANHO_MAXIMO = 10 * 1024 * 1024
+
+EXTENSOES_PERMITIDAS = {".jpg", ".jpeg", ".png", ".webp"}
+TIPOS_PERMITIDOS = {"image/jpeg", "image/png", "image/webp"}
+
+roboflow_client = None
+
+if ROBOFLOW_API_KEY:
+    roboflow_client = InferenceHTTPClient(
+        api_url="https://serverless.roboflow.com",
+        api_key=ROBOFLOW_API_KEY
+    ).configure(
+        InferenceConfiguration(
+            api_key_transport="header"
+        )
+    )
+else:
+    print(
+        "AVISO: ROBOFLOW_API_KEY não configurada. "
+        "A rota /api/diagnostico ficará indisponível."
+    )
+
 
 DB_CONFIG = {
     "host": "projetobru1-felipe25campaninisilva-1e7b.l.aivencloud.com",
@@ -375,76 +399,247 @@ def salvar_localizacao_usuario():
 
 
 # =========================================================
-# ROTA POST: DIAGNÓSTICO POR IMAGEM COM GEMINI IA
+# ROTA POST: DIAGNÓSTICO POR IMAGEM COM DATASETHLB / ROBOFLOW
 # =========================================================
+
+def extrair_predicoes_roboflow(objeto):
+    """
+    Procura recursivamente listas de previsões no retorno do Workflow.
+    Isso deixa a API tolerante a pequenas diferenças na estrutura
+    devolvida pelo inference-sdk.
+    """
+    encontradas = []
+
+    if isinstance(objeto, dict):
+        predictions = objeto.get("predictions")
+
+        if isinstance(predictions, list):
+            for pred in predictions:
+                if isinstance(pred, dict):
+                    classe = (
+                        pred.get("class")
+                        or pred.get("class_name")
+                        or pred.get("label")
+                    )
+                    confianca = pred.get("confidence")
+
+                    if classe is not None:
+                        encontradas.append({
+                            "classe": str(classe),
+                            "confianca": confianca
+                        })
+
+        for valor in objeto.values():
+            encontradas.extend(extrair_predicoes_roboflow(valor))
+
+    elif isinstance(objeto, list):
+        for item in objeto:
+            encontradas.extend(extrair_predicoes_roboflow(item))
+
+    # Remove duplicatas idênticas que podem aparecer ao percorrer
+    # diferentes níveis do retorno do workflow.
+    unicas = []
+    vistos = set()
+
+    for pred in encontradas:
+        chave = (pred["classe"], str(pred["confianca"]))
+        if chave not in vistos:
+            vistos.add(chave)
+            unicas.append(pred)
+
+    return unicas
+
+
+def montar_texto_diagnostico(resultado):
+    """
+    Converte as classes retornadas pelo DatasetHLB para o formato textual
+    que o JavaScript atual já espera em data.diagnostico.
+    Não inventa sintomas ou tratamentos que o modelo não retornou.
+    """
+    predicoes = extrair_predicoes_roboflow(resultado)
+
+    # Mantém apenas previsões que também respeitem o limite local.
+    filtradas = []
+    for pred in predicoes:
+        try:
+            confianca = float(pred["confianca"])
+        except (TypeError, ValueError):
+            confianca = None
+
+        if confianca is None or confianca >= CONFIANCA_MINIMA:
+            filtradas.append({
+                "classe": pred["classe"],
+                "confianca": confianca
+            })
+
+    filtradas.sort(
+        key=lambda p: p["confianca"] if p["confianca"] is not None else -1,
+        reverse=True
+    )
+
+    if not filtradas:
+        return (
+            "**Diagnóstico:** Nenhuma classe foi identificada com confiança "
+            "mínima de 50%.\n\n"
+            "**Resultado:** O DatasetHLB não encontrou uma detecção suficientemente "
+            "confiável nesta imagem.\n\n"
+            "**Recomendação:** Tente outra foto nítida, bem iluminada e com a parte "
+            "da planta ocupando a maior parte da imagem. A análise por imagem deve "
+            "ser confirmada por um profissional agrícola."
+        )
+
+    principal = filtradas[0]
+    confianca_txt = (
+        f"{principal['confianca'] * 100:.1f}%"
+        if principal["confianca"] is not None
+        else "não informada"
+    )
+
+    outras = []
+    for pred in filtradas[1:6]:
+        if pred["confianca"] is None:
+            outras.append(pred["classe"])
+        else:
+            outras.append(
+                f"{pred['classe']} ({pred['confianca'] * 100:.1f}%)"
+            )
+
+    texto = (
+        f"**Diagnóstico:** {principal['classe']}\n\n"
+        f"**Confiança do modelo:** {confianca_txt}\n\n"
+        "**Modelo:** DatasetHLB (Roboflow)"
+    )
+
+    if outras:
+        texto += "\n\n**Outras detecções:** " + ", ".join(outras)
+
+    texto += (
+        "\n\n**Recomendação:** O resultado é uma análise automatizada por imagem. "
+        "Confirme o diagnóstico com um profissional agrícola antes de definir o manejo."
+    )
+
+    return texto
+
+
 @app.route('/api/diagnostico', methods=['POST'])
 def analisar_imagem():
-    if client is None:
+    if roboflow_client is None:
         return jsonify({
-            "erro": "GEMINI_API_KEY não configurada no servidor."
+            "erro": (
+                "ROBOFLOW_API_KEY não configurada no servidor. "
+                "Crie o arquivo .env e defina ROBOFLOW_API_KEY."
+            )
         }), 503
 
     if 'imagem' not in request.files:
-        return jsonify({"erro": "Nenhuma imagem foi enviada no formulário."}), 400
+        return jsonify({
+            "erro": "Nenhuma imagem foi enviada no formulário."
+        }), 400
 
     arquivo = request.files['imagem']
 
-    if arquivo.filename == '':
-        return jsonify({"erro": "Nenhum arquivo de imagem foi selecionado."}), 400
+    if not arquivo or arquivo.filename == '':
+        return jsonify({
+            "erro": "Nenhum arquivo de imagem foi selecionado."
+        }), 400
+
+    nome_arquivo = arquivo.filename or "imagem.jpg"
+    extensao = Path(nome_arquivo).suffix.lower()
+
+    if extensao not in EXTENSOES_PERMITIDAS:
+        return jsonify({
+            "erro": "Formato inválido. Envie JPG, JPEG, PNG ou WEBP."
+        }), 400
+
+    if arquivo.mimetype not in TIPOS_PERMITIDOS:
+        return jsonify({
+            "erro": "O arquivo enviado não é uma imagem permitida."
+        }), 400
+
+    conteudo = arquivo.read()
+
+    if not conteudo:
+        return jsonify({
+            "erro": "A imagem enviada está vazia."
+        }), 400
+
+    if len(conteudo) > TAMANHO_MAXIMO:
+        return jsonify({
+            "erro": "A imagem deve ter no máximo 10 MB."
+        }), 413
+
+    caminho_temporario = None
 
     try:
-        imagem_pil = Image.open(io.BytesIO(arquivo.read()))
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=extensao
+        ) as arquivo_temporario:
+            arquivo_temporario.write(conteudo)
+            caminho_temporario = arquivo_temporario.name
 
-        prompt_agronomo = (
-            "Você é um Engenheiro Agrônomo especialista em citricultura e nutrição vegetal.\n\n"
-            "Analise a imagem enviada (folha, ramo ou fruto) e forneça um laudo prático, fluido e objetivo.\n"
-            "Se a imagem não for de uma planta ou estiver desfocada, peça gentilmente uma nova foto nítida.\n\n"
-            "Responda utilizando EXATAMENTE a estrutura abaixo, mantendo os títulos em negrito:\n\n"
-            "**Diagnóstico:** [Identifique a doença, praga, deficiência nutricional ou 'Planta Saudável'] — "
-            "**Severidade:** [Baixa | Moderada | Severa]\n\n"
-            "**Sintomas:** [Descreva brevemente os sinais visuais detectados na imagem em 2 a 3 frases diretas]\n\n"
-            "**Recomendação:** [Indique a ação prática de manejo (adubação foliar, defensivo ou controle biológico) "
-            "e lembre brevemente sobre o uso de EPI e orientação técnica]"
+        print(
+            f">>> Enviando imagem ao DatasetHLB "
+            f"(workflow {WORKFLOW_ID})..."
         )
 
-        modelos_gemini = [
-            'gemini-2.5-flash',
-            'gemini-flash-latest',
-            'gemini-2.5-flash-lite'
-        ]
+        resultado = roboflow_client.run_workflow(
+            workspace_name=WORKSPACE_NAME,
+            workflow_id=WORKFLOW_ID,
+            images={
+                "image": caminho_temporario
+            },
+            parameters={
+                "confidence": CONFIANCA_MINIMA,
+                "iou_threshold": 0.3,
+                "class_agnostic_nms": False,
+                "max_detections": 100
+            },
+            use_cache=True
+        )
 
-        resposta_texto = None
-        erro_ultimo = None
+        diagnostico = montar_texto_diagnostico(resultado)
 
-        for modelo in modelos_gemini:
-            try:
-                print(f">>> Analisando imagem com o modelo Gemini: {modelo}...")
-                response = client.models.generate_content(
-                    model=modelo,
-                    contents=[imagem_pil, prompt_agronomo]
-                )
-                resposta_texto = response.text
-                print(f">>> SUCESSO com o modelo {modelo}!")
-                break
+        print(">>> SUCESSO: análise concluída pelo DatasetHLB.")
 
-            except Exception as ex:
-                print(f"--- Modelo {modelo} com instabilidade: {ex}")
-                erro_ultimo = ex
-
-        if resposta_texto:
-            return jsonify({"diagnostico": resposta_texto}), 200
-
+        # 'diagnostico' mantém compatibilidade com o JavaScript atual.
+        # 'resultado' fica disponível caso o front-end queira usar
+        # caixas, classes e demais dados estruturados futuramente.
         return jsonify({
-            "erro": f"Servidores do Gemini indisponíveis. Detalhe: {str(erro_ultimo)}"
-        }), 503
+            "sucesso": True,
+            "arquivo": nome_arquivo,
+            "modelo": "DatasetHLB",
+            "confianca_minima": CONFIANCA_MINIMA,
+            "diagnostico": diagnostico,
+            "resultado": resultado,
+            "aviso": (
+                "O resultado é uma análise por imagem e deve ser "
+                "confirmado por um profissional agrícola."
+            )
+        }), 200
 
     except Exception as e:
-        print("\n================ DETALHE DO ERRO NO DIAGNÓSTICO GEMINI ================")
+        print(
+            "\n================ ERRO DATASETHLB / ROBOFLOW ================"
+        )
         print(e)
-        print("=======================================================================\n")
+        print(
+            "=============================================================\n"
+        )
+
         return jsonify({
-            "erro": f"Falha ao processar análise no Gemini: {str(e)}"
+            "erro": (
+                "Não foi possível analisar a imagem. "
+                "Verifique a conexão, a API key da Roboflow e tente novamente."
+            )
         }), 500
+
+    finally:
+        if caminho_temporario and os.path.exists(caminho_temporario):
+            try:
+                os.remove(caminho_temporario)
+            except OSError as e:
+                print(f"Não foi possível remover arquivo temporário: {e}")
 
 
 # =========================================================
