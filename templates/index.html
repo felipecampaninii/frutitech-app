@@ -1243,6 +1243,471 @@ body{
         .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field-grid .form-group{margin:0}.agro-subsection{margin-top:15px;padding-top:14px;border-top:1px solid #e2e8e4}.agro-subtitle{font-size:12px;font-weight:800;color:#124d2b;margin-bottom:10px}.agro-help{font-size:9px;line-height:1.5;color:#66756c;margin-top:5px}
         .water-alert{display:none;margin-top:10px;padding:10px;border-radius:10px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-size:10px;font-weight:700;line-height:1.45}.spray-status{display:flex;align-items:center;gap:9px;margin-top:12px;padding:11px;border-radius:12px;background:#fef3c7;color:#854d0e;font-size:10px;font-weight:800}.spray-dot{width:11px;height:11px;border-radius:50%;background:#eab308;box-shadow:0 0 0 4px rgba(234,179,8,.15)}
         .result-volume-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.result-volume-item{padding:11px;border-radius:12px;background:#edf8f0;border:1px solid #c9e8d1}.result-volume-item span{display:block;font-size:9px;color:#607067}.result-volume-item strong{display:block;margin-top:3px;font-size:15px;color:#125a30}@media(max-width:420px){.field-grid,.result-volume-grid{grid-template-columns:1fr}}
+   
+    /* ==================================================
+   EVOLUÇÃO VISUAL DO POMAR DE CITROS
+================================================== */
+
+.citrus-evolution {
+    width: 100%;
+    margin: 18px 0;
+    overflow: hidden;
+    border: 1px solid #d7e9dc;
+    border-radius: 24px;
+    background: #f8fffa;
+    box-shadow: 0 8px 22px rgba(17, 94, 55, 0.12);
+}
+
+/* Cenário */
+
+.citrus-scene {
+    position: relative;
+    width: 100%;
+    height: 245px;
+    overflow: hidden;
+    background: linear-gradient(
+        to bottom,
+        #7fd1f2 0%,
+        #bcecff 58%,
+        #65bc62 59%,
+        #53aa50 79%,
+        #a96632 80%,
+        #8a4e27 100%
+    );
+}
+
+.citrus-sun {
+    position: absolute;
+    top: 18px;
+    right: 25px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #ffe35b;
+    box-shadow: 0 0 22px rgba(255, 227, 91, 0.9);
+}
+
+.citrus-cloud {
+    position: absolute;
+    width: 55px;
+    height: 16px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.citrus-cloud::before,
+.citrus-cloud::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    border-radius: 50%;
+    background: inherit;
+}
+
+.citrus-cloud::before {
+    left: 10px;
+    width: 24px;
+    height: 24px;
+}
+
+.citrus-cloud::after {
+    right: 8px;
+    width: 19px;
+    height: 19px;
+}
+
+.cloud-1 {
+    top: 34px;
+    left: 28px;
+}
+
+.cloud-2 {
+    top: 58px;
+    left: 42%;
+    transform: scale(0.8);
+}
+
+.cloud-3 {
+    top: 31px;
+    right: 90px;
+    transform: scale(0.7);
+}
+
+.citrus-mountains {
+    position: absolute;
+    left: -10%;
+    width: 120%;
+    clip-path: polygon(
+        0 100%,
+        0 55%,
+        12% 18%,
+        25% 58%,
+        40% 25%,
+        55% 62%,
+        70% 22%,
+        84% 58%,
+        100% 30%,
+        100% 100%
+    );
+}
+
+.mountain-back {
+    bottom: 48px;
+    height: 105px;
+    background: #62b8a2;
+    opacity: 0.75;
+}
+
+.mountain-front {
+    bottom: 39px;
+    height: 85px;
+    background: #48a673;
+    opacity: 0.92;
+}
+
+.citrus-field {
+    position: absolute;
+    right: 0;
+    bottom: 38px;
+    left: 0;
+    height: 43px;
+    background: linear-gradient(#55b84f, #449841);
+}
+
+.citrus-soil {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 43px;
+    background: linear-gradient(#ad6c38, #864821);
+}
+
+/* Linha das quatro plantas */
+
+.citrus-growth-row {
+    position: absolute;
+    z-index: 5;
+    right: 10px;
+    bottom: 24px;
+    left: 10px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+}
+
+.citrus-plant {
+    position: relative;
+    width: 23%;
+    height: 130px;
+    transform-origin: bottom center;
+}
+
+.plant-shadow {
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    width: 70px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(74, 38, 17, 0.3);
+    transform: translateX(-50%);
+}
+
+.plant-trunk {
+    position: absolute;
+    z-index: 2;
+    bottom: 0;
+    left: 50%;
+    width: 9px;
+    height: 76px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #75401e, #a35c2b, #633218);
+    transform: translateX(-50%);
+}
+
+.branch {
+    position: absolute;
+    z-index: 2;
+    bottom: 53px;
+    left: 50%;
+    width: 7px;
+    height: 43px;
+    border-radius: 5px;
+    background: #75401e;
+    transform-origin: bottom center;
+}
+
+.branch-left {
+    transform: translateX(-50%) rotate(-42deg);
+}
+
+.branch-right {
+    transform: translateX(-50%) rotate(42deg);
+}
+
+/* Plantio: muda pequena */
+
+.plant-plantio {
+    height: 82px;
+    transform: scale(0.72);
+}
+
+.plant-plantio .plant-trunk {
+    width: 7px;
+    height: 55px;
+}
+
+.leaf {
+    position: absolute;
+    z-index: 4;
+    width: 31px;
+    height: 18px;
+    border-radius: 90% 10% 90% 10%;
+    background: linear-gradient(135deg, #2ca544, #08712e);
+}
+
+.leaf-1 {
+    bottom: 38px;
+    left: 12px;
+    transform: rotate(25deg);
+}
+
+.leaf-2 {
+    right: 12px;
+    bottom: 43px;
+    transform: scaleX(-1) rotate(25deg);
+}
+
+.leaf-3 {
+    bottom: 63px;
+    left: 50%;
+    width: 25px;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+/* Copas */
+
+.crown {
+    position: absolute;
+    z-index: 3;
+    border-radius: 48% 52% 45% 55%;
+    background:
+        radial-gradient(circle at 30% 30%, #35a844 0 12%, transparent 13%),
+        radial-gradient(circle at 65% 55%, #075f27 0 14%, transparent 15%),
+        linear-gradient(140deg, #178336, #075c28);
+    box-shadow:
+        inset 5px 6px 8px rgba(75, 190, 82, 0.35),
+        0 4px 8px rgba(0, 65, 25, 0.18);
+}
+
+.crown-left {
+    top: 31px;
+    left: 2px;
+    width: 54px;
+    height: 56px;
+}
+
+.crown-center {
+    top: 13px;
+    left: 50%;
+    width: 65px;
+    height: 69px;
+    transform: translateX(-50%);
+}
+
+.crown-right {
+    top: 32px;
+    right: 2px;
+    width: 54px;
+    height: 56px;
+}
+
+/* Formação */
+
+.plant-formacao {
+    transform: scale(0.83);
+}
+
+/* Desenvolvimento */
+
+.plant-desenvolvimento {
+    transform: scale(0.96);
+}
+
+/* Produção */
+
+.plant-producao {
+    transform: scale(1.05);
+}
+
+/* Flores */
+
+.blossom {
+    position: absolute;
+    z-index: 6;
+    width: 8px;
+    height: 8px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: #ffe96b;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+}
+
+/* Frutos */
+
+.orange {
+    position: absolute;
+    z-index: 7;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffe65b, #f39b12 70%);
+    box-shadow: 0 1px 3px rgba(123, 70, 0, 0.45);
+}
+
+.b1,
+.o1 {
+    top: 29px;
+    left: 25px;
+}
+
+.b2,
+.o2 {
+    top: 21px;
+    right: 27px;
+}
+
+.b3,
+.o3 {
+    top: 52px;
+    left: 11px;
+}
+
+.b4,
+.o4 {
+    top: 57px;
+    right: 12px;
+}
+
+.b5,
+.o5 {
+    top: 45px;
+    left: 48%;
+}
+
+.o6 {
+    top: 68px;
+    left: 34%;
+}
+
+/* Linha das fases */
+
+.citrus-timeline {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 23px 7px 17px;
+    background: #f8fffa;
+}
+
+.citrus-timeline::before {
+    content: "";
+    position: absolute;
+    top: 31px;
+    right: 12%;
+    left: 12%;
+    height: 4px;
+    border-radius: 5px;
+    background: #c7d3ca;
+}
+
+.citrus-stage-item {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    color: #7a817c;
+    text-align: center;
+}
+
+.citrus-stage-item span {
+    width: 19px;
+    height: 19px;
+    border: 5px solid #aeb5b0;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.citrus-stage-item strong {
+    font-size: 10px;
+    line-height: 1.15;
+    white-space: normal;
+}
+
+/* Destaque da fase atual */
+
+.stage-plantio .stage-item-plantio,
+.stage-formacao .stage-item-formacao,
+.stage-desenvolvimento .stage-item-desenvolvimento,
+.stage-producao .stage-item-producao {
+    color: #087532;
+}
+
+.stage-plantio .stage-item-plantio span,
+.stage-formacao .stage-item-formacao span,
+.stage-desenvolvimento .stage-item-desenvolvimento span,
+.stage-producao .stage-item-producao span {
+    border-color: #078137;
+    box-shadow: 0 0 0 5px rgba(23, 166, 77, 0.13);
+}
+
+.stage-plantio .stage-item-plantio strong,
+.stage-formacao .stage-item-formacao strong,
+.stage-desenvolvimento .stage-item-desenvolvimento strong,
+.stage-producao .stage-item-producao strong {
+    font-weight: 800;
+}
+
+/* Responsividade */
+
+@media (max-width: 380px) {
+    .citrus-scene {
+        height: 215px;
+    }
+
+    .citrus-growth-row {
+        right: 3px;
+        left: 3px;
+    }
+
+    .citrus-plant {
+        transform-origin: bottom center;
+    }
+
+    .plant-plantio {
+        transform: scale(0.61);
+    }
+
+    .plant-formacao {
+        transform: scale(0.7);
+    }
+
+    .plant-desenvolvimento {
+        transform: scale(0.82);
+    }
+
+    .plant-producao {
+        transform: scale(0.88);
+    }
+
+    .citrus-stage-item strong {
+        font-size: 9px;
+    }
+}
     </style>
 </head>
 <body>
