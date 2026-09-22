@@ -2575,13 +2575,13 @@ body{
                 mostrarTela('login');
             }
 
-            function mostrarAppAposLogin() {
+                        function mostrarAppAposLogin() {
                 app.classList.remove('app-locked');
-
-                // NÃO vai direto para a Home.
-                // Primeiro verifica se o usuário já informou o local do pomar.
+            
+                // Verifica se o usuário já informou o local do pomar.
                 if (temLocalizacaoSalva()) {
-                    mostrarTela('inicio');
+                    window.navigate('inicio');
+            
                     if (typeof window.carregarClima === 'function') {
                         setTimeout(() => window.carregarClima(), 50);
                     }
@@ -2601,9 +2601,12 @@ body{
                 app.classList.remove('app-locked');
                 mostrarTela(pageId);
 
-                if (pageId === 'historico' && typeof window.carregarHistorico === 'function') {
-                    window.carregarHistorico();
-                }
+                if (
+    (pageId === "inicio" || pageId === "historico") &&
+    typeof carregarHistorico === "function"
+) {
+    carregarHistorico();
+}
             };
 
             window.mostrarAppAposLogin = mostrarAppAposLogin;
@@ -2634,11 +2637,12 @@ body{
                 }
 
                 // Após salvar, finalmente vai para a Home.
-                app.classList.remove('app-locked');
-                mostrarTela('inicio');
-                if (typeof window.carregarClima === 'function') {
-                    setTimeout(() => window.carregarClima(), 50);
-                }
+                            app.classList.remove('app-locked');
+            window.navigate('inicio');
+            
+            if (typeof window.carregarClima === 'function') {
+                setTimeout(() => window.carregarClima(), 50);
+            }
             };
 
             document.addEventListener('DOMContentLoaded', function () {
