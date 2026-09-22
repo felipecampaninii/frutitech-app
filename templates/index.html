@@ -1887,6 +1887,111 @@ body{
     .plant-producao { transform: scale(.91); }
 }
 
+/* =========================================================
+   HOME COMPACTA + ÁRVORE SVG DEFINIDA PELA IDADE DO TALHÃO
+   ========================================================= */
+
+#page-inicio { padding-bottom: 4px; }
+#page-inicio .home-hero {
+    min-height: 108px;
+    padding: 15px 20px 13px;
+}
+#page-inicio .home-hero h1 { margin-top: 0; font-size: 24px; }
+#page-inicio .home-hero p { margin-top: 5px; width: 78%; font-size: 12px; line-height: 1.3; }
+#page-inicio .home-evolution-btn { margin-top: 8px; padding: 7px 12px; font-size: 11px; border-radius: 10px; }
+#page-inicio .home-evolution-btn i { font-size: 14px; }
+
+#page-inicio .home-body { padding: 8px 10px 4px; }
+#page-inicio .home-development-card {
+    margin-bottom: 8px;
+    padding: 10px;
+    border-radius: 17px;
+}
+#page-inicio .home-section-title { gap: 7px; margin-bottom: 7px; font-size: 16px; }
+#page-inicio .home-lot-head {
+    gap: 8px;
+    margin-bottom: 7px;
+    padding: 7px 10px;
+    border-radius: 11px;
+}
+#page-inicio .home-lot-head > i { font-size: 20px; }
+#page-inicio .home-lot-name { font-size: 14px; }
+#page-inicio .home-lot-date { margin-top: 1px; font-size: 9px; }
+
+.citrus-current-tree {
+    position: absolute;
+    z-index: 6;
+    inset: 6px 0 18px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.citrus-tree-svg {
+    width: 170px;
+    height: 150px;
+    overflow: visible;
+    transform: scale(var(--tree-scale, 1));
+    transform-origin: bottom center;
+    filter: drop-shadow(0 3px 2px rgba(13, 83, 35, .16));
+}
+.citrus-evolution.stage-plantio .citrus-tree-svg { width: 145px; }
+.citrus-evolution.stage-producao .citrus-tree-svg { width: 184px; }
+
+#page-inicio .citrus-scene { height: 150px; }
+#page-inicio .citrus-timeline { padding: 12px 4px 7px; }
+#page-inicio .citrus-timeline::before { top: 19px; height: 3px; }
+#page-inicio .citrus-stage-item span { width: 17px; height: 17px; border-width: 4px; }
+#page-inicio .citrus-stage-item strong { margin-top: 5px; font-size: 8px; }
+
+#page-inicio .home-stat-grid-complete {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 7px;
+}
+#page-inicio .home-stat {
+    min-width: 0;
+    min-height: 49px;
+    padding: 6px;
+    gap: 5px;
+    border-radius: 10px;
+}
+#page-inicio .home-stat i { flex: 0 0 auto; font-size: 16px; }
+#page-inicio .home-stat span { font-size: 7px; line-height: 1.15; }
+#page-inicio .home-stat strong {
+    overflow-wrap: anywhere;
+    margin-top: 1px;
+    font-size: 10px;
+    line-height: 1.15;
+}
+#page-inicio .home-stat-npk { grid-column: span 2; }
+
+#page-inicio .home-weather-card {
+    margin-bottom: 0;
+    padding: 10px 12px;
+    border-radius: 17px;
+}
+#page-inicio .home-weather-card .card-header { margin-bottom: 6px; }
+#page-inicio .home-weather-card .card-title { font-size: 15px; }
+#page-inicio .home-weather-main { gap: 8px; }
+#page-inicio .home-weather-temp { gap: 7px; }
+#page-inicio .home-weather-temp .weather-icon { font-size: 25px; }
+#page-inicio .home-weather-temp .weather-temp { font-size: 27px; }
+#page-inicio .weather-status, #page-inicio .home-location { font-size: 9px; }
+#page-inicio .home-weather-details { padding-left: 8px; font-size: 9px; line-height: 1.65; }
+#page-inicio .spray-status { margin-top: 7px; padding: 6px 8px; min-height: 0; }
+#page-inicio .spray-status-title { font-size: 8px; }
+#page-inicio .spray-status-summary { font-size: 8px; }
+#page-inicio .spray-status-detail { display: none; }
+
+/* Em celulares baixos, a home ocupa a janela sem rolagem. */
+@media (max-height: 820px) {
+    #page-inicio .home-hero { min-height: 92px; padding-top: 10px; }
+    #page-inicio .home-hero p { display: none; }
+    #page-inicio .citrus-scene { height: 132px; }
+    #page-inicio .citrus-tree-svg { height: 132px; }
+    #page-inicio .home-stat { min-height: 43px; }
+}
+
     </style>
 </head>
 <body>
@@ -2163,20 +2268,6 @@ body{
                                 </small>
                             </div>
                         </div>
-                    </article>
-
-                    <!-- Atalho para diagnóstico, sem alterar a função existente -->
-                    <article class="card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-leaf"></i>
-                            <span class="card-title">Diagnóstico nutricional</span>
-                        </div>
-                        <p class="card-subtitle">
-                            Analise uma folha por imagem e obtenha uma avaliação com IA.
-                        </p>
-                        <button class="btn-green" onclick="navigate('diagnostico')">
-                            <i class="fa-solid fa-camera"></i>&nbsp; Analisar folha
-                        </button>
                     </article>
 
                 </div>
