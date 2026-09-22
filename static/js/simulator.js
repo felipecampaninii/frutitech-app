@@ -482,55 +482,766 @@ function calcularTRVPorHectare(altura, largura, espacamentoLinhas) {
     return calcularTRV(altura, largura, 1, espacamentoLinhas);
 }
 
-function avaliarPhAgua(ph) {
-    ph = Number(ph);
-    if (!Number.isFinite(ph) || ph <= 0) return { status: "não informado", mensagem: "Informe o pH para avaliar o condicionamento da água." };
-    if (ph > 6.5) return { status: "acima do ideal", mensagem: "pH acima de 6,5. Avalie a correção com acidificante compatível antes de preparar a calda." };
-    if (ph < 5.5) return { status: "abaixo do ideal", mensagem: "pH abaixo de 5,5. Confirme a compatibilidade da fonte e evite acidificar ainda mais a calda." };
-    return { status: "adequado", mensagem: "pH dentro da faixa de referência de 5,5 a 6,5." };
-}
 
-function recomendarAdjuvante(estagioFoliar, escolha) {
-    if (escolha && escolha !== "nao-informado") return escolha.replaceAll("-", " ");
-    return estagioFoliar === "jovens"
-        ? "priorizar espalhante não iônico em dose de rótulo; folhas jovens são mais sensíveis"
-        : "selecionar espalhante compatível com a fonte e conforme o rótulo";
-}
+// ==========================================================
+// LEITURA DOS DADOS CLIMÁTICOS DA HOME
+// ==========================================================
 
 function lerNumeroClima(id) {
-    const texto = document.getElementById(id)?.textContent || "";
-    const valor = parseFloat(texto.replace(",", ".").replace(/[^0-9.-]/g, ""));
-    return Number.isFinite(valor) ? valor : null;
+
+    const elemento =
+        document.getElementById(id);
+
+
+    if (!elemento) {
+        return null;
+    }
+
+
+    const texto =
+        elemento.textContent || "";
+
+
+    const textoNormalizado =
+        texto
+            .replace(",", ".")
+            .replace(
+                /[^0-9.-]/g,
+                ""
+            );
+
+
+    const valor =
+        parseFloat(
+            textoNormalizado
+        );
+
+
+    return Number.isFinite(valor)
+        ? valor
+        : null;
 }
+
+
+
+// ==========================================================
+// AVALIAÇÃO DA JANELA CLIMÁTICA
+//
+// VERDE:
+// Umidade > 55%
+// Temperatura < 30 °C
+// Vento entre 3 e 10 km/h
+//
+// AMARELO:
+// Uma ou mais condições pouco fora do ideal,
+// mas ainda sem atingir condição crítica.
+//
+// VERMELHO:
+// Temperatura >= 35 °C
+// Umidade <= 40%
+// Vento < 1 km/h
+// Vento > 15 km/h
+// ==========================================================
 
 function avaliarJanelaClimatica() {
-    const temperatura = lerNumeroClima("clima-temp");
-    const umidade = lerNumeroClima("clima-umidade");
-    const vento = lerNumeroClima("clima-vento");
-    if (temperatura === null || umidade === null || vento === null) return { nivel: "amarelo", titulo: "VERIFICAR CLIMA", mensagem: "Dados meteorológicos indisponíveis. Consulte o painel da Home antes da pulverização." };
-    const apto = temperatura < 30 && umidade > 55 && vento >= 3 && vento <= 10;
-    if (apto) return { nivel: "verde", titulo: "APTO PARA PULVERIZAÇÃO", mensagem: `Temperatura ${temperatura} °C, umidade ${umidade}% e vento ${vento} km/h dentro das faixas de referência.` };
-    return { nivel: "vermelho", titulo: "NÃO APTO PARA PULVERIZAÇÃO", mensagem: `Condições atuais: ${temperatura} °C, ${umidade}% de umidade e vento de ${vento} km/h. Referências: temperatura < 30 °C, umidade > 55% e vento entre 3 e 10 km/h.` };
+
+    const temperatura =
+        lerNumeroClima(
+            "clima-temp"
+        );
+
+
+    const umidade =
+        lerNumeroClima(
+            "clima-umidade"
+        );
+
+
+    const vento =
+        lerNumeroClima(
+            "clima-vento"
+        );
+
+
+    // ======================================================
+    // DADOS AINDA NÃO FORAM CARREGADOS
+    // ======================================================
+
+    if (
+        temperatura === null ||
+        umidade === null ||
+        vento === null
+    ) {
+
+        return {
+
+            nivel:
+                "amarelo",
+
+            recomendavel:
+                false,
+
+            titulo:
+                "AGUARDANDO DADOS CLIMÁTICOS",
+
+            resumo:
+                "Ainda não é possível recomendar a pulverização.",
+
+            mensagem:
+                "Aguarde a atualização dos dados meteorológicos da cidade."
+        };
+    }
+
+
+
+    // ======================================================
+    // VERIFICA AS FAIXAS IDEAIS
+    // ======================================================
+
+    const temperaturaIdeal =
+        temperatura < 30;
+
+
+    const umidadeIdeal =
+        umidade > 55;
+
+
+    const ventoIdeal =
+        vento >= 3 &&
+        vento <= 10;
+
+
+
+    // ======================================================
+    // STATUS VERDE
+    // TODAS AS CONDIÇÕES ESTÃO ADEQUADAS
+    // ======================================================
+
+    if (
+        temperaturaIdeal &&
+        umidadeIdeal &&
+        ventoIdeal
+    ) {
+
+        return {
+
+            nivel:
+                "verde",
+
+            recomendavel:
+                true,
+
+            titulo:
+                "APTO PARA PULVERIZAÇÃO",
+
+            resumo:
+                "Momento recomendável para a adubação foliar.",
+
+            mensagem:
+                `Temperatura de ${temperatura} °C, ` +
+                `umidade relativa de ${umidade}% e ` +
+                `vento de ${vento} km/h dentro das ` +
+                `faixas ideais.`
+        };
+    }
+
+
+
+    // ======================================================
+    // CONDIÇÕES CRÍTICAS
+    // ======================================================
+
+    const condicaoCritica =
+
+        temperatura >= 35 ||
+
+        umidade <= 40 ||
+
+        vento < 1 ||
+
+        vento > 15;
+
+
+
+    // ======================================================
+    // MONTA A LISTA DE PROBLEMAS ENCONTRADOS
+    // ======================================================
+
+    const problemas = [];
+
+
+    if (!temperaturaIdeal) {
+
+        problemas.push(
+
+            `temperatura de ${temperatura} °C ` +
+            `(ideal abaixo de 30 °C)`
+
+        );
+    }
+
+
+    if (!umidadeIdeal) {
+
+        problemas.push(
+
+            `umidade de ${umidade}% ` +
+            `(ideal acima de 55%)`
+
+        );
+    }
+
+
+    if (!ventoIdeal) {
+
+        problemas.push(
+
+            `vento de ${vento} km/h ` +
+            `(ideal entre 3 e 10 km/h)`
+
+        );
+    }
+
+
+
+    // ======================================================
+    // STATUS VERMELHO
+    // CONDIÇÃO CLARAMENTE DESFAVORÁVEL
+    // ======================================================
+
+    if (condicaoCritica) {
+
+        return {
+
+            nivel:
+                "vermelho",
+
+            recomendavel:
+                false,
+
+            titulo:
+                "NÃO APTO PARA PULVERIZAÇÃO",
+
+            resumo:
+                "Não é recomendável realizar a adubação foliar agora.",
+
+            mensagem:
+                "Condição climática desfavorável: " +
+                problemas.join("; ") +
+                ". Aguarde uma melhora antes da aplicação."
+        };
+    }
+
+
+
+    // ======================================================
+    // STATUS AMARELO
+    // FORA DO IDEAL, MAS SEM CONDIÇÃO CRÍTICA
+    // ======================================================
+
+    return {
+
+        nivel:
+            "amarelo",
+
+        recomendavel:
+            false,
+
+        titulo:
+            "ATENÇÃO — AGUARDE MELHORA",
+
+        resumo:
+            "O momento ainda não é recomendável para a adubação foliar.",
+
+        mensagem:
+            "Condição fora da faixa ideal: " +
+            problemas.join("; ") +
+            ". Verifique novamente antes da aplicação."
+    };
 }
+
+
+
+// ==========================================================
+// AVALIAÇÃO DO pH DA ÁGUA
+// ==========================================================
+
+function avaliarPhAgua(ph) {
+
+    ph =
+        Number(ph);
+
+
+    if (
+        !Number.isFinite(ph) ||
+        ph <= 0
+    ) {
+
+        return {
+
+            status:
+                "não informado",
+
+            mensagem:
+                "Informe o pH para avaliar o condicionamento da água."
+        };
+    }
+
+
+    if (ph > 6.5) {
+
+        return {
+
+            status:
+                "acima do ideal",
+
+            mensagem:
+                "pH acima de 6,5. Avalie a correção com um acidificante compatível antes de preparar a calda."
+        };
+    }
+
+
+    if (ph < 5.5) {
+
+        return {
+
+            status:
+                "abaixo do ideal",
+
+            mensagem:
+                "pH abaixo de 5,5. Confirme a compatibilidade da fonte e evite acidificar ainda mais a calda."
+        };
+    }
+
+
+    return {
+
+        status:
+            "adequado",
+
+        mensagem:
+            "pH dentro da faixa de referência de 5,5 a 6,5."
+    };
+}
+
+
+
+// ==========================================================
+// RECOMENDAÇÃO DE ADJUVANTE
+// ==========================================================
+
+function recomendarAdjuvante(
+    estagioFoliar,
+    escolha
+) {
+
+    if (
+        escolha &&
+        escolha !== "nao-informado"
+    ) {
+
+        return escolha.replaceAll(
+            "-",
+            " "
+        );
+    }
+
+
+    if (
+        estagioFoliar ===
+        "jovens"
+    ) {
+
+        return (
+            "priorizar espalhante não iônico em dose de rótulo; " +
+            "folhas jovens apresentam maior sensibilidade"
+        );
+    }
+
+
+    return (
+        "selecionar espalhante compatível com a fonte " +
+        "e seguir as orientações presentes no rótulo"
+    );
+}
+
+
+
+// ==========================================================
+// ALTERA AS CORES E OS TEXTOS DOS INDICADORES
+// ==========================================================
+
+function atualizarIndicadorClimatico(
+    painel,
+    clima
+) {
+
+    if (!painel) {
+        return;
+    }
+
+
+    const configuracoes = {
+
+        verde: {
+
+            fundo:
+                "#dcfce7",
+
+            texto:
+                "#166534",
+
+            borda:
+                "#22c55e",
+
+            ponto:
+                "#22c55e",
+
+            icone:
+                "fa-circle-check"
+        },
+
+
+        amarelo: {
+
+            fundo:
+                "#fef3c7",
+
+            texto:
+                "#854d0e",
+
+            borda:
+                "#eab308",
+
+            ponto:
+                "#eab308",
+
+            icone:
+                "fa-triangle-exclamation"
+        },
+
+
+        vermelho: {
+
+            fundo:
+                "#fee2e2",
+
+            texto:
+                "#991b1b",
+
+            borda:
+                "#ef4444",
+
+            ponto:
+                "#ef4444",
+
+            icone:
+                "fa-circle-xmark"
+        }
+
+    };
+
+
+    const configuracao =
+        configuracoes[
+            clima.nivel
+        ];
+
+
+    painel.style.background =
+        configuracao.fundo;
+
+
+    painel.style.color =
+        configuracao.texto;
+
+
+    painel.style.border =
+        `1px solid ${configuracao.borda}`;
+
+
+    const ponto =
+        painel.querySelector(
+            ".spray-dot"
+        );
+
+
+    if (ponto) {
+
+        ponto.style.background =
+            configuracao.ponto;
+
+
+        ponto.style.boxShadow =
+            `0 0 0 4px ${configuracao.ponto}26`;
+    }
+
+
+    const icone =
+        painel.querySelector(
+            ".spray-status-icon"
+        );
+
+
+    if (icone) {
+
+        icone.className =
+            `fa-solid ${configuracao.icone} spray-status-icon`;
+    }
+
+
+    const titulo =
+        painel.querySelector(
+            ".spray-status-title"
+        );
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            clima.titulo;
+    }
+
+
+    const resumo =
+        painel.querySelector(
+            ".spray-status-summary"
+        );
+
+
+    if (resumo) {
+
+        resumo.textContent =
+            clima.resumo;
+    }
+
+
+    const detalhe =
+        painel.querySelector(
+            ".spray-status-detail"
+        );
+
+
+    if (detalhe) {
+
+        detalhe.textContent =
+            clima.mensagem;
+    }
+
+
+    painel.dataset.nivel =
+        clima.nivel;
+
+
+    painel.dataset.recomendavel =
+        String(
+            clima.recomendavel
+        );
+}
+
+
+
+// ==========================================================
+// ATUALIZA OS PAINÉIS DE CLIMA E pH
+// ==========================================================
 
 function atualizarAlertasAplicacao() {
-    const alerta = document.getElementById("alertaPhAgua");
-    const ph = numero("simPhAgua");
-    if (alerta) {
-        const avaliacao = avaliarPhAgua(ph);
-        alerta.style.display = ph > 0 ? "block" : "none";
-        alerta.textContent = avaliacao.mensagem;
+
+    // ======================================================
+    // ALERTA DE pH
+    // ======================================================
+
+    const alertaPh =
+        document.getElementById(
+            "alertaPhAgua"
+        );
+
+
+    const ph =
+        numero(
+            "simPhAgua"
+        );
+
+
+    if (alertaPh) {
+
+        const avaliacaoPh =
+            avaliarPhAgua(
+                ph
+            );
+
+
+        alertaPh.style.display =
+            ph > 0
+                ? "block"
+                : "none";
+
+
+        alertaPh.textContent =
+            avaliacaoPh.mensagem;
+
+
+        if (
+            avaliacaoPh.status ===
+            "adequado"
+        ) {
+
+            alertaPh.style.background =
+                "#dcfce7";
+
+
+            alertaPh.style.color =
+                "#166534";
+
+
+            alertaPh.style.borderColor =
+                "#86efac";
+
+        } else {
+
+            alertaPh.style.background =
+                "#fff7ed";
+
+
+            alertaPh.style.color =
+                "#9a3412";
+
+
+            alertaPh.style.borderColor =
+                "#fdba74";
+        }
     }
-    const painel = document.getElementById("statusPulverizacao");
-    if (painel) {
-        const clima = avaliarJanelaClimatica();
-        const cores = { verde:["#dcfce7","#166534","#22c55e"], amarelo:["#fef3c7","#854d0e","#eab308"], vermelho:["#fee2e2","#991b1b","#ef4444"] }[clima.nivel];
-        painel.style.background = cores[0]; painel.style.color = cores[1];
-        const ponto = painel.querySelector(".spray-dot"); if (ponto) ponto.style.background = cores[2];
-        const texto = painel.querySelector("span:last-child"); if (texto) texto.textContent = `${clima.titulo}: ${clima.mensagem}`;
-    }
+
+
+
+    // ======================================================
+    // AVALIAÇÃO DOS DADOS DO CLIMA
+    // ======================================================
+
+    const clima =
+        avaliarJanelaClimatica();
+
+
+
+    // ======================================================
+    // INDICADOR DA TELA DO SIMULADOR
+    // ======================================================
+
+    const painelSimulador =
+        document.getElementById(
+            "statusPulverizacao"
+        );
+
+
+    atualizarIndicadorClimatico(
+        painelSimulador,
+        clima
+    );
+
+
+
+    // ======================================================
+    // INDICADOR DA TELA INICIAL
+    // ======================================================
+
+    const painelHome =
+        document.getElementById(
+            "clima-pulverizacao-status"
+        );
+
+
+    atualizarIndicadorClimatico(
+        painelHome,
+        clima
+    );
+
+
+    return clima;
 }
 
+
+
+// ==========================================================
+// OBSERVA A ATUALIZAÇÃO DA API DE CLIMA
+//
+// O weather.js busca os dados de forma assíncrona.
+// Por isso, o indicador precisa observar quando o conteúdo
+// dos elementos de temperatura, umidade e vento é alterado.
+// ==========================================================
+
+function observarAtualizacaoClima() {
+
+    const idsClimaticos = [
+
+        "clima-temp",
+
+        "clima-umidade",
+
+        "clima-vento"
+
+    ];
+
+
+    const observador =
+        new MutationObserver(
+            function () {
+
+                atualizarAlertasAplicacao();
+
+            }
+        );
+
+
+    idsClimaticos.forEach(
+        function (idCampo) {
+
+            const campo =
+                document.getElementById(
+                    idCampo
+                );
+
+
+            if (campo) {
+
+                observador.observe(
+                    campo,
+                    {
+
+                        childList:
+                            true,
+
+                        characterData:
+                            true,
+
+                        subtree:
+                            true
+
+                    }
+                );
+            }
+        }
+    );
+
+
+    atualizarAlertasAplicacao();
+}
+
+
+
+// ==========================================================
+// DISPONIBILIZA AS FUNÇÕES GLOBALMENTE
+// ==========================================================
+
+window.avaliarJanelaClimatica =
+    avaliarJanelaClimatica;
+
+
+window.atualizarAlertasAplicacao =
+    atualizarAlertasAplicacao;
+
+
+window.observarAtualizacaoClima =
+    observarAtualizacaoClima;
 
 
 // ==========================================================
@@ -2489,7 +3200,6 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-
         // ==================================================
         // ALTERAÇÃO DA FONTE
         // ==================================================
@@ -2526,6 +3236,8 @@ document.addEventListener(
                 "change",
                 function () {
 
+                    atualizarFontes();
+
                     setTimeout(
                         atualizarConcentracaoFonte,
                         0
@@ -2534,19 +3246,33 @@ document.addEventListener(
             );
         }
 
-        const phAgua = document.getElementById("simPhAgua");
-        if (phAgua) phAgua.addEventListener("input", atualizarAlertasAplicacao);
-        atualizarAlertasAplicacao();
+
+
+        // ==================================================
+        // ALTERAÇÃO DO pH
+        // ==================================================
+
+        const phAgua =
+            document.getElementById(
+                "simPhAgua"
+            );
+
+
+        if (phAgua) {
+
+            phAgua.addEventListener(
+                "input",
+                atualizarAlertasAplicacao
+            );
+        }
 
 
 
         // ==================================================
-        // O HTML NOVO NÃO POSSUI MAIS A ILUSTRAÇÃO
-        // DO POMAR DENTRO DO SIMULADOR.
-        //
-        // O DESENVOLVIMENTO AGORA É EXIBIDO
-        // INDIVIDUALMENTE NO HISTÓRICO.
+        // MONITORAMENTO AUTOMÁTICO DO CLIMA
         // ==================================================
+
+        observarAtualizacaoClima();
 
     }
 );
