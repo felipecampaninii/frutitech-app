@@ -29,7 +29,7 @@ LITEROUTER_URL = "https://api.literouter.com/v1/chat/completions"
 
 # Modelo multimodal/vision. Se sua conta LiteRouter usar outro ID de modelo
 # com visão, altere somente esta linha.
-LITEROUTER_MODEL = ("gemma-3-27b-it")
+LITEROUTER_MODEL = ("ministral-3b-2512:free")
 
 TAMANHO_MAXIMO = 10 * 1024 * 1024
 EXTENSOES_PERMITIDAS = {".jpg", ".jpeg", ".png", ".webp"}
