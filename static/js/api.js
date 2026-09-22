@@ -275,7 +275,11 @@ function gerarPlantaCitros(tipo) {
 
                 ${
                     tipo === "desenvolvimento"
-                        ? '<span class="blossom b5"></span>'
+                        ? `
+                            <span class="blossom b5"></span>
+                            <span class="blossom b6"></span>
+                            <span class="blossom b7"></span>
+                          `
                         : ""
                 }
             `
@@ -291,6 +295,8 @@ function gerarPlantaCitros(tipo) {
                 <span class="orange o4"></span>
                 <span class="orange o5"></span>
                 <span class="orange o6"></span>
+                <span class="orange o7"></span>
+                <span class="orange o8"></span>
             `
             : "";
 
