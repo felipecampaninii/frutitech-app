@@ -1708,6 +1708,185 @@ body{
         font-size: 9px;
     }
 }
+/* ==================================================
+   ACABAMENTO REALISTA DAS QUATRO FASES DOS CITROS
+   Substitui o aspecto oval por copas folhosas e irregulares
+================================================== */
+
+.citrus-growth-row {
+    align-items: flex-end;
+    padding: 0 4px;
+}
+
+.citrus-plant {
+    isolation: isolate;
+    filter: drop-shadow(0 5px 4px rgba(40, 67, 31, .18));
+}
+
+.citrus-plant .plant-trunk {
+    z-index: 3;
+    width: 8px;
+    border-radius: 60% 60% 22% 22%;
+    background: linear-gradient(90deg, #57321c 0 18%, #9a6137 48%, #65391e 100%);
+    box-shadow: inset -2px 0 rgba(61, 31, 15, .28);
+}
+
+.citrus-plant .branch {
+    z-index: 2;
+    width: 6px;
+    background: linear-gradient(90deg, #57321c, #956039 55%, #61371f);
+}
+
+/* Cada copa passa a ter borda recortada e dezenas de folhas visuais. */
+.citrus-plant .crown {
+    z-index: 4;
+    border: 0;
+    border-radius: 42% 58% 47% 53% / 57% 42% 58% 43%;
+    background:
+        radial-gradient(ellipse at 14% 25%, #69b936 0 7%, transparent 7.7%),
+        radial-gradient(ellipse at 34% 13%, #83c846 0 7%, transparent 7.8%),
+        radial-gradient(ellipse at 55% 19%, #4ca72e 0 8%, transparent 8.8%),
+        radial-gradient(ellipse at 79% 27%, #79bf3d 0 7%, transparent 7.8%),
+        radial-gradient(ellipse at 90% 48%, #2e8c2e 0 8%, transparent 8.8%),
+        radial-gradient(ellipse at 75% 68%, #58ae32 0 8%, transparent 8.8%),
+        radial-gradient(ellipse at 52% 84%, #337f29 0 8%, transparent 8.8%),
+        radial-gradient(ellipse at 27% 76%, #6fba38 0 8%, transparent 8.8%),
+        radial-gradient(ellipse at 10% 55%, #27802c 0 8%, transparent 8.8%),
+        radial-gradient(circle at 42% 43%, #57ad32 0 10%, transparent 10.8%),
+        radial-gradient(circle at 65% 48%, #1c762b 0 12%, transparent 12.8%),
+        radial-gradient(circle at 36% 65%, #2b8a2d 0 12%, transparent 12.8%),
+        linear-gradient(145deg, #218230 0%, #0b6328 66%, #084c22 100%);
+    box-shadow:
+        inset 5px 7px 8px rgba(164, 222, 91, .22),
+        inset -7px -6px 8px rgba(5, 71, 31, .25),
+        0 3px 5px rgba(23, 85, 37, .22);
+    clip-path: polygon(
+        12% 21%, 25% 8%, 40% 11%, 51% 2%, 65% 10%, 80% 8%,
+        92% 22%, 88% 36%, 100% 49%, 91% 62%, 94% 77%,
+        76% 84%, 66% 98%, 50% 91%, 35% 99%, 24% 86%,
+        8% 82%, 11% 65%, 0 53%, 9% 40%
+    );
+}
+
+/* Folhagem adicional sem exigir imagens externas. */
+.citrus-plant .crown::before,
+.citrus-plant .crown::after {
+    content: "";
+    position: absolute;
+    width: 17px;
+    height: 9px;
+    border-radius: 100% 0 100% 0;
+    background: #78c541;
+    box-shadow:
+        22px 5px #398f2d,
+        39px -2px #60b438,
+        9px 20px #28862d,
+        31px 25px #72bd3c,
+        48px 17px #267b2b;
+    transform: rotate(-18deg);
+    opacity: .92;
+}
+
+.citrus-plant .crown::before {
+    top: 15px;
+    left: 7px;
+}
+
+.citrus-plant .crown::after {
+    right: 12px;
+    bottom: 17px;
+    transform: rotate(154deg) scale(.82);
+}
+
+/* PLANTIO: muda baixa com folhas grandes e tronco bem fino. */
+.plant-plantio {
+    width: 18%;
+    height: 76px;
+    transform: none;
+}
+
+.plant-plantio .plant-trunk {
+    width: 6px;
+    height: 49px;
+}
+
+.plant-plantio .leaf {
+    z-index: 5;
+    width: 32px;
+    height: 18px;
+    background: linear-gradient(135deg, #62b83a, #13802d 64%, #075c26);
+    box-shadow: inset 4px 3px rgba(155, 216, 82, .25);
+}
+
+.plant-plantio .leaf-1 { bottom: 32px; left: 3px; transform: rotate(15deg); }
+.plant-plantio .leaf-2 { right: 3px; bottom: 37px; transform: scaleX(-1) rotate(17deg); }
+.plant-plantio .leaf-3 { bottom: 54px; width: 23px; height: 15px; }
+
+/* FORMAÇÃO: copa menor, aberta e com ramificações aparentes. */
+.plant-formacao {
+    height: 116px;
+    transform: scale(.88);
+}
+
+.plant-formacao .plant-trunk { height: 69px; }
+.plant-formacao .branch { bottom: 43px; height: 42px; }
+.plant-formacao .crown-left { top: 38px; left: 5px; width: 50px; height: 51px; }
+.plant-formacao .crown-center { top: 18px; width: 57px; height: 57px; }
+.plant-formacao .crown-right { top: 38px; right: 5px; width: 50px; height: 51px; }
+
+/* DESENVOLVIMENTO: copa larga, densa e ainda florida. */
+.plant-desenvolvimento {
+    height: 133px;
+    transform: scale(.98);
+}
+
+.plant-desenvolvimento .plant-trunk { width: 10px; height: 75px; }
+.plant-desenvolvimento .branch { bottom: 48px; height: 49px; }
+.plant-desenvolvimento .crown-left { top: 34px; left: -1px; width: 61px; height: 64px; }
+.plant-desenvolvimento .crown-center { top: 8px; width: 73px; height: 76px; }
+.plant-desenvolvimento .crown-right { top: 34px; right: -1px; width: 61px; height: 64px; }
+
+/* PRODUÇÃO: maior copa e frutos pequenos distribuídos. */
+.plant-producao {
+    height: 145px;
+    transform: scale(1.05);
+}
+
+.plant-producao .plant-trunk { width: 11px; height: 81px; }
+.plant-producao .branch { bottom: 51px; height: 52px; }
+.plant-producao .crown-left { top: 35px; left: -4px; width: 65px; height: 68px; }
+.plant-producao .crown-center { top: 4px; width: 78px; height: 82px; }
+.plant-producao .crown-right { top: 35px; right: -4px; width: 65px; height: 68px; }
+
+.citrus-plant .blossom {
+    width: 9px;
+    height: 9px;
+    border: 3px solid #fff;
+    background: #f6d94b;
+    box-shadow: 0 0 3px rgba(255, 255, 255, .9);
+}
+
+.citrus-plant .orange {
+    width: 10px;
+    height: 10px;
+    border: 1px solid #e79a0b;
+    background: radial-gradient(circle at 32% 28%, #fff176 0 10%, #ffc928 28%, #f39a13 100%);
+    box-shadow: 0 2px 2px rgba(113, 67, 8, .28);
+}
+
+.citrus-plant .b6,
+.citrus-plant .o7 { top: 72px; left: 22%; }
+
+.citrus-plant .b7,
+.citrus-plant .o8 { top: 38px; right: 20%; }
+
+@media (max-width: 380px) {
+    .plant-plantio { transform: scale(.88); }
+    .plant-formacao { transform: scale(.76); }
+    .plant-desenvolvimento { transform: scale(.86); }
+    .plant-producao { transform: scale(.91); }
+}
+
     </style>
 </head>
 <body>
