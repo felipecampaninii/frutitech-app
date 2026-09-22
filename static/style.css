@@ -1348,3 +1348,31 @@ body {
     #page-inicio .citrus-tree-svg{height:132px}
     #page-inicio .home-stat{min-height:43px}
 }
++/* Identidade visual Fru-tech */
+.frutech-logo{display:inline-flex;align-items:center;gap:8px;color:#fff;white-space:nowrap}
+.frutech-mark{width:31px;height:31px;overflow:visible}
+.frutech-mark .mark-frame{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linejoin:round}
+.frutech-mark .mark-leaf{fill:currentColor;opacity:.96}
+.frutech-mark .mark-vein{fill:none;stroke:#08713d;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.frutech-mark circle{fill:#a9e05d;stroke:#08713d;stroke-width:1}
+.frutech-wordmark{font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:24px;line-height:1;letter-spacing:-.75px}
+.frutech-wordmark strong{font-weight:780}.frutech-wordmark span{font-weight:470;opacity:.96}
+.frutech-logo--header{color:#fff}.frutech-logo--header .frutech-mark{width:29px;height:29px}
+.frutech-logo--sidebar{color:#eaffef}.frutech-logo--sidebar .frutech-wordmark{font-size:21px}
+.frutech-logo--auth{justify-content:center;color:#08713d;margin-bottom:7px}
+.frutech-logo--auth .frutech-mark{width:43px;height:43px}
+.frutech-logo--auth .frutech-wordmark{font-size:31px;letter-spacing:-1px}
+.frutech-logo--auth .mark-vein{stroke:#fff}.auth-brand p{margin-top:5px;letter-spacing:.15px}
+.weather-day-icon{color:#f4b400!important;filter:drop-shadow(0 0 6px rgba(244,180,0,.25))}
+.weather-dawn-icon{color:#f39a45!important;filter:drop-shadow(0 0 7px rgba(243,154,69,.28))}
+.weather-sunset-icon{color:#ed7b32!important;filter:drop-shadow(0 5px 0 rgba(163,70,55,.22)) drop-shadow(0 0 8px rgba(237,123,50,.30))}
+.weather-night-icon{color:#536ca8!important;filter:drop-shadow(3px 2px 0 rgba(248,244,205,.72))}
+.citrus-scene.periodo-entardecer{background:linear-gradient(#ef9f78 0%,#f8c58b 48%,#79aa72 49%,#4d934f 78%,#9a5d34 79%)!important}
+.citrus-scene.periodo-entardecer .citrus-sun{top:54px;background:#f37a32;box-shadow:0 0 20px rgba(243,122,50,.58)}
+.citrus-scene.periodo-noite{background:linear-gradient(#102b52 0%,#284c72 48%,#315f49 49%,#214936 78%,#573a28 79%)!important}
+.citrus-scene.periodo-noite .citrus-sun{width:38px;height:38px;background:#f4f1d2;box-shadow:0 0 18px rgba(245,243,214,.56)}
+.citrus-scene.periodo-noite .citrus-cloud{opacity:.38}
+.citrus-scene.periodo-noite .citrus-field{filter:brightness(.52) saturate(.75)}
+.citrus-scene.periodo-noite .citrus-soil{filter:brightness(.58)}
+.citrus-tree-svg .svg-foliage{filter:drop-shadow(0 1px 1px rgba(0,48,19,.16))}
+.citrus-tree-svg .svg-fruits{filter:drop-shadow(0 1px 1px rgba(83,46,0,.3))}
