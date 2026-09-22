@@ -1116,8 +1116,6 @@ body {
     .auth-brand {
         margin-bottom: 16px;
     }
-}
-
 
 /* 
  * IMPORTANTE:
@@ -1127,3 +1125,19 @@ body {
  * E a página inicial de autenticação:
  * <section id="page-login" class="page active">
  */
+}
+/* Ícone do status climático da pulverização */
+.spray-status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #eab308;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1;
+}
