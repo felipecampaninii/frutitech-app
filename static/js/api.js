@@ -250,72 +250,60 @@ function gerarArvore(classe, frutos) {
 // ========================================================
 
 function gerarPlantaCitros(tipo) {
-    // Fase de plantio: muda cítrica pequena
+    const configuracoes = {
+        plantio: { escala: 0.54, folhas: 3, flores: 0, frutos: 0 },
+        formacao: { escala: 0.76, folhas: 16, flores: 6, frutos: 0 },
+        desenvolvimento: { escala: 0.92, folhas: 24, flores: 10, frutos: 0 },
+        producao: { escala: 1.08, folhas: 30, flores: 2, frutos: 12 }
+    };
+
+    const c = configuracoes[tipo] || configuracoes.plantio;
+    const folhas = [
+        [63,43],[80,32],[98,39],[113,54],[119,72],[111,91],[95,103],[75,105],
+        [57,96],[43,83],[39,65],[49,50],[72,58],[91,54],[101,72],[88,84],
+        [67,81],[55,69],[78,70],[104,88],[53,105],[119,101],[34,94],[129,83],
+        [66,28],[91,24],[112,35],[41,57],[128,62],[78,93]
+    ];
+    const flores = [[55,54],[84,39],[108,60],[69,74],[98,87],[48,88],[119,78],[78,101],[91,65],[63,96]];
+    const frutos = [[55,51],[81,38],[105,52],[119,70],[99,75],[75,63],[48,77],[64,91],[91,96],[113,91],[77,105],[43,96]];
+
     if (tipo === "plantio") {
         return `
-            <div class="citrus-plant plant-plantio">
-                <span class="plant-shadow"></span>
-                <span class="plant-trunk"></span>
-
-                <span class="leaf leaf-1"></span>
-                <span class="leaf leaf-2"></span>
-                <span class="leaf leaf-3"></span>
-            </div>
-        `;
+            <svg class="citrus-tree-svg tree-${tipo}" viewBox="0 0 160 150" role="img" aria-label="Muda cítrica em fase de plantio">
+                <ellipse cx="80" cy="140" rx="35" ry="7" fill="rgba(82,45,24,.28)"/>
+                <path d="M77 139 C78 112 77 86 79 60" stroke="#78401f" stroke-width="7" stroke-linecap="round"/>
+                <path d="M79 91 C65 78 56 68 48 58" stroke="#78401f" stroke-width="4" stroke-linecap="round"/>
+                <path d="M79 80 C91 68 99 58 106 47" stroke="#78401f" stroke-width="4" stroke-linecap="round"/>
+                <ellipse cx="43" cy="53" rx="25" ry="13" transform="rotate(27 43 53)" fill="url(#leafPlantio)"/>
+                <ellipse cx="109" cy="43" rx="25" ry="13" transform="rotate(-31 109 43)" fill="url(#leafPlantio)"/>
+                <ellipse cx="80" cy="55" rx="15" ry="28" fill="url(#leafPlantio)"/>
+                <defs><linearGradient id="leafPlantio" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#58b94d"/><stop offset="1" stop-color="#087333"/></linearGradient></defs>
+            </svg>`;
     }
 
-    // Flores aparecem durante formação e desenvolvimento
-    const flores =
-        tipo === "formacao" || tipo === "desenvolvimento"
-            ? `
-                <span class="blossom b1"></span>
-                <span class="blossom b2"></span>
-                <span class="blossom b3"></span>
-                <span class="blossom b4"></span>
-
-                ${
-                    tipo === "desenvolvimento"
-                        ? `
-                            <span class="blossom b5"></span>
-                            <span class="blossom b6"></span>
-                            <span class="blossom b7"></span>
-                          `
-                        : ""
-                }
-            `
-            : "";
-
-    // Laranjas aparecem somente na fase produtiva
-    const frutos =
-        tipo === "producao"
-            ? `
-                <span class="orange o1"></span>
-                <span class="orange o2"></span>
-                <span class="orange o3"></span>
-                <span class="orange o4"></span>
-                <span class="orange o5"></span>
-                <span class="orange o6"></span>
-                <span class="orange o7"></span>
-                <span class="orange o8"></span>
-            `
-            : "";
+    const folhasSvg = folhas.slice(0, c.folhas).map((p, i) =>
+        `<ellipse cx="${p[0]}" cy="${p[1]}" rx="19" ry="14" transform="rotate(${(i % 3 - 1) * 18} ${p[0]} ${p[1]})" fill="${i % 4 === 0 ? '#48a83e' : i % 3 === 0 ? '#08702c' : '#168137'}"/>`
+    ).join("");
+    const floresSvg = flores.slice(0, c.flores).map(p =>
+        `<g transform="translate(${p[0]} ${p[1]})"><circle r="5.5" fill="#fffdf4"/><circle r="2" fill="#ffd84a"/></g>`
+    ).join("");
+    const frutosSvg = frutos.slice(0, c.frutos).map(p =>
+        `<g transform="translate(${p[0]} ${p[1]})"><circle r="6.5" fill="url(#orangeFruit)"/><ellipse cx="2" cy="-6" rx="4" ry="2" fill="#2f8b2f" transform="rotate(-25)"/></g>`
+    ).join("");
 
     return `
-        <div class="citrus-plant plant-${tipo}">
-            <span class="plant-shadow"></span>
-            <span class="plant-trunk"></span>
-
-            <span class="branch branch-left"></span>
-            <span class="branch branch-right"></span>
-
-            <span class="crown crown-left"></span>
-            <span class="crown crown-center"></span>
-            <span class="crown crown-right"></span>
-
-            ${flores}
-            ${frutos}
-        </div>
-    `;
+        <svg class="citrus-tree-svg tree-${tipo}" style="--tree-scale:${c.escala}" viewBox="0 0 160 150" role="img" aria-label="Citro em fase de ${tipo}">
+            <defs>
+                <linearGradient id="trunk-${tipo}" x1="0" x2="1"><stop stop-color="#603116"/><stop offset=".5" stop-color="#9b5a2d"/><stop offset="1" stop-color="#5c2c15"/></linearGradient>
+                <radialGradient id="orangeFruit" cx="30%" cy="25%"><stop stop-color="#fff48c"/><stop offset=".28" stop-color="#ffc629"/><stop offset="1" stop-color="#e98200"/></radialGradient>
+            </defs>
+            <ellipse cx="80" cy="140" rx="43" ry="8" fill="rgba(82,45,24,.30)"/>
+            <path d="M78 140 C80 113 79 92 80 69" stroke="url(#trunk-${tipo})" stroke-width="11" stroke-linecap="round"/>
+            <path d="M80 103 C68 86 58 75 48 66 M81 99 C94 82 105 71 116 62 M80 88 C78 69 78 57 81 44" fill="none" stroke="#74401f" stroke-width="6" stroke-linecap="round"/>
+            <g class="svg-foliage">${folhasSvg}</g>
+            <g class="svg-flowers">${floresSvg}</g>
+            <g class="svg-fruits">${frutosSvg}</g>
+        </svg>`;
 }
 
 
@@ -325,6 +313,12 @@ function gerarPlantaCitros(tipo) {
 
 function gerarEvolucaoCitros(idade, id = "") {
     const estagio = obterDadosEstagio(idade);
+
+    const tipoAtual =
+        estagio.classe === "stage-plantio" ? "plantio" :
+        estagio.classe === "stage-formacao" ? "formacao" :
+        estagio.classe === "stage-desenvolvimento" ? "desenvolvimento" :
+        "producao";
 
     const atributoId =
         id
@@ -350,16 +344,8 @@ function gerarEvolucaoCitros(idade, id = "") {
                 <div class="citrus-field"></div>
                 <div class="citrus-soil"></div>
 
-                <div class="citrus-growth-row">
-
-                    ${gerarPlantaCitros("plantio")}
-
-                    ${gerarPlantaCitros("formacao")}
-
-                    ${gerarPlantaCitros("desenvolvimento")}
-
-                    ${gerarPlantaCitros("producao")}
-
+                <div class="citrus-current-tree">
+                    ${gerarPlantaCitros(tipoAtual)}
                 </div>
 
             </div>
@@ -899,6 +885,82 @@ function gerarDesenvolvimentoPomar(item) {
 
 
 // ========================================================
+// ÚLTIMO TALHÃO NA TELA INICIAL
+// Usa somente valores recebidos da API; não cria dados fictícios.
+// ========================================================
+
+function primeiroValorValido(objeto, chaves, fallback = null) {
+    for (const chave of chaves) {
+        const valor = objeto?.[chave];
+        if (valor !== undefined && valor !== null && String(valor).trim() !== "") {
+            return valor;
+        }
+    }
+    return fallback;
+}
+
+function formatarValorReal(valor, casas = 2) {
+    if (valor === null || valor === undefined || valor === "") return "Não salvo";
+    const numero = Number(valor);
+    if (!Number.isFinite(numero)) return escaparHTML(valor);
+    return numero.toLocaleString("pt-BR", { maximumFractionDigits: casas });
+}
+
+function obterRecomendacaoNPK(item) {
+    const recomendacaoPronta = primeiroValorValido(item, [
+        "recomendacao_npk", "recomendacaoNpk", "npk", "formula_npk", "formulacao_npk"
+    ]);
+    if (recomendacaoPronta !== null) return escaparHTML(recomendacaoPronta);
+
+    const n = primeiroValorValido(item, ["dose_n", "doseN", "nitrogenio", "n_recomendado"]);
+    const p = primeiroValorValido(item, ["dose_p", "doseP", "fosforo", "p_recomendado"]);
+    const k = primeiroValorValido(item, ["dose_k", "doseK", "potassio", "k_recomendado"]);
+    if (n !== null || p !== null || k !== null) {
+        return `N ${formatarValorReal(n)} · P ${formatarValorReal(p)} · K ${formatarValorReal(k)}`;
+    }
+
+    const elemento = primeiroValorValido(item, ["elemento"]);
+    const fonte = primeiroValorValido(item, ["fonte"]);
+    const concentracao = primeiroValorValido(item, ["concentracao"]);
+    if (elemento || fonte) {
+        return `${escaparHTML(elemento || "NPK")} · ${escaparHTML(fonte || "fonte não salva")}${concentracao !== null ? ` · ${formatarValorReal(concentracao)}%` : ""}`;
+    }
+    return "Não salva";
+}
+
+function atualizarUltimoTalhaoHome(item) {
+    const container = document.getElementById("homeUltimoTalhao");
+    if (!container || !item) return;
+
+    const idade = Number(primeiroValorValido(item, ["idade", "idade_pomar"], 0)) || 0;
+    const area = primeiroValorValido(item, ["area", "area_ha"]);
+    const arvores = primeiroValorValido(item, ["arvores", "quantidade_arvores", "numero_arvores"]);
+    const trv = primeiroValorValido(item, ["trv_hectare", "trv_ha", "trvPorHectare", "trv"]);
+    const data = primeiroValorValido(item, ["data_registro", "data", "criado_em"], "Último registro");
+    const identificacao = primeiroValorValido(item, ["nome_talhao", "talhao", "identificacao"], "Último talhão registrado");
+    const npk = obterRecomendacaoNPK(item);
+
+    container.innerHTML = `
+        <div class="home-lot-head">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>
+                <div class="home-lot-name">${escaparHTML(identificacao)}</div>
+                <div class="home-lot-date"><i class="fa-regular fa-calendar"></i> ${escaparHTML(data)}</div>
+            </div>
+        </div>
+
+        ${gerarEvolucaoCitros(idade, "homeCitrusEvolution")}
+
+        <div class="home-stat-grid home-stat-grid-complete">
+            <div class="home-stat"><i class="fa-solid fa-seedling"></i><div><span>Idade</span><strong>${formatarValorReal(idade, 0)} ${idade === 1 ? "ano" : "anos"}</strong></div></div>
+            <div class="home-stat"><i class="fa-solid fa-tree"></i><div><span>Árvores</span><strong>${formatarValorReal(arvores, 0)}</strong></div></div>
+            <div class="home-stat"><i class="fa-solid fa-road"></i><div><span>Área</span><strong>${formatarValorReal(area)} ha</strong></div></div>
+            <div class="home-stat"><i class="fa-solid fa-ruler-combined"></i><div><span>TRV por hectare</span><strong>${formatarValorReal(trv)}${trv !== null ? " m³/ha" : ""}</strong></div></div>
+            <div class="home-stat home-stat-npk"><i class="fa-solid fa-flask-vial"></i><div><span>Recomendação NPK</span><strong>${npk}</strong></div></div>
+        </div>`;
+}
+
+// ========================================================
 // CARREGAR HISTÓRICO
 // ========================================================
 
@@ -1006,25 +1068,8 @@ async function carregarHistorico() {
             return;
         }
 
-        // ====================================================
-        // ATUALIZA A ÁRVORE DA HOME
-        // ====================================================
-
-        const evolucaoHome =
-            document.getElementById(
-                "homeCitrusEvolution"
-            );
-
-        if (
-            evolucaoHome &&
-            historico[0]
-        ) {
-            evolucaoHome.outerHTML =
-                gerarEvolucaoCitros(
-                    historico[0].idade,
-                    "homeCitrusEvolution"
-                );
-        }
+        // Atualiza toda a seção da home com o último registro real.
+        atualizarUltimoTalhaoHome(historico[0]);
 
         // ====================================================
         // CRIA OS CARTÕES DO HISTÓRICO
