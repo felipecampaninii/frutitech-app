@@ -274,15 +274,19 @@ function gerarPlantaCitros(tipo) {
                 <path d="M77 139 C78 112 77 86 79 60" stroke="#78401f" stroke-width="7" stroke-linecap="round"/>
                 <path d="M79 91 C65 78 56 68 48 58" stroke="#78401f" stroke-width="4" stroke-linecap="round"/>
                 <path d="M79 80 C91 68 99 58 106 47" stroke="#78401f" stroke-width="4" stroke-linecap="round"/>
-                <ellipse cx="43" cy="53" rx="25" ry="13" transform="rotate(27 43 53)" fill="url(#leafPlantio)"/>
-                <ellipse cx="109" cy="43" rx="25" ry="13" transform="rotate(-31 109 43)" fill="url(#leafPlantio)"/>
-                <ellipse cx="80" cy="55" rx="15" ry="28" fill="url(#leafPlantio)"/>
+                <path d="M49 58 C33 61 21 53 18 40 C34 35 52 40 61 54 C58 56 54 57 49 58Z" fill="url(#leafPlantio)"/>
+                <path d="M102 50 C116 48 127 37 129 24 C113 22 97 29 91 44 C94 47 97 49 102 50Z" fill="url(#leafPlantio)"/>
+                <path d="M80 65 C67 52 68 32 80 18 C93 31 94 51 80 65Z" fill="url(#leafPlantio)"/>
+                <path d="M25 42 Q43 48 58 55 M125 28 Q108 36 94 45 M80 23 L80 61" fill="none" stroke="rgba(210,244,192,.5)" stroke-width="1.4"/>
                 <defs><linearGradient id="leafPlantio" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#58b94d"/><stop offset="1" stop-color="#087333"/></linearGradient></defs>
             </svg>`;
     }
 
     const folhasSvg = folhas.slice(0, c.folhas).map((p, i) =>
-        `<ellipse cx="${p[0]}" cy="${p[1]}" rx="19" ry="14" transform="rotate(${(i % 3 - 1) * 18} ${p[0]} ${p[1]})" fill="${i % 4 === 0 ? '#48a83e' : i % 3 === 0 ? '#08702c' : '#168137'}"/>`
+        `<g transform="translate(${p[0]} ${p[1]}) rotate(${(i % 5 - 2) * 17})">
+            <path d="M-12 0 C-7-8 7-9 13 0 C7 8-7 8-12 0Z" fill="${i % 5 === 0 ? '#5dac3f' : i % 3 === 0 ? '#075f2b' : i % 2 === 0 ? '#16813a' : '#2d9440'}"/>
+            <path d="M-8 0 L9 0" stroke="rgba(204,238,179,.42)" stroke-width="1"/>
+        </g>`
     ).join("");
     const floresSvg = flores.slice(0, c.flores).map(p =>
         `<g transform="translate(${p[0]} ${p[1]})"><circle r="5.5" fill="#fffdf4"/><circle r="2" fill="#ffd84a"/></g>`
@@ -296,10 +300,13 @@ function gerarPlantaCitros(tipo) {
             <defs>
                 <linearGradient id="trunk-${tipo}" x1="0" x2="1"><stop stop-color="#603116"/><stop offset=".5" stop-color="#9b5a2d"/><stop offset="1" stop-color="#5c2c15"/></linearGradient>
                 <radialGradient id="orangeFruit" cx="30%" cy="25%"><stop stop-color="#fff48c"/><stop offset=".28" stop-color="#ffc629"/><stop offset="1" stop-color="#e98200"/></radialGradient>
+                <linearGradient id="canopy-${tipo}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2f963d"/><stop offset=".55" stop-color="#087030"/><stop offset="1" stop-color="#034f27"/></linearGradient>
             </defs>
             <ellipse cx="80" cy="140" rx="43" ry="8" fill="rgba(82,45,24,.30)"/>
-            <path d="M78 140 C80 113 79 92 80 69" stroke="url(#trunk-${tipo})" stroke-width="11" stroke-linecap="round"/>
-            <path d="M80 103 C68 86 58 75 48 66 M81 99 C94 82 105 71 116 62 M80 88 C78 69 78 57 81 44" fill="none" stroke="#74401f" stroke-width="6" stroke-linecap="round"/>
+            <path d="M78 140 C76 119 80 101 79 69" stroke="url(#trunk-${tipo})" stroke-width="11" stroke-linecap="round"/>
+            <path d="M80 105 C70 91 59 77 45 66 M80 99 C94 84 105 70 120 61 M80 89 C78 71 78 57 82 42 M65 85 L55 58 M96 81 L107 52" fill="none" stroke="#70401f" stroke-width="5.5" stroke-linecap="round"/>
+            <path d="M34 78 C25 58 37 39 55 34 C59 15 81 11 94 25 C112 19 132 33 129 52 C147 64 139 88 122 94 C114 112 91 112 79 101 C62 113 39 103 40 88 C34 86 31 82 34 78Z" fill="url(#canopy-${tipo})" opacity=".96"/>
+            <path d="M42 58 C55 35 80 29 98 38 C78 40 57 48 42 58Z" fill="rgba(117,183,68,.34)"/>
             <g class="svg-foliage">${folhasSvg}</g>
             <g class="svg-flowers">${floresSvg}</g>
             <g class="svg-fruits">${frutosSvg}</g>
@@ -1259,6 +1266,51 @@ async function carregarHistorico() {
         `;
     }
 }
+// ========================================================
+// IDENTIDADE VISUAL DO CLIMA PELO HORÁRIO LOCAL
+// ========================================================
+
+function atualizarIconePeriodoDia() {
+    const agora = new Date();
+    const hora = agora.getHours() + agora.getMinutes() / 60;
+    const icone = document.getElementById("clima-icone");
+    let periodo = "dia";
+    let classe = "fa-solid fa-sun weather-icon weather-day-icon";
+    let titulo = "Período diurno";
+
+    if (hora >= 5 && hora < 7) {
+        periodo = "amanhecer";
+        classe = "fa-solid fa-cloud-sun weather-icon weather-dawn-icon";
+        titulo = "Amanhecer";
+    } else if (hora >= 17 && hora < 19) {
+        periodo = "entardecer";
+        classe = "fa-solid fa-sun weather-icon weather-sunset-icon";
+        titulo = "Entardecer";
+    } else if (hora >= 19 || hora < 5) {
+        periodo = "noite";
+        classe = "fa-solid fa-moon weather-icon weather-night-icon";
+        titulo = "Período noturno";
+    }
+
+    if (icone) {
+        icone.className = classe;
+        icone.dataset.periodo = periodo;
+        icone.setAttribute("title", titulo);
+        icone.setAttribute("aria-label", titulo);
+    }
+
+    document.querySelectorAll(".citrus-scene").forEach(cena => {
+        cena.classList.remove("periodo-dia", "periodo-amanhecer", "periodo-entardecer", "periodo-noite");
+        cena.classList.add(`periodo-${periodo}`);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    atualizarIconePeriodoDia();
+    setTimeout(atualizarIconePeriodoDia, 1500);
+    setInterval(atualizarIconePeriodoDia, 60000);
+});
+
 // ========================================================
 // LIMPAR HISTÓRICO
 // ========================================================
