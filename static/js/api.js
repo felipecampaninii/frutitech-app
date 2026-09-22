@@ -44,77 +44,70 @@ function escaparHTML(valor) {
 // ========================================================
 
 function obterDadosEstagio(idade) {
-
     const anos = Number(idade) || 0;
 
-    if (anos <= 2) {
+    // Até 1 ano: muda pequena recém-implantada
+    if (anos <= 1) {
+        return {
+            classe: "stage-plantio",
+            titulo: "Plantio",
 
+            descricao:
+                "Muda cítrica em fase de implantação e enraizamento. " +
+                "O manejo deve favorecer o pegamento, a emissão de brotações " +
+                "e a formação inicial de uma estrutura saudável.",
+
+            estrutura: 25,
+            producao: 5
+        };
+    }
+
+    // De 2 a 3 anos: árvore jovem com a copa em formação
+    if (anos <= 3) {
         return {
             classe: "stage-formacao",
-            titulo: "Formação do Pomar",
+            titulo: "Formação",
 
             descricao:
-                "Pomar jovem em fase de estabelecimento. " +
-                "O foco principal está no desenvolvimento das raízes, " +
-                "formação da copa e crescimento vegetativo equilibrado.",
+                "Citro jovem em formação, com tronco ainda fino, " +
+                "ramificações abertas e copa em construção. " +
+                "O foco é obter arquitetura equilibrada e vigor vegetativo.",
 
-            estrutura: Math.min(42, 22 + anos * 10),
-            producao: Math.min(25, 8 + anos * 8)
+            estrutura: 48,
+            producao: 18
         };
-
     }
 
-
+    // De 4 a 5 anos: desenvolvimento da copa
     if (anos <= 5) {
-
         return {
-            classe: "stage-transicao",
-            titulo: "Entrada em Produção",
+            classe: "stage-desenvolvimento",
+            titulo: "Desenvolvimento",
 
             descricao:
-                "O pomar está entrando na fase produtiva, " +
-                "com expansão da copa e aumento gradual da necessidade nutricional.",
+                "Citro com copa em expansão, maior massa foliar e início " +
+                "da diferenciação floral. O acompanhamento nutricional " +
+                "sustenta o crescimento e prepara a produção.",
 
-            estrutura: 55 + ((anos - 3) * 9),
-            producao: 42 + ((anos - 3) * 12)
+            estrutura: 72,
+            producao: 48
         };
-
     }
 
-
-    if (anos <= 12) {
-
-        return {
-            classe: "stage-producao",
-            titulo: "Auge Produtivo",
-
-            descricao:
-                "Pomar adulto em fase de maior estabilidade produtiva, " +
-                "com necessidade de acompanhamento da nutrição, " +
-                "carga de frutos e uniformidade da copa.",
-
-            estrutura: 88,
-            producao: 90
-        };
-
-    }
-
-
+    // A partir de 6 anos: pomar produtivo
     return {
-        classe: "stage-maduro",
-        titulo: "Pomar Maduro",
+        classe: "stage-producao",
+        titulo: "Produção",
 
         descricao:
-            "Pomar consolidado, onde o manejo deve priorizar a manutenção " +
-            "do vigor, renovação de ramos e equilíbrio entre produção " +
-            "e desenvolvimento vegetativo.",
+            "Citro adulto com copa formada e presença de frutos. " +
+            "O manejo deve equilibrar carga produtiva, qualidade dos frutos, " +
+            "vigor e manutenção da área foliar.",
 
-        estrutura: 82,
-        producao: 76
+        estrutura: 90,
+        producao: 92
     };
 }
-
-
 // ========================================================
 // INFORMAÇÕES DOS NUTRIENTES
 // ========================================================
@@ -251,7 +244,150 @@ function gerarArvore(classe, frutos) {
 
 }
 
+// ========================================================
+// EVOLUÇÃO VISUAL DOS CITROS
+// Gera as fases: plantio, formação, desenvolvimento e produção
+// ========================================================
 
+function gerarPlantaCitros(tipo) {
+    // Fase de plantio: muda cítrica pequena
+    if (tipo === "plantio") {
+        return `
+            <div class="citrus-plant plant-plantio">
+                <span class="plant-shadow"></span>
+                <span class="plant-trunk"></span>
+
+                <span class="leaf leaf-1"></span>
+                <span class="leaf leaf-2"></span>
+                <span class="leaf leaf-3"></span>
+            </div>
+        `;
+    }
+
+    // Flores aparecem durante formação e desenvolvimento
+    const flores =
+        tipo === "formacao" || tipo === "desenvolvimento"
+            ? `
+                <span class="blossom b1"></span>
+                <span class="blossom b2"></span>
+                <span class="blossom b3"></span>
+                <span class="blossom b4"></span>
+
+                ${
+                    tipo === "desenvolvimento"
+                        ? '<span class="blossom b5"></span>'
+                        : ""
+                }
+            `
+            : "";
+
+    // Laranjas aparecem somente na fase produtiva
+    const frutos =
+        tipo === "producao"
+            ? `
+                <span class="orange o1"></span>
+                <span class="orange o2"></span>
+                <span class="orange o3"></span>
+                <span class="orange o4"></span>
+                <span class="orange o5"></span>
+                <span class="orange o6"></span>
+            `
+            : "";
+
+    return `
+        <div class="citrus-plant plant-${tipo}">
+            <span class="plant-shadow"></span>
+            <span class="plant-trunk"></span>
+
+            <span class="branch branch-left"></span>
+            <span class="branch branch-right"></span>
+
+            <span class="crown crown-left"></span>
+            <span class="crown crown-center"></span>
+            <span class="crown crown-right"></span>
+
+            ${flores}
+            ${frutos}
+        </div>
+    `;
+}
+
+
+// ========================================================
+// MONTA O PAINEL COMPLETO DE EVOLUÇÃO DO POMAR
+// ========================================================
+
+function gerarEvolucaoCitros(idade, id = "") {
+    const estagio = obterDadosEstagio(idade);
+
+    const atributoId =
+        id
+            ? ` id="${id}"`
+            : "";
+
+    return `
+        <div${atributoId}
+             class="citrus-evolution ${estagio.classe}"
+             data-estagio="${estagio.titulo}">
+
+            <div class="citrus-scene">
+
+                <div class="citrus-sun"></div>
+
+                <div class="citrus-cloud cloud-1"></div>
+                <div class="citrus-cloud cloud-2"></div>
+                <div class="citrus-cloud cloud-3"></div>
+
+                <div class="citrus-mountains mountain-back"></div>
+                <div class="citrus-mountains mountain-front"></div>
+
+                <div class="citrus-field"></div>
+                <div class="citrus-soil"></div>
+
+                <div class="citrus-growth-row">
+
+                    ${gerarPlantaCitros("plantio")}
+
+                    ${gerarPlantaCitros("formacao")}
+
+                    ${gerarPlantaCitros("desenvolvimento")}
+
+                    ${gerarPlantaCitros("producao")}
+
+                </div>
+
+            </div>
+
+            <div
+                class="citrus-timeline"
+                aria-label="Fase atual do pomar: ${estagio.titulo}"
+            >
+
+                <div class="citrus-stage-item stage-item-plantio">
+                    <span></span>
+                    <strong>Plantio</strong>
+                </div>
+
+                <div class="citrus-stage-item stage-item-formacao">
+                    <span></span>
+                    <strong>Formação</strong>
+                </div>
+
+                <div class="citrus-stage-item stage-item-desenvolvimento">
+                    <span></span>
+                    <strong>Desenvolvimento</strong>
+                </div>
+
+                <div class="citrus-stage-item stage-item-producao">
+                    <span></span>
+                    <strong>Produção</strong>
+                </div>
+
+            </div>
+
+        </div>
+    `;
+}
 // ========================================================
 // GERA O DESENVOLVIMENTO DO POMAR PARA CADA TALHÃO
 // ========================================================
@@ -443,40 +579,8 @@ function gerarDesenvolvimentoPomar(item) {
                  CENÁRIO DO POMAR
             ========================== -->
 
-            <div class="orchard-visual ${estagio.classe}">
-
-                <div class="orchard-sun"></div>
-
-                <div class="orchard-cloud"></div>
-
-                <div class="orchard-hills"></div>
-
-                <div class="orchard-soil"></div>
-
-
-                <div class="orchard-trees">
-
-                    ${gerarArvore(
-                        "side",
-                        Math.max(0, frutos - 2)
-                    )}
-
-                    ${gerarArvore(
-                        "main",
-                        frutos
-                    )}
-
-                    ${gerarArvore(
-                        "side",
-                        Math.max(0, frutos - 1)
-                    )}
-
-                </div>
-
-            </div>
-
-
-
+            ${gerarEvolucaoCitros(idade)}
+            
             <!-- =========================
                  INFORMAÇÕES
             ========================== -->
@@ -793,28 +897,19 @@ function gerarDesenvolvimentoPomar(item) {
 // ========================================================
 
 async function carregarHistorico() {
-
     const container =
-        document.getElementById(
-            "containerHistorico"
-        );
-
+        document.getElementById("containerHistorico");
 
     if (!container) {
         return;
     }
 
-
     const usuario =
         obterUsuarioLogado();
 
-
     if (!usuario) {
-
         container.innerHTML = `
-
             <article class="card">
-
                 <p
                     style="
                         font-size:13px;
@@ -822,22 +917,16 @@ async function carregarHistorico() {
                         text-align:center;
                     "
                 >
-
                     Usuário não identificado.
                     Faça login novamente.
-
                 </p>
-
             </article>
-
         `;
 
         return;
     }
 
-
     container.innerHTML = `
-
         <p
             style="
                 font-size:12px;
@@ -845,35 +934,23 @@ async function carregarHistorico() {
                 text-align:center;
             "
         >
-
             Buscando talhões registrados...
-
         </p>
-
     `;
 
-
     try {
-
         const response = await fetch(
-
             `${API_SIMULACOES_URL}?usuario_id=${encodeURIComponent(
                 usuario.id
             )}`
-
         );
-
 
         const historico =
             await response.json();
 
-
         if (!response.ok) {
-
             container.innerHTML = `
-
                 <article class="card">
-
                     <p
                         style="
                             font-size:13px;
@@ -881,23 +958,18 @@ async function carregarHistorico() {
                             text-align:center;
                         "
                     >
-
                         ${
                             escaparHTML(
                                 historico.erro ||
                                 "Erro ao carregar histórico."
                             )
                         }
-
                     </p>
-
                 </article>
-
             `;
 
             return;
         }
-
 
         // ====================================================
         // HISTÓRICO VAZIO
@@ -907,11 +979,8 @@ async function carregarHistorico() {
             !historico ||
             historico.length === 0
         ) {
-
             container.innerHTML = `
-
                 <article class="card">
-
                     <p
                         style="
                             font-size:13px;
@@ -919,273 +988,213 @@ async function carregarHistorico() {
                             text-align:center;
                         "
                     >
-
                         Nenhum talhão registrado ainda.
 
                         <br>
 
                         Faça uma simulação para começar!
-
                     </p>
-
                 </article>
-
             `;
 
             return;
         }
 
+        // ====================================================
+        // ATUALIZA A ÁRVORE DA HOME
+        // ====================================================
+
+        const evolucaoHome =
+            document.getElementById(
+                "homeCitrusEvolution"
+            );
+
+        if (
+            evolucaoHome &&
+            historico[0]
+        ) {
+            evolucaoHome.outerHTML =
+                gerarEvolucaoCitros(
+                    historico[0].idade,
+                    "homeCitrusEvolution"
+                );
+        }
 
         // ====================================================
-        // CRIA CADA CARD DO HISTÓRICO
+        // CRIA OS CARTÕES DO HISTÓRICO
         // ====================================================
 
         container.innerHTML =
             historico
-            .map(
-                (item, indice) => `
+                .map(
+                    (item, indice) => `
+                        <article class="card history-card">
 
+                            <div class="history-header-info">
 
-                <article class="card history-card">
+                                <span class="history-date">
+                                    <i
+                                        class="
+                                            fa-regular
+                                            fa-calendar-check
+                                        "
+                                    ></i>
 
+                                    ${
+                                        escaparHTML(
+                                            item.data_registro
+                                        )
+                                    }
+                                </span>
 
-                    <!-- CABEÇALHO -->
+                                <span class="history-tag">
+                                    Talhão ${
+                                        historico.length -
+                                        indice
+                                    }
+                                </span>
 
-                    <div class="history-header-info">
+                            </div>
 
-                        <span class="history-date">
-
-                            <i
-                                class="
-                                    fa-regular
-                                    fa-calendar-check
+                            <div
+                                class="card-title"
+                                style="
+                                    font-size:14px;
+                                    margin-bottom:4px;
                                 "
-                            ></i>
-
-                            ${
-                                escaparHTML(
-                                    item.data_registro
-                                )
-                            }
-
-                        </span>
-
-
-                        <span class="history-tag">
-
-                            Talhão ${
-                                historico.length -
-                                indice
-                            }
-
-                        </span>
-
-                    </div>
-
-
-
-                    <!-- NUTRIENTE PRINCIPAL -->
-
-                    <div
-                        class="card-title"
-                        style="
-                            font-size:14px;
-                            margin-bottom:4px;
-                        "
-                    >
-
-                        <i
-                            class="
-                                fa-solid
-                                fa-vial-circle-check
-                            "
-                            style="
-                                color:#136a32;
-                            "
-                        ></i>
-
-
-                        ${
-                            escaparHTML(
-                                item.elemento
-                            )
-                        }
-
-                        -
-
-                        ${
-                            escaparHTML(
-                                item.fonte
-                            )
-                        }
-
-                    </div>
-
-
-
-                    <!-- DADOS -->
-
-                    <div class="history-grid-data">
-
-
-                        <div class="history-data-item">
-
-                            <span>
-                                Área do Talhão:
-                            </span>
-
-                            <strong>
+                            >
+                                <i
+                                    class="
+                                        fa-solid
+                                        fa-vial-circle-check
+                                    "
+                                    style="color:#136a32;"
+                                ></i>
 
                                 ${
                                     escaparHTML(
-                                        item.area
+                                        item.elemento
                                     )
                                 }
-                                ha
 
-                            </strong>
-
-                        </div>
-
-
-
-                        <div class="history-data-item">
-
-                            <span>
-                                Produção Esperada:
-                            </span>
-
-                            <strong>
+                                -
 
                                 ${
                                     escaparHTML(
-                                        item.producao
+                                        item.fonte
                                     )
                                 }
-                                cx
+                            </div>
 
-                            </strong>
+                            <div class="history-grid-data">
 
-                        </div>
+                                <div class="history-data-item">
+                                    <span>
+                                        Área do Talhão:
+                                    </span>
 
+                                    <strong>
+                                        ${
+                                            escaparHTML(
+                                                item.area
+                                            )
+                                        }
+                                        ha
+                                    </strong>
+                                </div>
 
+                                <div class="history-data-item">
+                                    <span>
+                                        Produção Esperada:
+                                    </span>
 
-                        <div class="history-data-item">
+                                    <strong>
+                                        ${
+                                            escaparHTML(
+                                                item.producao
+                                            )
+                                        }
+                                        cx
+                                    </strong>
+                                </div>
 
-                            <span>
-                                Nº de Árvores:
-                            </span>
+                                <div class="history-data-item">
+                                    <span>
+                                        Nº de Árvores:
+                                    </span>
 
-                            <strong>
+                                    <strong>
+                                        ${
+                                            escaparHTML(
+                                                item.arvores
+                                            )
+                                        }
+                                        un
+                                    </strong>
+                                </div>
 
-                                ${
-                                    escaparHTML(
-                                        item.arvores
-                                    )
-                                }
+                                <div class="history-data-item">
+                                    <span>
+                                        Idade do Pomar:
+                                    </span>
 
-                                un
+                                    <strong>
+                                        ${
+                                            escaparHTML(
+                                                item.idade
+                                            )
+                                        }
+                                        anos
+                                    </strong>
+                                </div>
 
-                            </strong>
+                                <div class="history-data-item">
+                                    <span>
+                                        Volume de Calda:
+                                    </span>
 
-                        </div>
+                                    <strong>
+                                        ${
+                                            escaparHTML(
+                                                item.volume
+                                            )
+                                        }
+                                        L/ha
+                                    </strong>
+                                </div>
 
+                                <div class="history-data-item">
+                                    <span>
+                                        Concentração:
+                                    </span>
 
+                                    <strong>
+                                        ${
+                                            escaparHTML(
+                                                item.concentracao
+                                            )
+                                        }
+                                        %
+                                    </strong>
+                                </div>
 
-                        <div class="history-data-item">
+                            </div>
 
-                            <span>
-                                Idade do Pomar:
-                            </span>
+                            ${gerarDesenvolvimentoPomar(item)}
 
-                            <strong>
-
-                                ${
-                                    escaparHTML(
-                                        item.idade
-                                    )
-                                }
-
-                                anos
-
-                            </strong>
-
-                        </div>
-
-
-
-                        <div class="history-data-item">
-
-                            <span>
-                                Volume de Calda:
-                            </span>
-
-                            <strong>
-
-                                ${
-                                    escaparHTML(
-                                        item.volume
-                                    )
-                                }
-
-                                L/ha
-
-                            </strong>
-
-                        </div>
-
-
-
-                        <div class="history-data-item">
-
-                            <span>
-                                Concentração:
-                            </span>
-
-                            <strong>
-
-                                ${
-                                    escaparHTML(
-                                        item.concentracao
-                                    )
-                                }
-
-                                %
-
-                            </strong>
-
-                        </div>
-
-
-                    </div>
-
-
-
-                    <!-- DESENVOLVIMENTO DO POMAR -->
-
-                    ${gerarDesenvolvimentoPomar(item)}
-
-
-                </article>
-
-
-            `
-            )
-            .join("");
-
+                        </article>
+                    `
+                )
+                .join("");
 
     } catch (erro) {
-
         console.error(
             "Erro ao carregar histórico:",
             erro
         );
 
-
         container.innerHTML = `
-
             <article class="card">
-
                 <p
                     style="
                         font-size:13px;
@@ -1193,20 +1202,12 @@ async function carregarHistorico() {
                         text-align:center;
                     "
                 >
-
                     Não foi possível carregar os dados.
-
                 </p>
-
             </article>
-
         `;
-
     }
-
 }
-
-
 // ========================================================
 // LIMPAR HISTÓRICO
 // ========================================================
