@@ -1,11 +1,11 @@
 import os
-import tempfile
+import base64
+import requests
 from pathlib import Path
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
-from inference_sdk import InferenceConfiguration, InferenceHTTPClient
 
 app = Flask(__name__)
 CORS(app)
@@ -15,35 +15,25 @@ def pagina_inicial():
     return render_template('index.html')
 
 # =========================================================
-# CONFIGURAÇÃO ROBOFLOW / DATASETHLB E BANCO DE DADOS
+# CONFIGURAÇÃO LITEROUTER / VISÃO E BANCO DE DADOS
 # =========================================================
 
-ROBOFLOW_API_KEY = "erqLp3ThRAuBHyMzJP2X"
-WORKSPACE_NAME = "marias-workspace-lthtr"
-WORKFLOW_ID = "datasethlb-5opve"
+# IMPORTANTE:
+# Por segurança, use uma NOVA chave (a chave enviada no chat ficou exposta).
+# No PowerShell:
+#   $env:LITEROUTER_API_KEY="SUA_NOVA_CHAVE"
+#
+# O endpoint segue o formato OpenAI-compatible.
+LITEROUTER_API_KEY = ("4ae8814f468474a76df162f553a330b32963c34b71b3b7c71604da44bcea868a")
+LITEROUTER_URL = "https://api.literouter.com/v1/chat/completions"
 
-CONFIANCA_MINIMA = 0.5
+# Modelo multimodal/vision. Se sua conta LiteRouter usar outro ID de modelo
+# com visão, altere somente esta linha.
+LITEROUTER_MODEL = ("gemma-3-27b-it")
+
 TAMANHO_MAXIMO = 10 * 1024 * 1024
-
 EXTENSOES_PERMITIDAS = {".jpg", ".jpeg", ".png", ".webp"}
 TIPOS_PERMITIDOS = {"image/jpeg", "image/png", "image/webp"}
-
-roboflow_client = None
-
-if ROBOFLOW_API_KEY:
-    roboflow_client = InferenceHTTPClient(
-        api_url="https://serverless.roboflow.com",
-        api_key=ROBOFLOW_API_KEY
-    ).configure(
-        InferenceConfiguration(
-            api_key_transport="header"
-        )
-    )
-else:
-    print(
-        "AVISO: ROBOFLOW_API_KEY não configurada. "
-        "A rota /api/diagnostico ficará indisponível."
-    )
 
 
 DB_CONFIG = {
@@ -399,135 +389,217 @@ def salvar_localizacao_usuario():
 
 
 # =========================================================
-# ROTA POST: DIAGNÓSTICO POR IMAGEM COM DATASETHLB / ROBOFLOW
+# ROTA POST: DIAGNÓSTICO POR IMAGEM COM LITEROUTER VISION
 # =========================================================
 
-def extrair_predicoes_roboflow(objeto):
-    """
-    Procura recursivamente listas de previsões no retorno do Workflow.
-    Isso deixa a API tolerante a pequenas diferenças na estrutura
-    devolvida pelo inference-sdk.
-    """
-    encontradas = []
+PROMPT_DIAGNOSTICO = """
+Você é o assistente de diagnóstico visual do Fru-tech, especializado na análise de plantas do gênero Citrus (laranjeiras, limoeiros, tangerineiras e outros citros).
 
-    if isinstance(objeto, dict):
-        predictions = objeto.get("predictions")
+Analise cuidadosamente a imagem enviada, observando folhas, frutos, ramos e demais partes visíveis da planta.
 
-        if isinstance(predictions, list):
-            for pred in predictions:
-                if isinstance(pred, dict):
-                    classe = (
-                        pred.get("class")
-                        or pred.get("class_name")
-                        or pred.get("label")
-                    )
-                    confianca = pred.get("confidence")
+Seu objetivo é identificar sinais compatíveis com DEFICIÊNCIAS NUTRICIONAIS, DOENÇAS, PRAGAS ou ESTRESSES que possam afetar plantas cítricas.
 
-                    if classe is not None:
-                        encontradas.append({
-                            "classe": str(classe),
-                            "confianca": confianca
-                        })
+Para deficiências nutricionais, considere especialmente:
+- Nitrogênio (N)
+- Fósforo (P)
+- Potássio (K)
+- Cálcio (Ca)
+- Enxofre (S)
+- Magnésio (Mg)
+- Boro (B)
+- Cobre (Cu)
+- Ferro (Fe)
+- Manganês (Mn)
+- Molibdênio (Mo)
+- Níquel (Ni)
+- Zinco (Zn)
 
-        for valor in objeto.values():
-            encontradas.extend(extrair_predicoes_roboflow(valor))
+Use como referência os padrões visuais descritos no Guia de Deficiências Nutricionais Citrus da ICL Growing Solutions.
 
-    elif isinstance(objeto, list):
-        for item in objeto:
-            encontradas.extend(extrair_predicoes_roboflow(item))
+Ao analisar deficiências, observe cuidadosamente:
+- se os sintomas aparecem em folhas novas, intermediárias ou velhas;
+- clorose geral ou clorose entre as nervuras;
+- permanência das nervuras verdes;
+- padrões em V ou V invertido;
+- amarelecimento das bordas;
+- necrose das bordas ou pontas;
+- manchas;
+- deformações e encurvamento;
+- tamanho e formato das folhas;
+- entrenós curtos;
+- morte de brotos ou ramos;
+- queda de folhas;
+- alterações no desenvolvimento, tamanho, formato, casca e coloração dos frutos.
 
-    # Remove duplicatas idênticas que podem aparecer ao percorrer
-    # diferentes níveis do retorno do workflow.
-    unicas = []
-    vistos = set()
+Também analise sinais visuais compatíveis com doenças e pragas de citros, tanto nas folhas quanto nos frutos e ramos quando estiverem visíveis.
 
-    for pred in encontradas:
-        chave = (pred["classe"], str(pred["confianca"]))
-        if chave not in vistos:
-            vistos.add(chave)
-            unicas.append(pred)
+IMPORTANTE:
+1. Baseie o diagnóstico SOMENTE no que estiver visível na imagem.
+2. Não invente sintomas que não aparecem na fotografia.
+3. Não afirme uma doença ou deficiência como certeza quando a imagem não permitir confirmação.
+4. Compare condições com sintomas semelhantes antes de indicar a hipótese principal.
+5. Seja específico. Evite respostas genéricas como apenas "deficiência nutricional" quando houver sinais suficientes para indicar um nutriente provável.
+6. Se houver mais de uma hipótese plausível, indique a mais compatível primeiro e mencione brevemente as alternativas.
+7. Diferencie deficiência nutricional, doença, praga e dano ambiental sempre que possível.
+8. Se a planta não aparentar pertencer ao gênero Citrus, informe isso claramente.
+9. Se a imagem estiver desfocada, distante, escura ou insuficiente para diagnóstico, informe a limitação.
+10. Não recomende doses específicas de fertilizantes ou defensivos apenas com base na fotografia.
+11. Não interrompa frases ou parágrafos no meio.
+12. Produza uma resposta completa, clara e objetiva, adequada para ser exibida diretamente no aplicativo Fru-tech.
+13. Mantenha a resposta preferencialmente entre 900 e 1800 caracteres.
 
-    return unicas
+Responda EXATAMENTE neste formato:
 
+**Diagnóstico provável:** informe a deficiência, doença, praga ou condição mais compatível com a imagem. Indique de forma breve quando houver incerteza.
 
-def montar_texto_diagnostico(resultado):
-    """
-    Converte as classes retornadas pelo DatasetHLB para o formato textual
-    que o JavaScript atual já espera em data.diagnostico.
-    Não inventa sintomas ou tratamentos que o modelo não retornou.
-    """
-    predicoes = extrair_predicoes_roboflow(resultado)
+**Sinais identificados:** descreva os principais sintomas realmente visíveis que sustentam o diagnóstico.
 
-    # Mantém apenas previsões que também respeitem o limite local.
-    filtradas = []
-    for pred in predicoes:
-        try:
-            confianca = float(pred["confianca"])
-        except (TypeError, ValueError):
-            confianca = None
+**Possíveis causas:** explique de forma curta o que pode estar relacionado ao problema identificado.
 
-        if confianca is None or confianca >= CONFIANCA_MINIMA:
-            filtradas.append({
-                "classe": pred["classe"],
-                "confianca": confianca
-            })
+**Recomendação:** indique os próximos passos para confirmar o diagnóstico e medidas gerais de manejo, recomendando análise foliar, análise de solo ou avaliação profissional quando necessário.
 
-    filtradas.sort(
-        key=lambda p: p["confianca"] if p["confianca"] is not None else -1,
-        reverse=True
-    )
+Não inclua introduções, despedidas ou informações fora dessas quatro seções.
+""".strip()
 
-    if not filtradas:
-        return (
-            "**Diagnóstico:** Nenhuma classe foi identificada com confiança "
-            "mínima de 50%.\n\n"
-            "**Resultado:** O DatasetHLB não encontrou uma detecção suficientemente "
-            "confiável nesta imagem.\n\n"
-            "**Recomendação:** Tente outra foto nítida, bem iluminada e com a parte "
-            "da planta ocupando a maior parte da imagem. A análise por imagem deve "
-            "ser confirmada por um profissional agrícola."
+def extrair_texto_literouter(dados):
+    """Extrai conteúdo textual de respostas OpenAI-compatible."""
+    try:
+        content = dados["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError):
+        raise RuntimeError(
+            "Resposta do LiteRouter não contém choices[0].message.content."
         )
 
-    principal = filtradas[0]
-    confianca_txt = (
-        f"{principal['confianca'] * 100:.1f}%"
-        if principal["confianca"] is not None
-        else "não informada"
+    if isinstance(content, str):
+        return content.strip()
+
+    # Alguns provedores podem retornar content como lista de blocos.
+    if isinstance(content, list):
+        partes = []
+        for bloco in content:
+            if isinstance(bloco, dict):
+                texto = bloco.get("text")
+                if isinstance(texto, str):
+                    partes.append(texto)
+        resultado = "\n".join(partes).strip()
+        if resultado:
+            return resultado
+
+    raise RuntimeError("LiteRouter retornou conteúdo vazio ou em formato inesperado.")
+
+
+def analisar_com_literouter(conteudo_imagem, mime_type):
+    if not LITEROUTER_API_KEY:
+        raise RuntimeError(
+            "LITEROUTER_API_KEY não configurada. "
+            "Defina a variável de ambiente antes de iniciar o Flask."
+        )
+
+    imagem_base64 = base64.b64encode(conteudo_imagem).decode("ascii")
+    data_url = f"data:{mime_type};base64,{imagem_base64}"
+
+    payload = {
+        "model": LITEROUTER_MODEL,
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "Você analisa imagens de plantas com cautela, objetividade "
+                    "e foco agronômico. Nunca invente detalhes não visíveis."
+                )
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": PROMPT_DIAGNOSTICO
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": data_url
+                        }
+                    }
+                ]
+            }
+        ],
+        "temperature": 0.2,
+        "max_tokens": 1800,
+        "stream": False
+    }
+
+    headers = {
+        "Authorization": f"Bearer {LITEROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+
+    print("\n" + "=" * 70)
+    print("FRU-TECH - DIAGNÓSTICO COM LITEROUTER VISION")
+    print("=" * 70)
+    print(f">>> Modelo: {LITEROUTER_MODEL}")
+    print(f">>> MIME: {mime_type}")
+    print(f">>> Imagem: {len(conteudo_imagem)} bytes")
+    print(f">>> Base64: {len(imagem_base64)} caracteres")
+    print(">>> Enviando imagem para o LiteRouter...")
+
+    resposta = requests.post(
+        LITEROUTER_URL,
+        headers=headers,
+        json=payload,
+        timeout=120
     )
 
-    outras = []
-    for pred in filtradas[1:6]:
-        if pred["confianca"] is None:
-            outras.append(pred["classe"])
-        else:
-            outras.append(
-                f"{pred['classe']} ({pred['confianca'] * 100:.1f}%)"
-            )
+    print(f">>> Status HTTP: {resposta.status_code}")
 
-    texto = (
-        f"**Diagnóstico:** {principal['classe']}\n\n"
-        f"**Confiança do modelo:** {confianca_txt}\n\n"
-        "**Modelo:** DatasetHLB (Roboflow)"
-    )
+    if not resposta.ok:
+        corpo = resposta.text[:4000]
+        print("\n" + "=" * 70)
+        print("ERRO RETORNADO PELO LITEROUTER")
+        print("=" * 70)
+        print(corpo)
+        print("=" * 70)
+        raise RuntimeError(
+            f"LiteRouter retornou HTTP {resposta.status_code}: {corpo}"
+        )
 
-    if outras:
-        texto += "\n\n**Outras detecções:** " + ", ".join(outras)
+    try:
+        dados = resposta.json()
+    except ValueError:
+        raise RuntimeError(
+            "LiteRouter respondeu HTTP 200, mas a resposta não é JSON válido."
+        )
 
-    texto += (
-        "\n\n**Recomendação:** O resultado é uma análise automatizada por imagem. "
-        "Confirme o diagnóstico com um profissional agrícola antes de definir o manejo."
-    )
+    diagnostico = extrair_texto_literouter(dados)
 
-    return texto
+    choice = (dados.get("choices") or [{}])[0]
+    finish_reason = choice.get("finish_reason")
+
+    print("\n" + "=" * 70)
+    print("ANÁLISE CONCLUÍDA")
+    print("=" * 70)
+    print(f">>> Finish reason: {finish_reason}")
+    print(f">>> Tamanho do diagnóstico: {len(diagnostico)} caracteres")
+    print("\n" + diagnostico)
+    print("=" * 70 + "\n")
+
+    if finish_reason == "length":
+        print(
+            "AVISO: o provedor informou finish_reason='length'. "
+            "Aumente max_tokens se a resposta estiver incompleta."
+        )
+
+    return diagnostico, finish_reason
 
 
 @app.route('/api/diagnostico', methods=['POST'])
 def analisar_imagem():
-    if roboflow_client is None:
+    if not LITEROUTER_API_KEY:
         return jsonify({
             "erro": (
-                "ROBOFLOW_API_KEY não configurada no servidor. "
-                "Crie o arquivo .env e defina ROBOFLOW_API_KEY."
+                "LITEROUTER_API_KEY não configurada no servidor. "
+                "No PowerShell, defina $env:LITEROUTER_API_KEY e reinicie o app."
             )
         }), 503
 
@@ -551,9 +623,10 @@ def analisar_imagem():
             "erro": "Formato inválido. Envie JPG, JPEG, PNG ou WEBP."
         }), 400
 
-    if arquivo.mimetype not in TIPOS_PERMITIDOS:
+    mime_type = (arquivo.mimetype or "").lower()
+    if mime_type not in TIPOS_PERMITIDOS:
         return jsonify({
-            "erro": "O arquivo enviado não é uma imagem permitida."
+            "erro": "O arquivo enviado não é uma imagem JPG, PNG ou WEBP permitida."
         }), 400
 
     conteudo = arquivo.read()
@@ -568,78 +641,56 @@ def analisar_imagem():
             "erro": "A imagem deve ter no máximo 10 MB."
         }), 413
 
-    caminho_temporario = None
+    print("\n" + "#" * 70)
+    print("NOVA SOLICITAÇÃO DE DIAGNÓSTICO")
+    print("#" * 70)
+    print(f">>> Arquivo: {nome_arquivo}")
+    print(f">>> MIME: {mime_type}")
+    print(f">>> Tamanho: {len(conteudo)} bytes")
 
     try:
-        with tempfile.NamedTemporaryFile(
-            delete=False,
-            suffix=extensao
-        ) as arquivo_temporario:
-            arquivo_temporario.write(conteudo)
-            caminho_temporario = arquivo_temporario.name
-
-        print(
-            f">>> Enviando imagem ao DatasetHLB "
-            f"(workflow {WORKFLOW_ID})..."
+        diagnostico, finish_reason = analisar_com_literouter(
+            conteudo,
+            mime_type
         )
 
-        resultado = roboflow_client.run_workflow(
-            workspace_name=WORKSPACE_NAME,
-            workflow_id=WORKFLOW_ID,
-            images={
-                "image": caminho_temporario
-            },
-            parameters={
-                "confidence": CONFIANCA_MINIMA,
-                "iou_threshold": 0.3,
-                "class_agnostic_nms": False,
-                "max_detections": 100
-            },
-            use_cache=True
-        )
-
-        diagnostico = montar_texto_diagnostico(resultado)
-
-        print(">>> SUCESSO: análise concluída pelo DatasetHLB.")
-
-        # 'diagnostico' mantém compatibilidade com o JavaScript atual.
-        # 'resultado' fica disponível caso o front-end queira usar
-        # caixas, classes e demais dados estruturados futuramente.
+        # Mantém a chave "diagnostico" usada pelo JavaScript atual.
         return jsonify({
             "sucesso": True,
             "arquivo": nome_arquivo,
-            "modelo": "DatasetHLB",
-            "confianca_minima": CONFIANCA_MINIMA,
+            "modelo": LITEROUTER_MODEL,
             "diagnostico": diagnostico,
-            "resultado": resultado,
+            "finish_reason": finish_reason,
             "aviso": (
-                "O resultado é uma análise por imagem e deve ser "
-                "confirmado por um profissional agrícola."
+                "O resultado é uma análise automatizada por imagem e deve ser "
+                "confirmado por avaliação agronômica quando necessário."
             )
         }), 200
 
+    except requests.exceptions.Timeout:
+        print("ERRO: timeout ao consultar o LiteRouter.")
+        return jsonify({
+            "erro": "O LiteRouter demorou demais para responder. Tente novamente."
+        }), 504
+
+    except requests.exceptions.RequestException as e:
+        print(f"ERRO DE CONEXÃO COM LITEROUTER: {e}")
+        return jsonify({
+            "erro": "Erro de conexão com o LiteRouter.",
+            "detalhes": str(e)
+        }), 502
+
     except Exception as e:
-        print(
-            "\n================ ERRO DATASETHLB / ROBOFLOW ================"
-        )
-        print(e)
-        print(
-            "=============================================================\n"
-        )
+        print("\n" + "!" * 70)
+        print("ERRO DURANTE A ANÁLISE")
+        print("!" * 70)
+        print(str(e))
+        print("!" * 70 + "\n")
 
         return jsonify({
-            "erro": (
-                "Não foi possível analisar a imagem. "
-                "Verifique a conexão, a API key da Roboflow e tente novamente."
-            )
+            "erro": "Não foi possível analisar a imagem.",
+            "detalhes": str(e)
         }), 500
-
-    finally:
-        if caminho_temporario and os.path.exists(caminho_temporario):
-            try:
-                os.remove(caminho_temporario)
-            except OSError as e:
-                print(f"Não foi possível remover arquivo temporário: {e}")
 
 
 # =========================================================
