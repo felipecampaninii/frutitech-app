@@ -393,19 +393,87 @@ def salvar_localizacao_usuario():
 # =========================================================
 
 PROMPT_DIAGNOSTICO = """
-Você é o assistente de diagnóstico visual do Fru-tech, especializado na análise de plantas do gênero Citrus (laranjeiras, limoeiros, tangerineiras e outros citros).
+Você é o sistema de diagnóstico visual do Fru-tech, especializado
+EXCLUSIVAMENTE em plantas do gênero Citrus.
 
-Analise cuidadosamente a imagem enviada, observando folhas, frutos, ramos e demais partes visíveis da planta.
+Sua função é analisar imagens de laranjeiras, limoeiros, tangerineiras,
+limeiras e outros citros, procurando sinais de deficiências nutricionais,
+doenças, pragas e estresses visíveis em folhas, frutos e ramos.
 
-Seu objetivo é identificar sinais compatíveis com DEFICIÊNCIAS NUTRICIONAIS, DOENÇAS, PRAGAS ou ESTRESSES que possam afetar plantas cítricas.
+============================================================
+ETAPA 1 — CONFIRME SE É CITRUS
+============================================================
 
-Para deficiências nutricionais, considere especialmente:
+Antes de realizar qualquer diagnóstico, avalie se a planta ou material
+vegetal da imagem apresenta características visuais compatíveis com Citrus.
+
+Considere formato das folhas, margem, nervuras, pecíolo, textura,
+disposição das folhas, frutos e demais características visíveis.
+
+Se houver evidências suficientes de que NÃO é Citrus, responda somente:
+
+**Imagem incompatível com Citrus:** A planta apresentada não possui
+características visuais suficientes ou compatíveis com plantas do gênero
+Citrus. O Fru-tech realiza diagnósticos exclusivamente em citros.
+
+Nesse caso, NÃO faça diagnóstico de deficiência, doença ou praga.
+
+Se não for possível determinar a espécie, mas a planta ainda for
+visualmente compatível com Citrus, prossiga normalmente.
+
+============================================================
+ETAPA 2 — ANALISE OS SINTOMAS VISÍVEIS
+============================================================
+
+Antes de escolher um diagnóstico, examine sistematicamente:
+
+- folhas novas ou folhas velhas afetadas;
+- amarelecimento uniforme;
+- clorose entre as nervuras;
+- nervuras verdes ou amareladas;
+- padrão simétrico ou assimétrico;
+- manchas amareladas;
+- manchas marrons ou escuras;
+- pontuações;
+- halos;
+- lesões elevadas;
+- aspecto corticoso;
+- necrose;
+- queimadura das bordas;
+- secamento das pontas;
+- deformação das folhas;
+- folhas pequenas;
+- encarquilhamento;
+- queda de folhas;
+- encurtamento de entrenós;
+- morte de ponteiros;
+- lesões em ramos;
+- alterações nos frutos;
+- manchas na casca;
+- deformação do fruto;
+- tamanho anormal;
+- rachaduras;
+- queda prematura.
+
+Considere também se a distribuição dos sintomas é compatível com
+nutrientes móveis ou pouco móveis na planta.
+
+============================================================
+ETAPA 3 — DEFICIÊNCIAS NUTRICIONAIS
+============================================================
+
+Compare os sintomas observados com deficiências nutricionais conhecidas
+em Citrus, incluindo:
+
+MACRONUTRIENTES:
 - Nitrogênio (N)
 - Fósforo (P)
 - Potássio (K)
 - Cálcio (Ca)
-- Enxofre (S)
 - Magnésio (Mg)
+- Enxofre (S)
+
+MICRONUTRIENTES:
 - Boro (B)
 - Cobre (Cu)
 - Ferro (Fe)
@@ -414,51 +482,109 @@ Para deficiências nutricionais, considere especialmente:
 - Níquel (Ni)
 - Zinco (Zn)
 
-Use como referência os padrões visuais descritos no Guia de Deficiências Nutricionais Citrus da ICL Growing Solutions.
+Não escolha um nutriente apenas porque existe amarelecimento.
 
-Ao analisar deficiências, observe cuidadosamente:
-- se os sintomas aparecem em folhas novas, intermediárias ou velhas;
-- clorose geral ou clorose entre as nervuras;
-- permanência das nervuras verdes;
-- padrões em V ou V invertido;
-- amarelecimento das bordas;
-- necrose das bordas ou pontas;
-- manchas;
-- deformações e encurvamento;
-- tamanho e formato das folhas;
-- entrenós curtos;
-- morte de brotos ou ramos;
-- queda de folhas;
-- alterações no desenvolvimento, tamanho, formato, casca e coloração dos frutos.
+Compare o PADRÃO e a LOCALIZAÇÃO dos sintomas com outras deficiências
+que possam produzir aparência semelhante.
 
-Também analise sinais visuais compatíveis com doenças e pragas de citros, tanto nas folhas quanto nos frutos e ramos quando estiverem visíveis.
+============================================================
+ETAPA 4 — DOENÇAS E PRAGAS
+============================================================
 
-IMPORTANTE:
-1. Baseie o diagnóstico SOMENTE no que estiver visível na imagem.
-2. Não invente sintomas que não aparecem na fotografia.
-3. Não afirme uma doença ou deficiência como certeza quando a imagem não permitir confirmação.
-4. Compare condições com sintomas semelhantes antes de indicar a hipótese principal.
-5. Seja específico. Evite respostas genéricas como apenas "deficiência nutricional" quando houver sinais suficientes para indicar um nutriente provável.
-6. Se houver mais de uma hipótese plausível, indique a mais compatível primeiro e mencione brevemente as alternativas.
-7. Diferencie deficiência nutricional, doença, praga e dano ambiental sempre que possível.
-8. Se a planta não aparentar pertencer ao gênero Citrus, informe isso claramente.
-9. Se a imagem estiver desfocada, distante, escura ou insuficiente para diagnóstico, informe a limitação.
-10. Não recomende doses específicas de fertilizantes ou defensivos apenas com base na fotografia.
-11. Não interrompa frases ou parágrafos no meio.
-12. Produza uma resposta completa, clara e objetiva, adequada para ser exibida diretamente no aplicativo Fru-tech.
-13. Mantenha a resposta preferencialmente entre 900 e 1800 caracteres.
+Considere também doenças e pragas importantes dos citros quando seus
+sinais forem visualmente compatíveis.
 
-Responda EXATAMENTE neste formato:
+Compare, quando pertinente, condições como:
 
-**Diagnóstico provável:** informe a deficiência, doença, praga ou condição mais compatível com a imagem. Indique de forma breve quando houver incerteza.
+- Huanglongbing (HLB/greening);
+- cancro cítrico;
+- pinta-preta dos citros;
+- verrugose;
+- melanose;
+- leprose dos citros;
+- gomose/Phytophthora;
+- mancha-marrom de Alternaria;
+- fumagina;
+- podridões e outras doenças visíveis;
+- danos causados por ácaros;
+- minador-dos-citros;
+- cochonilhas;
+- pulgões e outras pragas visualmente identificáveis.
 
-**Sinais identificados:** descreva os principais sintomas realmente visíveis que sustentam o diagnóstico.
+NÃO diagnostique uma dessas condições apenas porque ela consta nesta lista.
 
-**Possíveis causas:** explique de forma curta o que pode estar relacionado ao problema identificado.
+Ela somente deve ser indicada quando os sinais realmente observados
+forem compatíveis.
 
-**Recomendação:** indique os próximos passos para confirmar o diagnóstico e medidas gerais de manejo, recomendando análise foliar, análise de solo ou avaliação profissional quando necessário.
+============================================================
+ETAPA 5 — DIAGNÓSTICO DIFERENCIAL
+============================================================
 
-Não inclua introduções, despedidas ou informações fora dessas quatro seções.
+Antes de responder, compare mentalmente pelo menos as principais
+hipóteses compatíveis.
+
+Escolha como diagnóstico provável aquela que melhor explique o
+CONJUNTO dos sinais visíveis.
+
+Se duas ou mais condições forem visualmente muito semelhantes,
+não invente certeza.
+
+Informe a hipótese principal e mencione a alternativa relevante.
+
+Evite respostas vagas como:
+
+"pode ser deficiência de potássio ou magnésio ou fósforo".
+
+Procure determinar qual hipótese apresenta maior compatibilidade com
+o padrão observado e explique por quê.
+
+============================================================
+REGRAS IMPORTANTES
+============================================================
+- NÃO utilize linhas separadoras como "---", "***", "___" ou semelhantes.
+- Não coloque barras invertidas antes de hífens ou outros caracteres.
+- Separe as seções apenas com uma linha em branco.
+- Analise exclusivamente Citrus.
+- Use somente informações realmente visíveis na fotografia.
+- Nunca invente sintomas.
+- Não transforme uma possibilidade em certeza.
+- Não diagnostique pela cor isoladamente.
+- Considere simultaneamente localização, formato, distribuição e padrão
+  dos sintomas.
+- Diferencie deficiência nutricional de doença e dano causado por praga.
+- Não confunda folhas naturalmente envelhecidas com deficiência.
+- Não prescreva defensivos agrícolas ou doses apenas pela fotografia.
+- Se a imagem estiver desfocada, distante ou inadequada, informe isso.
+- Se houver fruto e folha na mesma imagem, considere os dois.
+- Seja específico, técnico, mas fácil de compreender.
+- Não escreva introduções ou despedidas.
+- Não interrompa frases.
+- Produza uma resposta apropriada para aparecer diretamente no Fru-tech.
+- Mantenha a resposta aproximadamente entre 800 e 1600 caracteres.
+
+============================================================
+FORMATO DA RESPOSTA
+============================================================
+
+**Diagnóstico provável:**
+Informe a condição mais compatível e deixe claro o grau de incerteza
+quando necessário.
+
+**Sinais identificados:**
+Descreva SOMENTE os sinais realmente observados na fotografia e explique
+quais deles sustentam a hipótese principal.
+
+**Diagnóstico diferencial:**
+Informe, quando relevante, uma condição semelhante e explique brevemente
+por que ela parece menos compatível com a imagem.
+
+**Recomendação:**
+Informe como confirmar o diagnóstico, como análise foliar, análise de solo,
+avaliação de frutos, inspeção de outras partes da planta ou avaliação de
+um profissional qualificado.
+
+A fotografia é uma ferramenta de triagem. Quando uma condição não puder
+ser diferenciada visualmente com segurança, declare essa limitação.
 """.strip()
 
 def extrair_texto_literouter(dados):
@@ -866,8 +992,11 @@ def listar_simulacoes():
 
 
 @app.route('/api/simulacoes', methods=['DELETE'])
-def limpar_simulacoes():
-    usuario_id = request.args.get('usuario_id')
+def excluir_simulacoes_selecionadas():
+    dados = request.get_json(silent=True) or {}
+
+    usuario_id = dados.get('usuario_id')
+    ids = dados.get('ids')
 
     if not usuario_id:
         return jsonify({"erro": "Usuário não identificado."}), 400
@@ -877,27 +1006,93 @@ def limpar_simulacoes():
     except (TypeError, ValueError):
         return jsonify({"erro": "ID de usuário inválido."}), 400
 
+    if not isinstance(ids, list) or len(ids) == 0:
+        return jsonify({
+            "erro": "Nenhum registro foi selecionado para exclusão."
+        }), 400
+
+    # Converte todos os IDs para inteiro e elimina duplicados.
     try:
+        ids = list(dict.fromkeys(int(item_id) for item_id in ids))
+    except (TypeError, ValueError):
+        return jsonify({
+            "erro": "A lista de registros contém um ID inválido."
+        }), 400
+
+    # Evita uma requisição exageradamente grande por engano.
+    if len(ids) > 1000:
+        return jsonify({
+            "erro": "Quantidade de registros selecionados acima do limite permitido."
+        }), 400
+
+    conn = None
+    cursor = None
+
+    try:
+        if not usuario_existe(usuario_id):
+            return jsonify({"erro": "Usuário não encontrado."}), 404
+
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute(
-            "DELETE FROM historico_simulacoes WHERE usuario_id = %s",
-            (usuario_id,)
-        )
+        placeholders = ", ".join(["%s"] * len(ids))
+
+        # IMPORTANTE:
+        # usuario_id também faz parte do WHERE.
+        # Portanto um usuário nunca apaga registros pertencentes a outro.
+        query = f"""
+            DELETE FROM historico_simulacoes
+            WHERE usuario_id = %s
+              AND id IN ({placeholders})
+        """
+
+        parametros = [usuario_id] + ids
+
+        cursor.execute(query, parametros)
+
         registros_excluidos = cursor.rowcount
+
         conn.commit()
 
-        cursor.close()
-        conn.close()
+        if registros_excluidos == 0:
+            return jsonify({
+                "erro": "Nenhum dos registros selecionados foi encontrado para este usuário.",
+                "registros_excluidos": 0
+            }), 404
 
         return jsonify({
-            "mensagem": "Histórico do usuário limpo com sucesso!",
+            "mensagem": "Registros selecionados excluídos com sucesso!",
             "registros_excluidos": registros_excluidos
         }), 200
 
     except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+
+        print("\nERRO AO EXCLUIR HISTÓRICO SELECIONADO:")
+        print(e)
+
+        return jsonify({
+            "erro": "Não foi possível excluir os registros selecionados.",
+            "detalhes": str(e)
+        }), 500
+
+    finally:
+        if cursor:
+            try:
+                cursor.close()
+            except Exception:
+                pass
+
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
 
 
 # =========================================================
@@ -920,3 +1115,4 @@ if __name__ == '__main__':
         debug=True,
         use_reloader=False
     )
+
