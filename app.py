@@ -560,7 +560,7 @@ REGRAS IMPORTANTES
 - Não escreva introduções ou despedidas.
 - Não interrompa frases.
 - Produza uma resposta apropriada para aparecer diretamente no Fru-tech.
-- Mantenha a resposta aproximadamente entre 800 e 1600 caracteres.
+- Mantenha a resposta aproximadamente entre 500 e 1000 caracteres.
 
 ============================================================
 FORMATO DA RESPOSTA
