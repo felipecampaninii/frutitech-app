@@ -1,0 +1,1738 @@
+/* ==================== ESTILOS GLOBAIS ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+body {
+    background-color: #0b2b1a; /* Verde escuro do fundo */
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container do Smartphone */
+.app-container {
+    width: 100%;
+    max-width: 412px;
+    height: 100vh;
+    max-height: 870px;
+    background-color: #092e1b;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.page {
+    display: none;
+    padding: 16px;
+}
+
+.page.active {
+    display: block;
+}
+
+/* Garante que apenas a tela de login use fundo verde/escuro completo */
+#page-login.active {
+    display: flex !important;
+    background-color: #0b2912;
+    min-height: 100vh;
+}
+
+/* ==================== MENU LATERAL (SIDEBAR) ==================== */
+.sidebar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    background-color: #062113;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    transition: left 0.3s ease-in-out;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #144729;
+}
+
+.sidebar-logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #72db34;
+}
+
+.close-sidebar {
+    font-size: 20px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.close-sidebar:hover {
+    color: #72db34;
+    transform: scale(1.15);
+}
+
+.sidebar-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #d1d5db;
+    text-decoration: none;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.sidebar-menu li a:hover {
+    background-color: #0f3d23;
+    color: #72db34;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* ==================== HEADER DA TELA ==================== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 10px 24px;
+    z-index: 10;
+}
+
+.header .icon-btn {
+    font-size: 20px;
+    cursor: pointer;
+    color: #ffffff;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.header .icon-btn:hover {
+    color: #72db34;
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.header .logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #72db34;
+    letter-spacing: 0.5px;
+}
+
+/* ==================== ÁREA DE ROLAGEM (CONTENT) ==================== */
+.content-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 20px 80px 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #1a5330 #092e1b;
+}
+
+.content-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.content-scroll::-webkit-scrollbar-thumb {
+    background-color: #1a5330;
+    border-radius: 10px;
+}
+
+/* ==================== CARDS E FORMULÁRIOS ==================== */
+.card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    color: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.card-header i {
+    color: #12572b;
+    font-size: 18px;
+}
+
+.card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #161616;
+}
+
+.card-subtitle {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 14px;
+}
+
+/* Saudação (Início) */
+.greeting-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.greeting-text h2 { 
+    font-size: 24px; 
+    font-weight: 700; 
+}
+
+.greeting-text p { 
+    font-size: 13px; 
+    color: #d1d5db; 
+}
+
+.leaf-avatar {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, #184e2e 0%, #0d381e 100%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #23693e;
+    transition: transform 0.3s ease;
+}
+
+.leaf-avatar:hover { 
+    transform: scale(1.08) rotate(5deg); 
+}
+
+.leaf-avatar i { 
+    font-size: 26px; 
+    color: #6ed329; 
+}
+
+/* NPK Grid */
+.npk-grid { 
+    display: flex; 
+    gap: 10px; 
+    margin-bottom: 12px; 
+}
+
+.npk-box {
+    flex: 1; 
+    background: #f8faf9; 
+    border-radius: 10px; 
+    border: 1px solid #e2e8f0;
+    padding: 10px 4px; 
+    text-align: center; 
+    transition: transform 0.2s;
+}
+
+.npk-box:hover { 
+    transform: scale(1.03); 
+}
+
+.npk-symbol { 
+    font-size: 20px; 
+    font-weight: 800; 
+}
+
+.npk-box.n .npk-symbol { color: #166534; }
+.npk-box.p .npk-symbol { color: #1e40af; }
+.npk-box.k .npk-symbol { color: #d97706; }
+
+.npk-value { 
+    font-size: 14px; 
+    font-weight: 700; 
+}
+
+.micro-text { 
+    font-size: 12px; 
+    font-weight: 600; 
+    color: #374151; 
+    margin-bottom: 12px; 
+}
+
+/* Botão Padrão */
+.btn-green {
+    background-color: #136a32;
+    color: #ffffff;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-green:hover {
+    background-color: #0e5226;
+    box-shadow: 0 4px 12px rgba(19, 106, 50, 0.4);
+}
+
+/* Card Clima e IA */
+.weather-content { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+}
+
+.weather-left { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+.weather-icon { 
+    font-size: 32px; 
+    color: #f59e0b; 
+}
+
+.weather-temp { 
+    font-size: 28px; 
+    font-weight: 700; 
+    color: #111827; 
+}
+
+.weather-status { 
+    font-size: 11px; 
+    color: #6b7280; 
+}
+
+.weather-details { 
+    font-size: 12px; 
+    color: #374151; 
+    text-align: right; 
+    line-height: 1.6; 
+}
+
+.ia-content { 
+    display: flex; 
+    gap: 14px; 
+    align-items: center; 
+}
+
+.ia-img-container { 
+    width: 80px; 
+    height: 80px; 
+    border-radius: 12px; 
+    overflow: hidden; 
+}
+
+.ia-img-container img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+}
+
+.ia-label { 
+    font-size: 12px; 
+    color: #374151; 
+}
+
+.ia-value { 
+    font-size: 13px; 
+    font-weight: 700; 
+    color: #1f2937; 
+    margin-bottom: 8px; 
+}
+
+.btn-ia {
+    background-color: #136a32; 
+    color: white; 
+    border: none; 
+    padding: 8px 12px;
+    border-radius: 8px; 
+    font-size: 11px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    width: 100%;
+}
+
+/* ==================== ESTILOS DA TELA DO SIMULADOR ==================== */
+.sim-header { 
+    margin-bottom: 16px; 
+}
+
+.sim-tag { 
+    font-size: 12px; 
+    color: #72db34; 
+    font-weight: 600; 
+}
+
+.sim-title { 
+    font-size: 22px; 
+    font-weight: 700; 
+    color: #ffffff; 
+    margin: 2px 0 6px 0; 
+}
+
+.sim-badge {
+    display: inline-block; 
+    background-color: #136a32; 
+    color: #72db34;
+    font-size: 11px; 
+    font-weight: 700; 
+    padding: 3px 10px; 
+    border-radius: 12px; 
+    border: 1px solid #23693e;
+}
+
+.form-group { 
+    margin-bottom: 14px; 
+}
+
+.form-group label { 
+    display: block; 
+    font-size: 12px; 
+    font-weight: 600; 
+    color: #374151; 
+    margin-bottom: 6px; 
+}
+
+.form-group input, 
+.form-group select {
+    width: 100%; 
+    padding: 10px 12px; 
+    border-radius: 8px; 
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb; 
+    font-size: 13px; 
+    color: #111827; 
+    outline: none; 
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+    border-color: #136a32; 
+    background-color: #ffffff; 
+    box-shadow: 0 0 0 3px rgba(19, 106, 50, 0.15);
+}
+
+.result-hint { 
+    font-size: 12px; 
+    color: #6b7280; 
+    margin-bottom: 14px; 
+}
+
+.recom-box {
+    background-color: #f3f4f6; 
+    border-radius: 10px; 
+    padding: 12px; 
+    margin-bottom: 16px; 
+    border-left: 4px solid #136a32;
+}
+
+.recom-title { 
+    font-size: 13px; 
+    font-weight: 700; 
+    color: #136a32; 
+    margin-bottom: 8px; 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+}
+
+.recom-list { 
+    list-style: none; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+}
+
+.recom-list li { 
+    font-size: 11px; 
+    color: #4b5563; 
+    line-height: 1.4; 
+}
+
+.recom-list li i { 
+    color: #136a32; 
+    margin-right: 4px; 
+}
+
+.btn-calc { 
+    border-radius: 10px; 
+    font-size: 13px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px; 
+}
+
+/* ==================== ESTILOS DA TELA DE HISTÓRICO ==================== */
+.history-card {
+    border-left: 5px solid #136a32;
+}
+
+.history-header-info {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 8px;
+}
+
+.history-date { 
+    font-size: 11px; 
+    color: #6b7280; 
+    font-weight: 600; 
+}
+
+.history-tag {
+    background-color: #dcfce7; 
+    color: #15803d; 
+    font-size: 10px; 
+    font-weight: 700;
+    padding: 2px 8px; 
+    border-radius: 10px;
+}
+
+.history-grid-data {
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 8px; 
+    font-size: 12px;
+    background-color: #f8faf9; 
+    padding: 10px; 
+    border-radius: 8px; 
+    margin-top: 10px;
+}
+
+.history-data-item span { 
+    display: block; 
+    color: #6b7280; 
+    font-size: 10px; 
+}
+
+.history-data-item strong { 
+    color: #111827; 
+}
+
+.btn-clear-history {
+    background-color: transparent; 
+    color: #ef4444; 
+    border: 1px solid #ef4444;
+    padding: 10px; 
+    border-radius: 10px; 
+    font-size: 12px; 
+    cursor: pointer; 
+    width: 100%;
+    margin-bottom: 16px; 
+    font-weight: 600; 
+    transition: all 0.2s ease;
+}
+
+.btn-clear-history:hover { 
+    background-color: #fef2f2; 
+}
+
+/* ==================== TELA DE DIAGNÓSTICO COM IA ==================== */
+.upload-box {
+    border: 2px dashed #136a32;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    background-color: #f8faf9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 14px;
+}
+
+.upload-box:hover { 
+    background-color: #f0fdf4; 
+    border-color: #16a34a; 
+}
+
+.upload-box i { 
+    font-size: 36px; 
+    color: #136a32; 
+    margin-bottom: 8px; 
+}
+
+.upload-text { 
+    font-size: 13px; 
+    font-weight: 600; 
+    color: #1f2937; 
+}
+
+.upload-subtext { 
+    font-size: 11px; 
+    color: #6b7280; 
+    margin-top: 4px; 
+}
+
+.preview-container {
+    width: 100%; 
+    height: 180px; 
+    border-radius: 12px; 
+    overflow: hidden;
+    margin-bottom: 14px; 
+    display: none; 
+    position: relative; 
+    border: 1px solid #e5e7eb;
+}
+
+.preview-container img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+}
+
+.ia-response-box {
+    background-color: #f8faf9; 
+    border-radius: 10px; 
+    padding: 14px;
+    font-size: 13px; 
+    color: #1f2937; 
+    line-height: 1.6; 
+    white-space: pre-line;
+    border-left: 4px solid #136a32;
+}
+
+/* ==================== ILUSTRAÇÃO DO POMAR (DESENVOLVIMENTO) ==================== */
+.tree-stage-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.tree-stage-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #136a32;
+    background-color: #dcfce7;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+
+.tree-age-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: #d97706;
+}
+
+.farm-illustration-box {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 60%, #a7f3d0 100%);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+/* Solo e Gramado */
+.illustration-ground {
+    position: absolute;
+    bottom: 0;
+    width: 120%;
+    height: 35px;
+    background-color: #15803d;
+    border-top: 4px solid #166534;
+    border-radius: 50% 50% 0 0;
+}
+
+/* Fileira de Árvores */
+.orchard-row {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+/* Estrutura Base da Árvore de Citros */
+.citrus-tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Tronco */
+.tree-trunk {
+    width: 12px;
+    height: 25px;
+    background: linear-gradient(90deg, #78350f 0%, #451a03 100%);
+    border-radius: 3px;
+    transition: all 0.5s ease;
+}
+
+/* Copa da Árvore */
+.tree-crown {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, #22c55e 0%, #15803d 100%);
+    border-radius: 50%;
+    position: relative;
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.15);
+    transition: all 0.5s ease;
+}
+
+/* Frutos de Laranja */
+.orange-fruit {
+    width: 7px;
+    height: 7px;
+    background-color: #f97316;
+    border-radius: 50%;
+    position: absolute;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: opacity 0.3s ease;
+}
+
+.orange-fruit.f1 { top: 20%; left: 25%; }
+.orange-fruit.f2 { top: 35%; right: 20%; }
+.orange-fruit.f3 { top: 60%; left: 30%; }
+.orange-fruit.f4 { top: 55%; right: 35%; }
+.orange-fruit.f5 { top: 25%; right: 45%; }
+
+/* Árvores do Fundo */
+.tree-bg {
+    opacity: 0.75;
+    transform: scale(0.8);
+}
+
+.illustration-caption {
+    font-size: 11px;
+    color: #4b5563;
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+/* ==================== TERMOS DE USO ==================== */
+.terms-content {
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.6;
+}
+
+.terms-date {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 12px;
+    font-style: italic;
+}
+
+.terms-paragraph {
+    margin-bottom: 10px;
+}
+
+.terms-subtitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: #136a32;
+    margin: 14px 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.terms-list {
+    list-style: disc;
+    padding-left: 18px;
+    margin-bottom: 10px;
+}
+
+.terms-list li {
+    margin-bottom: 4px;
+}
+
+/* ==================== MENU INFERIOR (BOTTOM NAV) ==================== */
+.bottom-nav {
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    height: 65px;
+    background-color: #051c10; 
+    display: flex; 
+    justify-content: space-around;
+    align-items: center; 
+    border-top: 1px solid #103a22; 
+    z-index: 10;
+}
+
+.nav-item {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 4px;
+    color: #8b9e93; 
+    text-decoration: none; 
+    font-size: 11px; 
+    cursor: pointer;
+    width: 25%; 
+    padding: 6px 0; 
+    border-radius: 8px; 
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover { 
+    color: #72db34; 
+    transform: translateY(-2px); 
+}
+
+.nav-item i { 
+    font-size: 18px; 
+}
+
+.nav-item.active { 
+    color: #ffffff; 
+    font-weight: 600; 
+}
+
+.nav-item.active i { 
+    color: #72db34; 
+    filter: drop-shadow(0 0 5px rgba(114, 219, 52, 0.5)); 
+}
+
+/* ==================== TELA DEDICADA DE LOGIN / CADASTRO ==================== */
+
+/* A tela de login ocupa todo o aplicativo antes da autenticação */
+#page-login {
+    position: absolute;
+    inset: 0;
+    z-index: 9999;
+
+    background-color: #0b2b1a;
+
+    min-height: 100%;
+    width: 100%;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px 16px;
+    box-sizing: border-box;
+
+    overflow-y: auto;
+}
+
+#page-login.active {
+    display: flex !important;
+}
+
+/* ==================== CARD DE AUTENTICAÇÃO ==================== */
+
+.auth-wrapper {
+    background: #ffffff;
+
+    width: 100%;
+    max-width: 380px;
+
+    border-radius: 20px;
+
+    padding: 28px 24px;
+
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.30);
+
+    box-sizing: border-box;
+}
+
+/* ==================== IDENTIDADE FRU-TECH ==================== */
+
+.auth-brand {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.brand-icon {
+    width: 50px;
+    height: 50px;
+
+    background: #dcfce7;
+    color: #136a32;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 24px;
+
+    margin: 0 auto 10px auto;
+}
+
+.auth-brand h2 {
+    color: #136a32;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 0 3px 0;
+}
+
+.auth-brand p {
+    color: #6b7280;
+    font-size: 12px;
+    margin: 0;
+}
+
+/* Compatibilidade caso o HTML antigo ainda use auth-header */
+.auth-header h2 {
+    color: #136a32;
+    font-size: 26px;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.auth-header p {
+    color: #6b7280;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* ==================== ABAS ENTRAR / CADASTRO ==================== */
+
+.auth-tabs {
+    display: flex;
+
+    background: #f3f4f6;
+
+    border-radius: 12px;
+
+    padding: 4px;
+
+    margin-bottom: 20px;
+}
+
+.auth-tab {
+    flex: 1;
+
+    border: none;
+    background: transparent;
+
+    padding: 10px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    color: #6b7280;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.auth-tab:hover {
+    color: #136a32;
+}
+
+.auth-tab.active {
+    background: #ffffff;
+
+    color: #136a32;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ==================== FORMULÁRIOS DE AUTENTICAÇÃO ==================== */
+
+.auth-form {
+    width: 100%;
+}
+
+.auth-form .form-group {
+    margin-bottom: 14px;
+}
+
+.auth-form .form-group label {
+    color: #374151;
+}
+
+.auth-form input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+
+    background-color: #f9fafb;
+
+    font-size: 13px;
+    color: #111827;
+
+    outline: none;
+
+    transition: all 0.2s ease;
+}
+
+.auth-form input:focus {
+    border-color: #136a32;
+
+    background-color: #ffffff;
+
+    box-shadow: 0 0 0 3px rgba(19, 106, 50, 0.15);
+}
+
+/* ==================== BOTÃO DE LOGIN / CADASTRO ==================== */
+
+.btn-auth {
+    width: 100%;
+
+    margin-top: 10px;
+
+    background-color: #136a32;
+    color: #ffffff;
+
+    border: none;
+
+    padding: 12px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.btn-auth:hover {
+    background-color: #0e5226;
+
+    box-shadow: 0 4px 12px rgba(19, 106, 50, 0.4);
+}
+
+.btn-auth:active {
+    transform: scale(0.98);
+}
+
+/* ==================== COMPATIBILIDADE COM O APP ==================== */
+
+/*
+ * Quando a classe app-locked estiver no .app-container,
+ * o restante do sistema fica oculto e somente #page-login aparece.
+ */
+.app-container.app-locked .header,
+.app-container.app-locked .content-scroll,
+.app-container.app-locked .bottom-nav,
+.app-container.app-locked .sidebar,
+.app-container.app-locked .sidebar-overlay {
+    display: none !important;
+}
+
+/* Evita que páginas do sistema apareçam por trás do login */
+.app-container.app-locked .page:not(#page-login) {
+    display: none !important;
+}
+
+/* ==================== RESPONSIVIDADE ==================== */
+
+@media (max-width: 412px) {
+    #page-login {
+        padding: 20px 16px;
+    }
+
+    .auth-wrapper {
+        padding: 26px 20px;
+        border-radius: 18px;
+    }
+}
+
+@media (max-height: 650px) {
+    #page-login {
+        align-items: flex-start;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .auth-wrapper {
+        padding-top: 22px;
+        padding-bottom: 22px;
+    }
+
+    .auth-brand {
+        margin-bottom: 16px;
+    }
+
+/* 
+ * IMPORTANTE:
+ * O HTML deve usar:
+ * <div class="app-container app-locked">
+ *
+ * E a página inicial de autenticação:
+ * <section id="page-login" class="page active">
+ */
+}
+/* Ícone do status climático da pulverização */
+.spray-status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #eab308;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* ==================== EVOLUÇÃO VISUAL DO POMAR DE CITROS ==================== */
+.citrus-evolution {
+    --stage-color: #14833b;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid #cfe7d5;
+    border-radius: 18px;
+    background: #f8fff9;
+    box-shadow: 0 8px 22px rgba(21, 95, 52, 0.10);
+}
+
+.citrus-scene {
+    position: relative;
+    height: 190px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #73caf0 0%, #b8e7f8 58%, #69b860 59%, #459445 76%, #a96d37 77%, #c88b4d 100%);
+}
+
+.citrus-sun {
+    position: absolute;
+    top: 16px;
+    right: 22px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 35%, #fff6a6 0 16%, #ffe248 52%, #f8c92f 100%);
+    box-shadow: 0 0 22px rgba(255, 225, 62, 0.72);
+}
+
+.citrus-cloud,
+.citrus-cloud::before,
+.citrus-cloud::after {
+    position: absolute;
+    display: block;
+    content: "";
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.84);
+}
+
+.citrus-cloud { width: 48px; height: 12px; top: 31px; }
+.citrus-cloud::before { width: 22px; height: 22px; left: 8px; top: -10px; }
+.citrus-cloud::after { width: 27px; height: 27px; right: 5px; top: -13px; }
+.citrus-cloud.cloud-1 { left: 24px; }
+.citrus-cloud.cloud-2 { left: 42%; top: 24px; transform: scale(.72); }
+.citrus-cloud.cloud-3 { right: 84px; top: 38px; transform: scale(.62); }
+
+.citrus-mountains {
+    position: absolute;
+    left: -8%;
+    width: 116%;
+    clip-path: polygon(0 100%, 0 62%, 13% 20%, 25% 64%, 38% 34%, 50% 66%, 62% 25%, 76% 62%, 88% 30%, 100% 60%, 100% 100%);
+}
+
+.citrus-mountains.mountain-back { bottom: 42px; height: 94px; background: #62b5aa; opacity: .78; }
+.citrus-mountains.mountain-front { bottom: 32px; height: 69px; background: #409b78; opacity: .86; transform: translateX(18px); }
+.citrus-field { position: absolute; inset: auto 0 30px; height: 52px; background: linear-gradient(#55ac50, #358b3d); }
+.citrus-soil { position: absolute; inset: auto 0 0; height: 36px; background: linear-gradient(#b8753f, #93572f); }
+
+.citrus-growth-row {
+    position: absolute;
+    z-index: 4;
+    left: 9px;
+    right: 9px;
+    bottom: 21px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: end;
+    justify-items: center;
+}
+
+.citrus-plant { position: relative; width: 72px; height: 130px; transform-origin: bottom center; }
+.plant-shadow { position: absolute; left: 9px; bottom: 0; width: 54px; height: 10px; border-radius: 50%; background: rgba(82, 43, 20, .28); }
+.plant-trunk { position: absolute; z-index: 2; left: 31px; bottom: 5px; width: 10px; height: 55px; border-radius: 8px 8px 3px 3px; background: linear-gradient(90deg, #75401f, #a46431 48%, #5e3118); }
+.branch { position: absolute; z-index: 2; bottom: 46px; width: 7px; height: 35px; border-radius: 8px; background: #6d391d; transform-origin: bottom center; }
+.branch-left { left: 29px; transform: rotate(-42deg); }
+.branch-right { right: 29px; transform: rotate(42deg); }
+
+.crown {
+    position: absolute;
+    z-index: 3;
+    width: 48px;
+    height: 48px;
+    border-radius: 48% 52% 46% 54%;
+    background:
+        radial-gradient(circle at 31% 28%, #3ec64f 0 12%, transparent 13%),
+        radial-gradient(circle at 68% 35%, #25aa3b 0 15%, transparent 16%),
+        radial-gradient(circle at 50% 66%, #08762f 0 30%, transparent 31%),
+        #11923a;
+    box-shadow: inset -5px -6px 0 rgba(2, 83, 35, .18), 0 4px 8px rgba(5, 78, 34, .18);
+}
+.crown-left { left: 1px; top: 35px; transform: rotate(-8deg); }
+.crown-center { left: 14px; top: 13px; width: 52px; height: 53px; }
+.crown-right { right: 0; top: 37px; transform: rotate(8deg); }
+
+.leaf { position: absolute; z-index: 4; width: 24px; height: 14px; border-radius: 100% 0 100% 0; background: linear-gradient(135deg, #39b54a, #0b792f); }
+.leaf-1 { left: 10px; top: 51px; transform: rotate(24deg); }
+.leaf-2 { right: 10px; top: 51px; transform: rotate(66deg); }
+.leaf-3 { left: 25px; top: 34px; transform: rotate(43deg); }
+
+.blossom { position: absolute; z-index: 6; width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,.32); }
+.orange { position: absolute; z-index: 6; width: 9px; height: 9px; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #ffd65b, #f59a13 62%, #db6e05); box-shadow: 0 1px 2px rgba(87, 41, 3, .28); }
+.b1,.o1 { left: 13px; top: 48px; }.b2,.o2 { right: 10px; top: 50px; }
+.b3,.o3 { left: 29px; top: 25px; }.b4,.o4 { right: 25px; top: 73px; }
+.b5,.o5 { left: 15px; top: 80px; }.o6 { right: 8px; top: 81px; }
+
+/* Muda pequena de citros */
+.plant-plantio { height: 82px; transform: scale(.72); }
+.plant-plantio .plant-trunk { left: 33px; height: 42px; width: 7px; }
+
+/* Citro jovem realmente em formação: copa aberta, irregular e sem frutos */
+.plant-formacao { transform: scale(.76); }
+.plant-formacao .crown { width: 38px; height: 39px; }
+.plant-formacao .crown-left { left: 7px; top: 44px; }
+.plant-formacao .crown-center { left: 19px; top: 23px; }
+.plant-formacao .crown-right { right: 4px; top: 47px; }
+
+.plant-desenvolvimento { transform: scale(.91); }
+.plant-producao { transform: scale(1.02); }
+
+.citrus-timeline {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 17px 4px 13px;
+    background: #fbfffc;
+}
+.citrus-timeline::before { content: ""; position: absolute; top: 25px; left: 12.5%; right: 12.5%; height: 3px; background: #b9bec2; }
+.citrus-stage-item { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; color: #737a80; }
+.citrus-stage-item span { width: 18px; height: 18px; border: 4px solid #aeb3b7; border-radius: 50%; background: #fff; }
+.citrus-stage-item strong { font-size: 9px; line-height: 1.1; text-align: center; font-weight: 650; }
+
+.stage-plantio .stage-item-plantio,
+.stage-formacao .stage-item-formacao,
+.stage-desenvolvimento .stage-item-desenvolvimento,
+.stage-producao .stage-item-producao { color: var(--stage-color); }
+.stage-plantio .stage-item-plantio span,
+.stage-formacao .stage-item-formacao span,
+.stage-desenvolvimento .stage-item-desenvolvimento span,
+.stage-producao .stage-item-producao span { border-color: var(--stage-color); box-shadow: 0 0 0 4px rgba(20,131,59,.12); }
+.stage-plantio .stage-item-plantio strong,
+.stage-formacao .stage-item-formacao strong,
+.stage-desenvolvimento .stage-item-desenvolvimento strong,
+.stage-producao .stage-item-producao strong { font-weight: 850; }
+
+.orchard-history-panel .citrus-evolution { border: 0; border-radius: 0; box-shadow: none; }
+.orchard-history-panel .citrus-scene { height: 180px; }
+
+@media (max-width: 380px) {
+    .citrus-scene { height: 174px; }
+    .citrus-growth-row { left: 2px; right: 2px; }
+    .citrus-plant { transform-origin: bottom center; }
+    .plant-plantio { transform: scale(.62); }
+    .plant-formacao { transform: scale(.68); }
+    .plant-desenvolvimento { transform: scale(.80); }
+    .plant-producao { transform: scale(.90); }
+    .citrus-stage-item strong { font-size: 8px; }
+}
+
+/* Home compacta e árvore SVG correspondente à idade */
+#page-inicio{padding-bottom:4px}
+#page-inicio .home-hero{min-height:108px;padding:15px 20px 13px}
+#page-inicio .home-hero h1{margin-top:0;font-size:24px}
+#page-inicio .home-hero p{margin-top:5px;width:78%;font-size:12px;line-height:1.3}
+#page-inicio .home-evolution-btn{margin-top:8px;padding:7px 12px;font-size:11px;border-radius:10px}
+#page-inicio .home-evolution-btn i{font-size:14px}
+#page-inicio .home-body{padding:8px 10px 4px}
+#page-inicio .home-development-card{margin-bottom:8px;padding:10px;border-radius:17px}
+#page-inicio .home-section-title{gap:7px;margin-bottom:7px;font-size:16px}
+#page-inicio .home-lot-head{gap:8px;margin-bottom:7px;padding:7px 10px;border-radius:11px}
+#page-inicio .home-lot-head>i{font-size:20px}
+#page-inicio .home-lot-name{font-size:14px}
+#page-inicio .home-lot-date{margin-top:1px;font-size:9px}
+.citrus-current-tree{position:absolute;z-index:6;inset:6px 0 18px;display:flex;align-items:flex-end;justify-content:center}
+.citrus-tree-svg{width:170px;height:150px;overflow:visible;transform:scale(var(--tree-scale,1));transform-origin:bottom center;filter:drop-shadow(0 3px 2px rgba(13,83,35,.16))}
+.citrus-evolution.stage-plantio .citrus-tree-svg{width:145px}
+.citrus-evolution.stage-producao .citrus-tree-svg{width:184px}
+#page-inicio .citrus-scene{height:150px}
+#page-inicio .citrus-timeline{padding:12px 4px 7px}
+#page-inicio .citrus-timeline::before{top:19px;height:3px}
+#page-inicio .citrus-stage-item span{width:17px;height:17px;border-width:4px}
+#page-inicio .citrus-stage-item strong{margin-top:5px;font-size:8px}
+#page-inicio .home-stat-grid-complete{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:7px}
+#page-inicio .home-stat{min-width:0;min-height:49px;padding:6px;gap:5px;border-radius:10px}
+#page-inicio .home-stat i{flex:0 0 auto;font-size:16px}
+#page-inicio .home-stat span{font-size:7px;line-height:1.15}
+#page-inicio .home-stat strong{overflow-wrap:anywhere;margin-top:1px;font-size:10px;line-height:1.15}
+#page-inicio .home-stat-npk{grid-column:span 2}
+#page-inicio .home-weather-card{margin-bottom:0;padding:10px 12px;border-radius:17px}
+#page-inicio .home-weather-card .card-header{margin-bottom:6px}
+#page-inicio .home-weather-card .card-title{font-size:15px}
+#page-inicio .home-weather-main{gap:8px}
+#page-inicio .home-weather-temp{gap:7px}
+#page-inicio .home-weather-temp .weather-icon{font-size:25px}
+#page-inicio .home-weather-temp .weather-temp{font-size:27px}
+#page-inicio .weather-status,#page-inicio .home-location{font-size:9px}
+#page-inicio .home-weather-details{padding-left:8px;font-size:9px;line-height:1.65}
+#page-inicio .spray-status{margin-top:7px;padding:6px 8px;min-height:0}
+#page-inicio .spray-status-title,#page-inicio .spray-status-summary{font-size:8px}
+#page-inicio .spray-status-detail{display:none}
+@media (max-height:820px){
+    #page-inicio .home-hero{min-height:92px;padding-top:10px}
+    #page-inicio .home-hero p{display:none}
+    #page-inicio .citrus-scene{height:132px}
+    #page-inicio .citrus-tree-svg{height:132px}
+    #page-inicio .home-stat{min-height:43px}
+}
+/* Identidade visual Fru-tech */
+.frutech-logo{display:inline-flex;align-items:center;gap:8px;color:#fff;white-space:nowrap}
+.frutech-mark{width:31px;height:31px;overflow:visible}
+.frutech-mark .mark-frame{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linejoin:round}
+.frutech-mark .mark-leaf{fill:currentColor;opacity:.96}
+.frutech-mark .mark-vein{fill:none;stroke:#08713d;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.frutech-mark circle{fill:#a9e05d;stroke:#08713d;stroke-width:1}
+.frutech-wordmark{font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:24px;line-height:1;letter-spacing:-.75px}
+.frutech-wordmark strong{font-weight:780}.frutech-wordmark span{font-weight:470;opacity:.96}
+.frutech-logo--header{color:#fff}.frutech-logo--header .frutech-mark{width:29px;height:29px}
+.frutech-logo--sidebar{color:#eaffef}.frutech-logo--sidebar .frutech-wordmark{font-size:21px}
+.frutech-logo--auth{justify-content:center;color:#08713d;margin-bottom:7px}
+.frutech-logo--auth .frutech-mark{width:43px;height:43px}
+.frutech-logo--auth .frutech-wordmark{font-size:31px;letter-spacing:-1px}
+.frutech-logo--auth .mark-vein{stroke:#fff}.auth-brand p{margin-top:5px;letter-spacing:.15px}
+.weather-day-icon{color:#f4b400!important;filter:drop-shadow(0 0 6px rgba(244,180,0,.25))}
+.weather-dawn-icon{color:#f39a45!important;filter:drop-shadow(0 0 7px rgba(243,154,69,.28))}
+.weather-sunset-icon{color:#ed7b32!important;filter:drop-shadow(0 5px 0 rgba(163,70,55,.22)) drop-shadow(0 0 8px rgba(237,123,50,.30))}
+.weather-night-icon{color:#536ca8!important;filter:drop-shadow(3px 2px 0 rgba(248,244,205,.72))}
+.citrus-scene.periodo-entardecer{background:linear-gradient(#ef9f78 0%,#f8c58b 48%,#79aa72 49%,#4d934f 78%,#9a5d34 79%)!important}
+.citrus-scene.periodo-entardecer .citrus-sun{top:54px;background:#f37a32;box-shadow:0 0 20px rgba(243,122,50,.58)}
+.citrus-scene.periodo-noite{background:linear-gradient(#102b52 0%,#284c72 48%,#315f49 49%,#214936 78%,#573a28 79%)!important}
+.citrus-scene.periodo-noite .citrus-sun{width:38px;height:38px;background:#f4f1d2;box-shadow:0 0 18px rgba(245,243,214,.56)}
+.citrus-scene.periodo-noite .citrus-cloud{opacity:.38}
+.citrus-scene.periodo-noite .citrus-field{filter:brightness(.52) saturate(.75)}
+.citrus-scene.periodo-noite .citrus-soil{filter:brightness(.58)}
+.citrus-tree-svg .svg-foliage{filter:drop-shadow(0 1px 1px rgba(0,48,19,.16))}
+.citrus-tree-svg .svg-fruits{filter:drop-shadow(0 1px 1px rgba(83,46,0,.3))}
+
+
+/* =========================================================
+   AJUSTES FRU-TECH — HISTÓRICO, SENHA, MENSAGENS E CONTRASTE
+   ========================================================= */
+
+/* Olhinho SEMPRE dentro do campo de senha */
+.password-field {
+    position: relative;
+    width: 100%;
+}
+
+.password-field input {
+    width: 100%;
+    padding-right: 48px !important;
+    box-sizing: border-box;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    border-radius: 50%;
+    font-size: 16px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.password-toggle:focus,
+.password-toggle:active {
+    outline: none;
+    background: rgba(19, 106, 50, 0.08);
+}
+
+.password-toggle i {
+    pointer-events: none;
+}
+
+
+/* Mensagens internas do app — visíveis também no WebView */
+.app-message-container {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 430px;
+    z-index: 99999;
+    pointer-events: none;
+}
+
+.app-message {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 13px 15px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #1f2937;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.16);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+.app-message.success {
+    border-left: 4px solid #166534;
+}
+
+.app-message.error {
+    border-left: 4px solid #b91c1c;
+}
+
+.app-message.warning {
+    border-left: 4px solid #a16207;
+}
+
+.app-message.info {
+    border-left: 4px solid #1d4ed8;
+}
+
+
+/* Histórico — ações */
+.history-actions {
+    width: 100%;
+    margin: 12px 0 14px;
+}
+
+.btn-history-delete {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid #dc2626;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #b91c1c;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.history-selection-bar {
+    margin-top: 10px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+}
+
+.history-select-all {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #1f2937;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.history-select-all input,
+.history-select-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #166534;
+}
+
+.history-selection-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 11px;
+}
+
+.btn-history-cancel,
+.btn-history-confirm-delete {
+    flex: 1;
+    min-height: 40px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-history-cancel {
+    background: #ffffff;
+    color: #374151;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-history-confirm-delete {
+    background: #b91c1c;
+    color: #ffffff;
+    border: 1px solid #b91c1c;
+}
+
+.btn-history-confirm-delete:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+
+/* Cartão compacto de cada talhão */
+.history-item {
+    background: #ffffff;
+    border: 1px solid #d7e3da;
+    border-radius: 13px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.history-summary {
+    min-height: 58px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.history-summary-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-talhao-title {
+    color: #173f26;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.history-date {
+    margin-top: 3px;
+    color: #4b5563;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.history-chevron {
+    color: #166534;
+    transition: transform 0.2s ease;
+}
+
+.history-item.open .history-chevron {
+    transform: rotate(180deg);
+}
+
+.history-details {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid #e5e7eb;
+    color: #374151;
+}
+
+.history-item.open .history-details {
+    display: block;
+}
+
+.history-item.selection-mode .history-summary {
+    cursor: pointer;
+}
+
+.history-item.selected {
+    border-color: #166534;
+    box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.12);
+}
+
+
+/* Estado de carregamento e mensagens do histórico com contraste */
+#containerHistorico,
+#containerHistorico p,
+.history-loading,
+.history-empty,
+.history-error {
+    color: #24362b;
+}
+
+.history-loading,
+.history-empty,
+.history-error {
+    background: #ffffff;
+    border: 1px solid #d7e3da;
+    border-radius: 11px;
+    padding: 14px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* Sidebar: evita textos brancos se perderem no fundo */
+.sidebar,
+.sidebar a,
+.sidebar button,
+.sidebar .sidebar-item,
+.sidebar .menu-item,
+.sidebar .sidebar-link {
+    color: #183b25;
+}
+
+.sidebar i {
+    color: #166534;
+}
+
+
+/* Ajustes para telas menores / WebView */
+@media (max-width: 480px) {
+    .password-toggle {
+        right: 8px;
+        width: 38px;
+        height: 38px;
+    }
+
+    .history-selection-buttons {
+        flex-direction: column;
+    }
+
+    .app-message-container {
+        top: 10px;
+        width: calc(100% - 20px);
+    }
+}
+
+/* =====================================================
+   OLHO DENTRO DO CAMPO DE SENHA
+   ===================================================== */
+
+.password-field {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+.password-field input {
+    width: 100% !important;
+    padding-right: 55px !important;
+}
+
+.password-field .password-toggle {
+    position: absolute !important;
+
+    right: 12px !important;
+    top: 50% !important;
+
+    transform: translateY(-50%) !important;
+
+    width: 38px !important;
+    height: 38px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+    outline: none !important;
+
+    background: transparent !important;
+
+    color: #344054 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-size: 17px !important;
+
+    cursor: pointer !important;
+
+    z-index: 20 !important;
+
+    box-shadow: none !important;
+}
+
+.password-field .password-toggle:hover,
+.password-field .password-toggle:active,
+.password-field .password-toggle:focus {
+    background: transparent !important;
+    color: #08783f !important;
+}
+
+.password-field .password-toggle i {
+    pointer-events: none !important;
+}
+
+.password-toggle {
+    background: red !important;
+}
