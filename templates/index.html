@@ -7,6 +7,9 @@
     
     <!-- Ícones via FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS completo do aplicativo (Flask) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
     <style>
         /* ==================== ESTILOS GLOBAIS ==================== */
@@ -2427,6 +2430,285 @@ body{
     }
 }
 
+/* =========================================================
+   FRU-TECH 2026 — EVOLUÇÃO REALISTA E SIMULADOR EM ETAPAS
+   ========================================================= */
+:root {
+    --ft-green-900: #075f35;
+    --ft-green-800: #087443;
+    --ft-green-700: #0b8b50;
+    --ft-green-100: #dff8e9;
+    --ft-green-050: #f1fbf5;
+    --ft-navy: #102453;
+    --ft-muted: #667085;
+    --ft-line: #d8e4dd;
+}
+
+/* As imagens fornecidas substituem as árvores desenhadas em CSS. */
+.citrus-growth-row {
+    right: 5px;
+    bottom: 21px;
+    left: 5px;
+    gap: 2px;
+}
+.citrus-plant {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 24%;
+    height: 145px;
+    margin: 0;
+    overflow: visible;
+    transform: none !important;
+}
+.citrus-plant img {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 5px 5px rgba(40, 55, 36, .2));
+}
+.citrus-plant.plant-plantio { height: 82px; }
+.citrus-plant.plant-formacao { height: 116px; }
+.citrus-plant.plant-desenvolvimento { height: 134px; }
+.citrus-plant.plant-producao { height: 148px; }
+.citrus-plant .plant-shadow {
+    z-index: 1;
+    bottom: -3px;
+    width: 72%;
+    height: 10px;
+}
+
+/* Tela do simulador */
+#page-simulador {
+    --sim-primary: #078343;
+    --sim-dark: #102453;
+    --sim-text: #344054;
+    --sim-muted: #667085;
+    --sim-border: #d6e2db;
+    background: linear-gradient(180deg, #f8fffb 0%, #ecfbf3 100%);
+}
+#page-simulador .sim-header { margin: 2px 0 14px; }
+#page-simulador .sim-title {
+    margin: 0;
+    color: var(--sim-dark);
+    font-size: clamp(23px, 6vw, 30px);
+    font-weight: 850;
+    line-height: 1.12;
+    letter-spacing: -.7px;
+}
+.sim-subtitle {
+    margin: 5px 0 0;
+    color: var(--sim-muted);
+    font-size: 12px;
+    line-height: 1.45;
+}
+.sim-stepper {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 4px 0 17px;
+    padding: 0 2px;
+}
+.sim-step-indicator {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: #7b8494;
+    font-size: 9px;
+    font-weight: 750;
+    text-align: center;
+}
+.sim-step-indicator:not(:last-child)::after {
+    position: absolute;
+    z-index: 0;
+    top: 15px;
+    left: calc(50% + 17px);
+    width: calc(100% - 34px);
+    height: 3px;
+    border-radius: 99px;
+    background: #d9dfe2;
+    content: "";
+}
+.sim-step-number {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border: 2px solid #c9d0d5;
+    border-radius: 50%;
+    background: #f7f9f8;
+    color: #7b8494;
+    font-size: 13px;
+    font-weight: 850;
+}
+.sim-step-indicator.is-active,
+.sim-step-indicator.is-complete { color: var(--sim-primary); }
+.sim-step-indicator.is-active .sim-step-number,
+.sim-step-indicator.is-complete .sim-step-number {
+    border-color: var(--sim-primary);
+    background: var(--sim-primary);
+    color: #fff;
+    box-shadow: 0 0 0 5px rgba(7, 131, 67, .11);
+}
+.sim-step-indicator.is-complete:not(:last-child)::after { background: var(--sim-primary); }
+
+.sim-step-panel { display: none; animation: simFade .22s ease-out; }
+.sim-step-panel.is-active { display: block; }
+@keyframes simFade {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+#page-simulador .sim-step-panel > .card {
+    margin: 0;
+    padding: 18px 16px;
+    border: 1px solid rgba(15, 118, 69, .11);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .98);
+    box-shadow: 0 12px 30px rgba(19, 78, 48, .08);
+}
+#page-simulador .card-header {
+    align-items: flex-start;
+    gap: 11px;
+    margin-bottom: 5px;
+}
+#page-simulador .card-header > i {
+    width: 31px;
+    padding-top: 3px;
+    color: var(--sim-primary);
+    font-size: 23px;
+    text-align: center;
+}
+#page-simulador .card-title {
+    color: var(--sim-dark);
+    font-size: 20px;
+    font-weight: 850;
+    line-height: 1.16;
+    letter-spacing: -.3px;
+}
+.sim-card-intro {
+    margin: 0 0 17px 42px;
+    color: var(--sim-muted);
+    font-size: 11px;
+    line-height: 1.45;
+}
+.sim-fields-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+#page-simulador .form-group { margin-bottom: 13px; }
+#page-simulador .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--sim-dark);
+    font-size: 11px;
+    font-weight: 750;
+    line-height: 1.3;
+}
+#page-simulador input,
+#page-simulador select {
+    min-height: 48px;
+    border: 1px solid #cbdcd2;
+    border-radius: 11px;
+    background: #f7fcf9;
+    color: #162653;
+    font-size: 13px;
+}
+#page-simulador input:focus,
+#page-simulador select:focus {
+    border-color: var(--sim-primary);
+    outline: 3px solid rgba(7, 131, 67, .11);
+}
+.sim-full { grid-column: 1 / -1; }
+.canopy-reference {
+    margin: 12px 0 18px;
+    overflow: hidden;
+    border: 1px solid #dbe9e0;
+    border-radius: 16px;
+    background: #061d13;
+}
+.canopy-reference img {
+    display: block;
+    width: 100%;
+    max-height: 330px;
+    object-fit: contain;
+    background: #061d13;
+}
+.canopy-reference figcaption {
+    padding: 9px 12px;
+    color: #536259;
+    font-size: 9px;
+    line-height: 1.4;
+    text-align: center;
+}
+.sim-info-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+    padding: 12px;
+    border: 1px solid #b9d7f8;
+    border-radius: 12px;
+    background: #f0f7ff;
+    color: #24589a;
+}
+.sim-info-box i { padding-top: 2px; font-size: 16px; }
+.sim-info-box strong { display: block; margin-bottom: 2px; font-size: 10px; }
+.sim-info-box p { margin: 0; color: #5d6f86; font-size: 9px; line-height: 1.45; }
+.sim-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 10px;
+    margin-top: 15px;
+    padding-bottom: 4px;
+}
+.sim-actions.only-next { grid-template-columns: 1fr; }
+.sim-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--sim-primary);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--sim-primary);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.sim-action-btn.primary { background: var(--sim-primary); color: #fff; }
+.sim-progress-saved {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 9px;
+    color: #238050;
+    font-size: 9px;
+}
+.sim-final-card { margin-top: 14px !important; }
+#page-simulador .btn-calc {
+    min-height: 52px;
+    border-radius: 13px;
+    font-size: 11px;
+    letter-spacing: .2px;
+}
+@media (max-width: 370px) {
+    .sim-fields-grid { grid-template-columns: 1fr; }
+    .sim-full { grid-column: auto; }
+    .sim-step-indicator { font-size: 8px; }
+    .sim-step-number { width: 29px; height: 29px; }
+}
 </style>
 </head>
 <body>
@@ -2614,51 +2896,10 @@ body{
                                     <div class="citrus-soil"></div>
 
                                     <div class="citrus-growth-row">
-                                        <div class="citrus-plant plant-plantio">
-                                            <span class="plant-shadow"></span>
-                                            <span class="plant-trunk"></span>
-                                            <span class="leaf leaf-1"></span>
-                                            <span class="leaf leaf-2"></span>
-                                            <span class="leaf leaf-3"></span>
-                                        </div>
-
-                                        <div class="citrus-plant plant-formacao">
-                                            <span class="plant-shadow"></span>
-                                            <span class="plant-trunk"></span>
-                                            <span class="branch branch-left"></span>
-                                            <span class="branch branch-right"></span>
-                                            <span class="crown crown-left"></span>
-                                            <span class="crown crown-center"></span>
-                                            <span class="crown crown-right"></span>
-                                            <span class="blossom b1"></span><span class="blossom b2"></span>
-                                            <span class="blossom b3"></span><span class="blossom b4"></span>
-                                        </div>
-
-                                        <div class="citrus-plant plant-desenvolvimento">
-                                            <span class="plant-shadow"></span>
-                                            <span class="plant-trunk"></span>
-                                            <span class="branch branch-left"></span>
-                                            <span class="branch branch-right"></span>
-                                            <span class="crown crown-left"></span>
-                                            <span class="crown crown-center"></span>
-                                            <span class="crown crown-right"></span>
-                                            <span class="blossom b1"></span><span class="blossom b2"></span>
-                                            <span class="blossom b3"></span><span class="blossom b4"></span>
-                                            <span class="blossom b5"></span>
-                                        </div>
-
-                                        <div class="citrus-plant plant-producao">
-                                            <span class="plant-shadow"></span>
-                                            <span class="plant-trunk"></span>
-                                            <span class="branch branch-left"></span>
-                                            <span class="branch branch-right"></span>
-                                            <span class="crown crown-left"></span>
-                                            <span class="crown crown-center"></span>
-                                            <span class="crown crown-right"></span>
-                                            <span class="orange o1"></span><span class="orange o2"></span>
-                                            <span class="orange o3"></span><span class="orange o4"></span>
-                                            <span class="orange o5"></span><span class="orange o6"></span>
-                                        </div>
+                                        <figure class="citrus-plant plant-plantio"><span class="plant-shadow"></span><img src="/static/images/citros-plantio.jpg" alt="Muda cítrica em fase de plantio"></figure>
+                                        <figure class="citrus-plant plant-formacao"><span class="plant-shadow"></span><img src="/static/images/citros-formacao.jpg" alt="Laranjeira jovem em formação"></figure>
+                                        <figure class="citrus-plant plant-desenvolvimento"><span class="plant-shadow"></span><img src="/static/images/citros-desenvolvimento.jpg" alt="Laranjeira em desenvolvimento e florescimento"></figure>
+                                        <figure class="citrus-plant plant-producao"><span class="plant-shadow"></span><img src="/static/images/citros-producao.jpg" alt="Laranjeira adulta em produção"></figure>
                                     </div>
                                 </div>
 
@@ -2792,19 +3033,39 @@ body{
 
     <div class="sim-header">
         <h2 class="sim-title">Simulador de Adubação Foliar</h2>
+        <p class="sim-subtitle">Preencha uma etapa por vez para obter uma recomendação segura e adequada ao seu pomar.</p>
     </div>
 
+    <nav class="sim-stepper" aria-label="Etapas do simulador">
+        <div class="sim-step-indicator is-active" data-step-indicator="1">
+            <span class="sim-step-number">1</span><span>Talhão</span>
+        </div>
+        <div class="sim-step-indicator" data-step-indicator="2">
+            <span class="sim-step-number">2</span><span>Copa</span>
+        </div>
+        <div class="sim-step-indicator" data-step-indicator="3">
+            <span class="sim-step-number">3</span><span>Nutrição</span>
+        </div>
+        <div class="sim-step-indicator" data-step-indicator="4">
+            <span class="sim-step-number">4</span><span>Aplicação</span>
+        </div>
+    </nav>
 
     <!-- =====================================================
          SEÇÃO 1: DADOS DO TALHÃO
     ====================================================== -->
 
+    <section class="sim-step-panel is-active" data-sim-step="1">
     <article class="card">
 
         <div class="card-header">
             <i class="fa-solid fa-map-location-dot"></i>
             <span class="card-title">Dados do Talhão</span>
         </div>
+
+        <p class="sim-card-intro">Informações gerais da produção.</p>
+
+        <div class="sim-fields-grid">
 
 
         <div class="form-group">
@@ -2877,7 +3138,17 @@ body{
             <p class="agro-help">O estágio foliar ajusta a orientação de espalhamento e absorção da calda.</p>
         </div>
 
+        </div>
+
     </article>
+
+    <div class="sim-actions only-next">
+        <button type="button" class="sim-action-btn primary" data-sim-next="2">
+            Continuar <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
+    <div class="sim-progress-saved"><i class="fa-solid fa-circle-check"></i> Progresso preservado durante o preenchimento</div>
+    </section>
 
 
 
@@ -2885,6 +3156,7 @@ body{
          SEÇÃO 2: MODELAGEM MATEMÁTICA DA COPA
     ====================================================== -->
 
+    <section class="sim-step-panel" data-sim-step="2">
     <article class="card">
 
         <div class="card-header">
@@ -2898,16 +3170,19 @@ body{
         </div>
 
 
-        <p class="result-hint">
+        <p class="sim-card-intro">
 
             Informe as dimensões médias das árvores para calcular
             o diâmetro da copa, o volume geométrico e o TRV do talhão.
 
         </p>
 
-        <div class="agro-diagram" aria-label="Diagrama didático das medidas da copa">
-            <div class="agro-tree"></div><div class="measure-line measure-height">Altura H</div><div class="measure-line measure-width">D1 e D2 da copa</div><div class="measure-line measure-row">Espaçamento entre linhas</div>
-        </div>
+        <figure class="canopy-reference">
+            <img src="/static/images/modelagem-copa-citros.jpg" alt="Diagrama de uma laranjeira indicando D1, D2, altura, primeiras ramificações e espaçamentos">
+            <figcaption>D1: copa no sentido da linha · D2: copa no sentido da entrelinha · H: altura total da planta.</figcaption>
+        </figure>
+
+        <div class="sim-fields-grid">
 
 
         <!-- MEDIDA D1 -->
@@ -3009,6 +3284,8 @@ body{
             <input type="number" id="simEspacamentoPlantas" step="0.01" min="0" placeholder="Ex: 4">
         </div>
 
+        </div>
+
 
         <div
             style="
@@ -3054,12 +3331,20 @@ body{
 
     </article>
 
+    <div class="sim-actions">
+        <button type="button" class="sim-action-btn" data-sim-prev="1"><i class="fa-solid fa-chevron-left"></i> Voltar</button>
+        <button type="button" class="sim-action-btn primary" data-sim-next="3">Continuar <i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="sim-progress-saved"><i class="fa-solid fa-cloud-arrow-up"></i> Progresso salvo</div>
+    </section>
+
 
 
     <!-- =====================================================
          SEÇÃO 3: PRODUTIVIDADE E ANÁLISE NUTRICIONAL
     ====================================================== -->
 
+    <section class="sim-step-panel" data-sim-step="3">
     <article class="card">
 
         <div class="card-header">
@@ -3073,7 +3358,7 @@ body{
         </div>
 
 
-        <p class="result-hint">
+        <p class="sim-card-intro">
 
             Informe os dados utilizados nas tabelas de recomendação
             nutricional para determinar as necessidades de N, P₂O₅ e K₂O.
@@ -3198,12 +3483,20 @@ body{
 
     </article>
 
+    <div class="sim-actions">
+        <button type="button" class="sim-action-btn" data-sim-prev="2"><i class="fa-solid fa-chevron-left"></i> Voltar</button>
+        <button type="button" class="sim-action-btn primary" data-sim-next="4">Continuar <i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="sim-progress-saved"><i class="fa-solid fa-cloud-arrow-up"></i> Progresso salvo</div>
+    </section>
+
 
 
     <!-- =====================================================
          SEÇÃO 4: APLICAÇÃO FOLIAR
     ====================================================== -->
 
+    <section class="sim-step-panel" data-sim-step="4">
     <article class="card">
 
         <div class="card-header">
@@ -3425,10 +3718,10 @@ body{
 
 
     <!-- =====================================================
-         SEÇÃO 5: RESULTADO
+         RESULTADO FINAL — EXIBIDO DENTRO DA ETAPA 4
     ====================================================== -->
 
-    <article class="card">
+    <article class="card sim-final-card">
 
         <div class="card-header">
 
@@ -3562,12 +3855,17 @@ body{
 
             <i class="fa-solid fa-calculator"></i>
 
-            CALCULAR E SALVAR RECOMENDAÇÃO
+            REALIZAR SIMULAÇÃO E SALVAR RECOMENDAÇÃO
 
         </button>
 
 
     </article>
+
+    <div class="sim-actions">
+        <button type="button" class="sim-action-btn" data-sim-prev="3"><i class="fa-solid fa-chevron-left"></i> Voltar</button>
+    </div>
+    </section>
 
 
 </section>
