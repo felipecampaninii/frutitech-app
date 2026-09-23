@@ -2447,7 +2447,7 @@ body{
             <div class="sidebar-header">
                 <img
                     class="frutech-image-logo frutech-image-logo--sidebar"
-                    src="/static/images/logo-frutech.png"
+                    src="{{ url_for('static', filename='images/logo-frutech.png') }}"
                     alt="Fru-tech"
                 >
                 <i class="fa-solid fa-xmark close-sidebar" onclick="toggleSidebar()"></i>
@@ -2473,7 +2473,7 @@ body{
                 <div class="auth-brand">
                     <img
                         class="frutech-image-logo frutech-image-logo--auth"
-                        src="/static/images/logo-frutech.png"
+                        src="{{ url_for('static', filename='images/logo-frutech.png') }}"
                         alt="Fru-tech"
                     >
                     <p>Gestão Agronômica e Diagnóstico IA</p>
@@ -2559,7 +2559,7 @@ body{
             <i class="fa-solid fa-bars icon-btn" onclick="toggleSidebar()" title="Menu"></i>
             <img
                 class="frutech-image-logo frutech-image-logo--header"
-                src="/static/images/logo-frutech.png"
+                src="{{ url_for('static', filename='images/logo-frutech.png') }}"
                 alt="Fru-tech"
             >
             <i class="fa-regular fa-bell icon-btn" onclick="openNotifications()" title="Notificações"></i>
