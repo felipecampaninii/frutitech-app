@@ -180,6 +180,108 @@ function atualizarFontes() {
     }
 }
 
+// ==========================================================
+// NAVEGAÇÃO VISUAL DO SIMULADOR EM QUATRO ETAPAS
+// Não altera fórmulas, dados ou a função salvarECalcular().
+// ==========================================================
+(function configurarEtapasDoSimulador() {
+    let etapaAtual = 1;
+
+    function obterPaginaSimulador() {
+        return document.getElementById("page-simulador");
+    }
+
+    function mostrarEtapa(numero) {
+        const pagina = obterPaginaSimulador();
+        if (!pagina) return;
+
+        const destino = Math.max(1, Math.min(4, Number(numero) || 1));
+        etapaAtual = destino;
+
+        pagina.querySelectorAll("[data-sim-step]").forEach((painel) => {
+            const ativa = Number(painel.dataset.simStep) === destino;
+            painel.classList.toggle("is-active", ativa);
+            painel.hidden = !ativa;
+        });
+
+        pagina.querySelectorAll("[data-step-indicator]").forEach((indicador) => {
+            const numeroIndicador = Number(indicador.dataset.stepIndicator);
+            indicador.classList.toggle("is-active", numeroIndicador === destino);
+            indicador.classList.toggle("is-complete", numeroIndicador < destino);
+
+            const circulo = indicador.querySelector(".sim-step-number");
+            if (circulo) {
+                circulo.innerHTML = numeroIndicador < destino
+                    ? '<i class="fa-solid fa-check" aria-hidden="true"></i>'
+                    : String(numeroIndicador);
+            }
+        });
+
+        pagina.dataset.etapaAtual = String(destino);
+        if (typeof pagina.scrollTo === "function") {
+            pagina.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+            pagina.scrollTop = 0;
+        }
+    }
+
+    function campoPreenchido(id) {
+        const campo = document.getElementById(id);
+        if (!campo || campo.disabled) return true;
+        const valor = String(campo.value ?? "").trim();
+        return valor !== "" && (!campo.matches('[type="number"]') || Number(valor) >= 0);
+    }
+
+    function validarEtapa(numero) {
+        const obrigatorios = {
+            1: ["simProducao", "simArea", "simArvores", "simIdade", "simEstagioFoliar"],
+            2: ["simMedida1", "simMedida2", "simAltura", "simAlturaCaule", "simEspacamento", "simEspacamentoPlantas"],
+            3: ["simFinalidade", "simProdutividadeTon"],
+            4: []
+        };
+
+        const ausente = (obrigatorios[numero] || []).find((id) => !campoPreenchido(id));
+        if (!ausente) return true;
+
+        const campo = document.getElementById(ausente);
+        campo?.focus();
+        campo?.scrollIntoView({ behavior: "smooth", block: "center" });
+        alert("Preencha os campos desta etapa antes de continuar.");
+        return false;
+    }
+
+    function iniciar() {
+        const pagina = obterPaginaSimulador();
+        if (!pagina || pagina.dataset.etapasConfiguradas === "true") return;
+        pagina.dataset.etapasConfiguradas = "true";
+
+        pagina.addEventListener("click", (evento) => {
+            const botaoAvancar = evento.target.closest("[data-sim-next]");
+            const botaoVoltar = evento.target.closest("[data-sim-prev]");
+
+            if (botaoAvancar) {
+                evento.preventDefault();
+                if (validarEtapa(etapaAtual)) mostrarEtapa(botaoAvancar.dataset.simNext);
+            }
+
+            if (botaoVoltar) {
+                evento.preventDefault();
+                mostrarEtapa(botaoVoltar.dataset.simPrev);
+            }
+        });
+
+        mostrarEtapa(1);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", iniciar);
+    } else {
+        iniciar();
+    }
+
+    window.mostrarEtapaSimulador = mostrarEtapa;
+})();
+
 
 
 // ==========================================================
@@ -482,6 +584,20 @@ function calcularTRVPorHectare(altura, largura, espacamentoLinhas) {
     return calcularTRV(altura, largura, 1, espacamentoLinhas);
 }
 
+function avaliarPhAgua(ph) {
+    ph = Number(ph);
+    if (!Number.isFinite(ph) || ph <= 0) return { status: "não informado", mensagem: "Informe o pH para avaliar o condicionamento da água." };
+    if (ph > 6.5) return { status: "acima do ideal", mensagem: "pH acima de 6,5. Avalie a correção com acidificante compatível antes de preparar a calda." };
+    if (ph < 5.5) return { status: "abaixo do ideal", mensagem: "pH abaixo de 5,5. Confirme a compatibilidade da fonte e evite acidificar ainda mais a calda." };
+    return { status: "adequado", mensagem: "pH dentro da faixa de referência de 5,5 a 6,5." };
+}
+
+function recomendarAdjuvante(estagioFoliar, escolha) {
+    if (escolha && escolha !== "nao-informado") return escolha.replaceAll("-", " ");
+    return estagioFoliar === "jovens"
+        ? "priorizar espalhante não iônico em dose de rótulo; folhas jovens são mais sensíveis"
+        : "selecionar espalhante compatível com a fonte e conforme o rótulo";
+}
 
 // ==========================================================
 // LEITURA DOS DADOS CLIMÁTICOS DA HOME
