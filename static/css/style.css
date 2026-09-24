@@ -2941,3 +2941,325 @@ body{
     .sim-fields-grid { grid-template-columns: 1fr; }
     .sim-card-intro { margin-left: 0; }
 }
+
+/* =========================================================
+   FRU-TECH — AJUSTE VISUAL DA REFERÊNCIA 3 (24/09/2026)
+   ========================================================= */
+html,
+body,
+button,
+input,
+select,
+textarea {
+    font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Logo rigorosamente centralizada, independente dos ícones laterais. */
+.header {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    align-items: center;
+    justify-items: center;
+    min-height: 78px;
+    padding: 10px 16px;
+    background: #077a42;
+}
+.header .icon-btn:first-child { justify-self: start; }
+.header .icon-btn:last-child { justify-self: end; }
+.header .frutech-image-logo--header {
+    justify-self: center;
+    width: 174px;
+    height: 52px;
+}
+
+/* Fotografia fornecida aplicada aos blocos superiores de destaque. */
+#page-inicio .home-hero,
+.sim-header {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+        linear-gradient(90deg, rgba(5, 116, 61, .94), rgba(5, 116, 61, .67)),
+        url("../images/fundo-citros-blocos.jpg") center 58% / cover no-repeat;
+}
+#page-inicio .home-hero::before,
+.sim-header::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(4, 104, 54, .80), rgba(4, 104, 54, .22));
+    content: "";
+}
+#page-inicio .home-hero::after { display: none; }
+#page-inicio .home-hero {
+    min-height: 122px;
+    padding: 15px 21px 16px;
+    border-radius: 0 0 27px 27px;
+}
+#page-inicio .home-hero h1 {
+    margin: 0;
+    color: #fff;
+    font-size: 26px;
+    font-weight: 850;
+    letter-spacing: -.5px;
+}
+#page-inicio .home-hero p {
+    width: 76%;
+    margin-top: 5px;
+    color: rgba(255,255,255,.94);
+    font-size: 11px;
+    line-height: 1.35;
+}
+#page-inicio .home-evolution-btn {
+    min-height: 34px;
+    margin-top: 9px;
+    padding: 7px 13px;
+    border-radius: 11px;
+    font-size: 11px;
+    box-shadow: 0 5px 14px rgba(0,0,0,.13);
+}
+#page-inicio .home-evolution-btn i { font-size: 14px; }
+
+/* Paleta e cartões conforme a referência. */
+.app-container {
+    background: linear-gradient(160deg, #f4fff8 0%, #d7f6e4 100%);
+}
+#page-inicio .home-body { padding: 15px 12px 6px; }
+#page-inicio .home-development-card,
+#page-inicio .home-weather-card {
+    border: 1px solid rgba(8, 120, 63, .09);
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 10px 28px rgba(28, 88, 57, .09);
+}
+#page-inicio .home-section-title,
+#page-inicio .card-title {
+    color: #102453;
+    font-weight: 850;
+    letter-spacing: -.25px;
+}
+#page-inicio .home-section-title { font-size: 19px; }
+#page-inicio .home-lot-head {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #edf9f2;
+}
+#page-inicio .home-lot-name { color: #102453; font-size: 17px; font-weight: 850; }
+#page-inicio .home-lot-date { color: #657080; font-size: 11px; }
+
+/* Área da árvore sem cenário: fundo branco e somente sombra inferior. */
+.citrus-evolution {
+    border: 1px solid #dbe7e0;
+    border-radius: 21px;
+    background: #fff;
+    box-shadow: 0 8px 22px rgba(25, 78, 51, .08);
+}
+.citrus-scene,
+.citrus-scene.periodo-dia,
+.citrus-scene.periodo-amanhecer,
+.citrus-scene.periodo-entardecer,
+.citrus-scene.periodo-noite {
+    height: 225px;
+    background: #fff !important;
+}
+.citrus-sun,
+.citrus-cloud,
+.citrus-mountains,
+.citrus-field,
+.citrus-soil { display: none !important; }
+.citrus-current-tree {
+    inset: 10px 0 16px;
+    align-items: flex-end;
+}
+.citrus-current-tree .plant-shadow {
+    bottom: 1px;
+    width: 54%;
+    height: 13px;
+    background: rgba(47, 54, 49, .20);
+    filter: blur(5px);
+}
+.citrus-current-tree .citrus-plant img {
+    filter: drop-shadow(0 5px 4px rgba(28, 66, 42, .13));
+}
+
+/* Linha de evolução: concluídas com check, atual com anel e futuras vazias. */
+.citrus-timeline {
+    padding: 18px 7px 13px;
+    background: #fbfefc;
+}
+.citrus-timeline::before {
+    top: 26px;
+    height: 4px;
+    background: #d3ddd7;
+}
+.citrus-stage-item { position: relative; }
+.citrus-stage-item:not(:last-child)::after {
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    left: calc(50% + 14px);
+    width: calc(100% - 28px);
+    height: 4px;
+    border-radius: 99px;
+    background: #d3ddd7;
+    content: "";
+}
+.citrus-stage-item.is-complete:not(:last-child)::after { background: #078346; }
+.citrus-stage-item span {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    width: 23px;
+    height: 23px;
+    place-items: center;
+    border: 4px solid #aeb8b2;
+    border-radius: 50%;
+    background: #fff;
+}
+.citrus-stage-item.is-complete span {
+    border-color: #078346;
+    background: #078346;
+}
+.citrus-stage-item.is-complete span::before {
+    color: #fff;
+    font-family: "Font Awesome 6 Free";
+    font-size: 10px;
+    font-weight: 900;
+    content: "\f00c";
+}
+.citrus-stage-item.is-current span {
+    border-color: #078346;
+    background: #fff;
+    box-shadow: 0 0 0 7px rgba(7, 131, 70, .12);
+}
+.citrus-stage-item.is-current strong { color: #076c3c; font-weight: 850; }
+.citrus-stage-item.is-complete strong { color: #53665b; }
+.citrus-stage-item.is-upcoming strong { color: #7c8580; }
+
+/* Idade, árvores e área em três colunas; NPK ocupa a linha seguinte. */
+#page-inicio .home-stat-grid-complete {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    overflow: hidden;
+    margin-top: 13px;
+    border: 1px solid #dfe7e2;
+    border-radius: 17px;
+    background: #fff;
+}
+#page-inicio .home-stat {
+    grid-column: auto;
+    min-height: 76px;
+    padding: 12px 10px;
+    border: 0;
+    border-right: 1px solid #dfe7e2;
+    border-radius: 0;
+    background: #fff;
+}
+#page-inicio .home-stat:nth-child(3) { border-right: 0; }
+#page-inicio .home-stat i { color: #078346; font-size: 23px; }
+#page-inicio .home-stat span { color: #737c88; font-size: 10px; }
+#page-inicio .home-stat strong { color: #102453; font-size: 15px; font-weight: 850; }
+#page-inicio .home-stat-npk {
+    grid-column: 1 / -1;
+    min-height: 67px;
+    border-top: 1px solid #dfe7e2;
+    border-right: 0;
+    background: #f5fbf7;
+}
+#page-inicio .npk-value { color: #102453; }
+#page-inicio .npk-pending { color: #e67721; }
+#page-inicio .npk-separator { margin: 0 3px; color: #7a838e; }
+
+/* Clima idêntico à organização da referência, sem segundo ícone ao lado. */
+#page-inicio .home-weather-card { padding: 18px 17px; }
+#page-inicio .home-weather-card .card-header { margin-bottom: 12px; }
+#page-inicio .home-weather-card .card-header > i { color: #f4b400 !important; font-size: 27px; }
+#page-inicio .home-weather-card .card-title { font-size: 20px; }
+#page-inicio .home-weather-main {
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    gap: 16px;
+}
+#page-inicio .home-weather-temp { display: block; }
+#page-inicio .home-weather-temp .weather-icon { display: none !important; }
+#page-inicio .home-weather-temp .weather-temp {
+    color: #102453;
+    font-size: 42px;
+    font-weight: 850;
+    line-height: 1;
+}
+#page-inicio .weather-status { margin-top: 5px; color: #657080; font-size: 12px; }
+#page-inicio .home-location { margin-top: 8px; color: #657080; font-size: 11px; }
+#page-inicio .home-weather-details {
+    border-left: 1px solid #dfe6e2;
+    color: #536070;
+    font-size: 11px;
+    line-height: 2.05;
+}
+#page-inicio .home-weather-details i { color: #1598dd; }
+
+/* Indicador climático verde/amarelo/vermelho. */
+#page-inicio .spray-status {
+    position: relative;
+    display: grid;
+    grid-template-columns: 43px minmax(0, 1fr);
+    gap: 12px;
+    min-height: 76px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border: 1.5px solid #dfb51b;
+    border-radius: 17px;
+    background: #fff5c9;
+    color: #775116;
+}
+#page-inicio .spray-dot { display: none; }
+#page-inicio .spray-status-icon {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    align-self: center;
+    border-radius: 50%;
+    background: #e8b709;
+    color: #fff;
+    font-size: 18px;
+}
+#page-inicio .spray-status-title { display: block; font-size: 11px; line-height: 1.25; }
+#page-inicio .spray-status-summary { margin-top: 2px; font-size: 10px; line-height: 1.35; }
+#page-inicio .spray-status-detail { display: block; margin-top: 2px; font-size: 9px; line-height: 1.35; }
+#page-inicio .spray-status.status-verde,
+#page-inicio .spray-status.spray-ok {
+    border-color: #7ed6aa;
+    background: #eaf9f1;
+    color: #08663a;
+}
+#page-inicio .spray-status.status-verde .spray-status-icon,
+#page-inicio .spray-status.spray-ok .spray-status-icon { background: #13a461; }
+#page-inicio .spray-status.status-vermelho,
+#page-inicio .spray-status.spray-danger {
+    border-color: #ef9a9a;
+    background: #fff0f0;
+    color: #9f2828;
+}
+#page-inicio .spray-status.status-vermelho .spray-status-icon,
+#page-inicio .spray-status.spray-danger .spray-status-icon { background: #d64545; }
+
+/* Cabeçalhos internos usando a mesma fotografia e paleta. */
+.sim-header {
+    min-height: 112px;
+    border-radius: 0 0 25px 25px;
+}
+.sim-header .sim-title { color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.18); }
+
+@media (max-height: 820px) {
+    #page-inicio .home-hero { min-height: 118px; padding-top: 13px; }
+    #page-inicio .citrus-scene,
+    .orchard-history-panel .citrus-scene { height: 205px; }
+}
+
+@media (max-width: 370px) {
+    .header { grid-template-columns: 42px minmax(0,1fr) 42px; }
+    .header .frutech-image-logo--header { width: 150px; }
+    #page-inicio .home-stat strong { font-size: 13px; }
+    #page-inicio .home-weather-main { grid-template-columns: 1fr 1fr; gap: 10px; }
+}
