@@ -251,10 +251,10 @@ function gerarArvore(classe, frutos) {
 
 function obterImagemEstagioCitros(tipo) {
     const imagens = {
-        plantio: "/static/images/citros-plantio.jpg",
-        formacao: "/static/images/citros-formacao.jpg",
-        desenvolvimento: "/static/images/citros-desenvolvimento.jpg",
-        producao: "/static/images/citros-producao.jpg"
+        plantio: "/static/images/laranjeira-plantio.png",
+        formacao: "/static/images/laranjeira-formacao.png",
+        desenvolvimento: "/static/images/laranjeira-desenvolvimento.png",
+        producao: "/static/images/laranjeira-producao.png"
     };
 
     return imagens[tipo] || imagens.plantio;
