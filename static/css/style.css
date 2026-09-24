@@ -2695,3 +2695,249 @@ body{
     .sim-step-indicator { font-size: 8px; }
     .sim-step-number { width: 29px; height: 29px; }
 }
+
+/* =========================================================
+   FRU-TECH — ACABAMENTO VISUAL FINAL (24/09/2026)
+   Mantém a lógica original e corrige proporção, contraste e imagens.
+   ========================================================= */
+:root {
+    --ft-green: #078346;
+    --ft-green-dark: #056638;
+    --ft-green-soft: #e8f8ef;
+    --ft-background: #eefbf4;
+    --ft-navy: #10234f;
+    --ft-text: #263243;
+    --ft-muted: #667085;
+    --ft-border: #d7e3dc;
+}
+
+/* Estrutura geral */
+.app-container {
+    background: linear-gradient(180deg, #f7fffa 0%, #dcf8e8 100%);
+}
+.content-scroll { background: transparent; }
+.page { color: var(--ft-text); }
+.card,
+.home-development-card,
+.history-intro-card,
+#page-historico .history-item {
+    border: 1px solid rgba(7, 131, 70, .10);
+    background: rgba(255, 255, 255, .98);
+    box-shadow: 0 10px 28px rgba(16, 78, 49, .08);
+}
+.card-title,
+.sim-title,
+.home-section-title { color: var(--ft-navy); }
+
+/* Cabeçalho com logo oficial */
+.header {
+    min-height: 76px;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #078346, #056638);
+}
+.header .frutech-image-logo--header {
+    width: 168px;
+    height: 52px;
+    object-fit: contain;
+}
+.header .icon-btn { color: #fff; font-size: 24px; }
+
+/* Início */
+#page-inicio { padding: 0 0 22px; }
+#page-inicio .home-hero {
+    min-height: 152px;
+    padding: 22px 22px 20px;
+    border-radius: 0 0 30px 30px;
+}
+#page-inicio .home-hero h1 { font-size: 29px; line-height: 1.08; }
+#page-inicio .home-hero p { display: block; width: 88%; font-size: 13px; }
+#page-inicio .home-evolution-btn {
+    min-height: 39px;
+    padding: 9px 15px;
+    border-radius: 13px;
+    font-size: 13px;
+}
+#page-inicio .home-body { padding: 14px 12px 5px; }
+#page-inicio .home-development-card {
+    margin-bottom: 14px;
+    padding: 14px;
+    border-radius: 23px;
+}
+#page-inicio .home-section-title { margin-bottom: 10px; font-size: 19px; }
+#page-inicio .home-lot-head {
+    margin-bottom: 11px;
+    padding: 10px 12px;
+    border-radius: 14px;
+}
+#page-inicio .home-lot-head > i { font-size: 24px; }
+#page-inicio .home-lot-name { font-size: 16px; }
+#page-inicio .home-lot-date { font-size: 11px; }
+
+/* Cenário: exibe apenas a árvore correspondente ao estágio atual. */
+.citrus-evolution {
+    overflow: hidden;
+    border: 1px solid rgba(6, 102, 56, .16);
+    border-radius: 22px;
+    background: #f8fdf9;
+}
+.citrus-scene { height: 225px; overflow: hidden; }
+.citrus-current-tree {
+    position: absolute;
+    z-index: 8;
+    inset: 5px 0 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+}
+.citrus-current-tree .citrus-plant {
+    display: flex;
+    width: min(74%, 255px);
+    height: 194px;
+    align-items: flex-end;
+    justify-content: center;
+    margin: 0;
+    transform: none !important;
+}
+.citrus-current-tree .citrus-plant img {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+    mix-blend-mode: normal;
+    filter: drop-shadow(0 7px 5px rgba(22, 69, 38, .24));
+}
+.citrus-current-tree .plant-plantio { width: 34%; height: 122px; }
+.citrus-current-tree .plant-formacao { width: 48%; height: 160px; }
+.citrus-current-tree .plant-desenvolvimento { width: 62%; height: 181px; }
+.citrus-current-tree .plant-producao { width: 76%; height: 201px; }
+.citrus-current-tree .plant-shadow {
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    width: 55%;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(72, 38, 20, .26);
+    filter: blur(2px);
+}
+.citrus-timeline { padding: 17px 7px 13px; }
+.citrus-timeline::before { top: 25px; background: #cfdad3; }
+.citrus-stage-item span { width: 21px; height: 21px; border: 5px solid #aeb8b2; }
+.citrus-stage-item strong { margin-top: 7px; color: #67716b; font-size: 10px; }
+.stage-plantio .stage-item-plantio span,
+.stage-formacao .stage-item-formacao span,
+.stage-desenvolvimento .stage-item-desenvolvimento span,
+.stage-producao .stage-item-producao span {
+    border-color: var(--ft-green);
+    background: #fff;
+    box-shadow: 0 0 0 6px rgba(7, 131, 70, .11);
+}
+.stage-plantio .stage-item-plantio strong,
+.stage-formacao .stage-item-formacao strong,
+.stage-desenvolvimento .stage-item-desenvolvimento strong,
+.stage-producao .stage-item-producao strong { color: var(--ft-green-dark); }
+
+/* Informações do último talhão: TRV à esquerda e NPK ao lado. */
+#page-inicio .home-stat-grid-complete {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 11px;
+}
+#page-inicio .home-stat {
+    grid-column: span 2;
+    min-height: 65px;
+    padding: 9px;
+    gap: 7px;
+    border-radius: 13px;
+}
+#page-inicio .home-stat:nth-child(4) { grid-column: span 2; }
+#page-inicio .home-stat-npk { grid-column: span 4; }
+#page-inicio .home-stat i { font-size: 20px; }
+#page-inicio .home-stat span { font-size: 9px; }
+#page-inicio .home-stat strong { font-size: 11px; line-height: 1.25; }
+
+/* Clima */
+#page-inicio .home-weather-card { padding: 16px; border-radius: 23px; }
+#page-inicio .home-weather-card .card-title { font-size: 19px; }
+#page-inicio .home-weather-main { gap: 15px; }
+#page-inicio .home-weather-temp .weather-icon { font-size: 37px; }
+#page-inicio .home-weather-temp .weather-temp { font-size: 38px; }
+#page-inicio .weather-status,
+#page-inicio .home-location { font-size: 11px; }
+#page-inicio .home-weather-details { padding-left: 13px; font-size: 11px; line-height: 1.9; }
+#page-inicio .spray-status { margin-top: 12px; padding: 11px 12px; }
+#page-inicio .spray-status-title { font-size: 11px; }
+#page-inicio .spray-status-summary { font-size: 10px; }
+#page-inicio .spray-status-detail { display: block; font-size: 9px; }
+
+/* Simulador em quatro etapas */
+#page-simulador { padding: 18px 14px 26px; }
+#page-simulador .sim-header { margin-bottom: 17px; }
+#page-simulador .sim-title { font-size: 27px; }
+#page-simulador .sim-subtitle { font-size: 12px; }
+.sim-stepper { margin-bottom: 21px; }
+.sim-step-indicator { gap: 7px; font-size: 10px; }
+.sim-step-number { width: 38px; height: 38px; font-size: 15px; }
+.sim-step-indicator:not(:last-child)::after { top: 18px; }
+#page-simulador .sim-step-panel > .card { padding: 20px 17px; border-radius: 22px; }
+#page-simulador .card-title { font-size: 22px; }
+#page-simulador .card-header > i { width: 34px; font-size: 25px; }
+.sim-card-intro { margin: 1px 0 19px 45px; font-size: 12px; }
+#page-simulador .form-group label { margin-bottom: 7px; font-size: 12px; }
+#page-simulador input,
+#page-simulador select { min-height: 54px; padding: 11px 13px; font-size: 14px; }
+.sim-fields-grid { gap: 13px; }
+.sim-action-btn { min-height: 53px; border-radius: 13px; font-size: 13px; }
+.sim-progress-saved { font-size: 10px; }
+#page-simulador .btn-calc { min-height: 56px; font-size: 12px; }
+
+/* A ilustração D1/D2 aparece somente na etapa Copa. */
+.canopy-reference {
+    margin: 14px 0 20px;
+    border-radius: 17px;
+    background: linear-gradient(180deg, #f8fdf9, #eef9f3);
+}
+.canopy-reference img {
+    width: 100%;
+    max-height: 335px;
+    padding: 7px;
+    background: transparent;
+    object-fit: contain;
+}
+.canopy-reference figcaption { padding: 10px 12px; font-size: 10px; }
+
+/* Diagnóstico e histórico seguem a mesma identidade. */
+#page-diagnostico,
+#page-historico { padding: 20px 14px 26px; }
+#page-diagnostico .sim-title,
+#page-historico .sim-title { font-size: 27px; }
+#page-diagnostico .card { padding: 20px 17px; border-radius: 22px; }
+#page-diagnostico .card-title { font-size: 20px; }
+#page-diagnostico .result-hint { font-size: 12px; line-height: 1.55; }
+#page-diagnostico .upload-box { min-height: 210px; border-radius: 19px; }
+#page-historico .history-item { border-radius: 18px; }
+#page-historico .history-talhao-title { color: var(--ft-navy); font-size: 16px; }
+.orchard-history-panel .citrus-scene { height: 230px; }
+
+/* Não comprime conteúdo em aparelhos baixos: a rolagem permanece disponível. */
+@media (max-height: 820px) {
+    #page-inicio .home-hero { min-height: 138px; padding-top: 18px; }
+    #page-inicio .home-hero p { display: block; }
+    #page-inicio .citrus-scene,
+    .orchard-history-panel .citrus-scene { height: 210px; }
+    #page-inicio .home-stat { min-height: 61px; }
+}
+
+@media (max-width: 370px) {
+    #page-inicio .home-stat-grid-complete { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #page-inicio .home-stat,
+    #page-inicio .home-stat:nth-child(4),
+    #page-inicio .home-stat-npk { grid-column: span 1; }
+    #page-inicio .home-stat-npk { grid-column: 1 / -1; }
+    .sim-fields-grid { grid-template-columns: 1fr; }
+    .sim-card-intro { margin-left: 0; }
+}
