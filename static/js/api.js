@@ -304,25 +304,31 @@ function gerarEvolucaoCitros(idade, id = "") {
             ? ` id="${id}"`
             : "";
 
+    const ordemEstagios = ["plantio", "formacao", "desenvolvimento", "producao"];
+    const indiceAtual = ordemEstagios.indexOf(tipoAtual);
+
+    function gerarItemEtapa(tipo, titulo) {
+        const indice = ordemEstagios.indexOf(tipo);
+        const estado = indice < indiceAtual
+            ? "is-complete"
+            : indice === indiceAtual
+                ? "is-current"
+                : "is-upcoming";
+
+        return `
+            <div class="citrus-stage-item stage-item-${tipo} ${estado}">
+                <span></span>
+                <strong>${titulo}</strong>
+            </div>
+        `;
+    }
+
     return `
         <div${atributoId}
              class="citrus-evolution ${estagio.classe}"
              data-estagio="${estagio.titulo}">
 
             <div class="citrus-scene">
-
-                <div class="citrus-sun"></div>
-
-                <div class="citrus-cloud cloud-1"></div>
-                <div class="citrus-cloud cloud-2"></div>
-                <div class="citrus-cloud cloud-3"></div>
-
-                <div class="citrus-mountains mountain-back"></div>
-                <div class="citrus-mountains mountain-front"></div>
-
-                <div class="citrus-field"></div>
-                <div class="citrus-soil"></div>
-
                 <div class="citrus-current-tree">
                     ${gerarPlantaCitros(tipoAtual)}
                 </div>
@@ -334,25 +340,10 @@ function gerarEvolucaoCitros(idade, id = "") {
                 aria-label="Fase atual do pomar: ${estagio.titulo}"
             >
 
-                <div class="citrus-stage-item stage-item-plantio">
-                    <span></span>
-                    <strong>Plantio</strong>
-                </div>
-
-                <div class="citrus-stage-item stage-item-formacao">
-                    <span></span>
-                    <strong>Formação</strong>
-                </div>
-
-                <div class="citrus-stage-item stage-item-desenvolvimento">
-                    <span></span>
-                    <strong>Desenvolvimento</strong>
-                </div>
-
-                <div class="citrus-stage-item stage-item-producao">
-                    <span></span>
-                    <strong>Produção</strong>
-                </div>
+                ${gerarItemEtapa("plantio", "Plantio")}
+                ${gerarItemEtapa("formacao", "Formação")}
+                ${gerarItemEtapa("desenvolvimento", "Desenvolvimento")}
+                ${gerarItemEtapa("producao", "Produção")}
 
             </div>
 
@@ -895,7 +886,11 @@ function obterRecomendacaoNPK(item) {
     const p = primeiroValorValido(item, ["dose_p", "doseP", "fosforo", "p_recomendado"]);
     const k = primeiroValorValido(item, ["dose_k", "doseK", "potassio", "k_recomendado"]);
     if (n !== null || p !== null || k !== null) {
-        return `N ${formatarValorReal(n)} · P ${formatarValorReal(p)} · K ${formatarValorReal(k)}`;
+        const dose = (rotulo, valor) => valor === null
+            ? `<span class="npk-value npk-pending">${rotulo} Não salvo</span>`
+            : `<span class="npk-value">${rotulo} ${formatarValorReal(valor)}</span>`;
+
+        return `${dose("N", n)} <span class="npk-separator">·</span> ${dose("P", p)} <span class="npk-separator">·</span> ${dose("K", k)}`;
     }
 
     const elemento = primeiroValorValido(item, ["elemento"]);
@@ -907,7 +902,7 @@ function obterRecomendacaoNPK(item) {
     return "Não salva";
 }
 
-function atualizarUltimoTalhaoHome(item) {
+function atualizarUltimoTalhaoHome(item, numeroTalhao = null) {
     const container = document.getElementById("homeUltimoTalhao");
     if (!container || !item) return;
 
@@ -916,7 +911,9 @@ function atualizarUltimoTalhaoHome(item) {
     const arvores = primeiroValorValido(item, ["arvores", "quantidade_arvores", "numero_arvores"]);
     const trv = primeiroValorValido(item, ["trv_hectare", "trv_ha", "trvPorHectare", "trv"]);
     const data = primeiroValorValido(item, ["data_registro", "data", "criado_em"], "Último registro");
-    const identificacao = primeiroValorValido(item, ["nome_talhao", "talhao", "identificacao"], "Último talhão registrado");
+    const identificacaoSalva = primeiroValorValido(item, ["nome_talhao", "talhao", "identificacao"]);
+    const numeroRegistro = numeroTalhao || primeiroValorValido(item, ["numero_talhao", "id"], 1);
+    const identificacao = identificacaoSalva || `Talhão ${numeroRegistro}`;
     const npk = obterRecomendacaoNPK(item);
 
     container.innerHTML = `
@@ -924,7 +921,7 @@ function atualizarUltimoTalhaoHome(item) {
             <i class="fa-solid fa-location-dot"></i>
             <div>
                 <div class="home-lot-name">${escaparHTML(identificacao)}</div>
-                <div class="home-lot-date"><i class="fa-regular fa-calendar"></i> ${escaparHTML(data)}</div>
+                <div class="home-lot-date"><i class="fa-regular fa-calendar"></i> Atualizado em ${escaparHTML(data)}</div>
             </div>
         </div>
 
@@ -934,7 +931,6 @@ function atualizarUltimoTalhaoHome(item) {
             <div class="home-stat"><i class="fa-solid fa-seedling"></i><div><span>Idade</span><strong>${formatarValorReal(idade, 0)} ${idade === 1 ? "ano" : "anos"}</strong></div></div>
             <div class="home-stat"><i class="fa-solid fa-tree"></i><div><span>Árvores</span><strong>${formatarValorReal(arvores, 0)}</strong></div></div>
             <div class="home-stat"><i class="fa-solid fa-road"></i><div><span>Área</span><strong>${formatarValorReal(area)} ha</strong></div></div>
-            <div class="home-stat"><i class="fa-solid fa-ruler-combined"></i><div><span>TRV por hectare</span><strong>${formatarValorReal(trv)}${trv !== null ? " m³/ha" : ""}</strong></div></div>
             <div class="home-stat home-stat-npk"><i class="fa-solid fa-flask-vial"></i><div><span>Recomendação NPK</span><strong>${npk}</strong></div></div>
         </div>`;
 }
@@ -1238,7 +1234,7 @@ async function carregarHistorico() {
             return;
         }
 
-        atualizarUltimoTalhaoHome(historico[0]);
+        atualizarUltimoTalhaoHome(historico[0], historico.length);
 
         container.innerHTML = historico.map((item, indice) => {
             const numeroTalhao = historico.length - indice;
