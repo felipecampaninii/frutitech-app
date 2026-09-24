@@ -1239,6 +1239,10 @@ async function carregarHistorico() {
         container.innerHTML = historico.map((item, indice) => {
             const numeroTalhao = historico.length - indice;
             const id = Number(item.id);
+            const estagioResumo = obterDadosEstagio(Number(item.idade) || 0);
+            const iconeEstagio = estagioResumo.classe === "stage-desenvolvimento" || estagioResumo.classe === "stage-producao"
+                ? "fa-leaf"
+                : "fa-seedling";
 
             return `
                 <article class="history-item" data-id="${id}">
@@ -1265,6 +1269,10 @@ async function carregarHistorico() {
                             <div class="history-date">
                                 <i class="fa-regular fa-calendar"></i>
                                 ${escaparHTML(item.data_registro || "-")}
+                            </div>
+                            <div class="history-stage-badge ${estagioResumo.classe}">
+                                <i class="fa-solid ${iconeEstagio}"></i>
+                                ${escaparHTML(estagioResumo.titulo)}
                             </div>
                         </div>
 
@@ -1390,3 +1398,49 @@ async function limparHistorico() {
 }
 
 window.limparHistorico = limparHistorico;
+
+// ========================================================
+// EXPERIÊNCIA VISUAL DO DIAGNÓSTICO
+// Mantém o mesmo input e o mesmo fluxo de análise já existente.
+// ========================================================
+
+function atualizarEtapaDiagnostico(etapaAtual) {
+    document.querySelectorAll("[data-diagnosis-step]").forEach((etapa) => {
+        const numero = Number(etapa.dataset.diagnosisStep);
+        etapa.classList.toggle("is-active", numero === etapaAtual);
+        etapa.classList.toggle("is-complete", numero < etapaAtual);
+    });
+}
+
+function abrirFonteDiagnostico(origem) {
+    const input = document.getElementById("inputFoto");
+    if (!input) return;
+
+    if (origem === "camera") input.setAttribute("capture", "environment");
+    else input.removeAttribute("capture");
+
+    input.click();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("inputFoto");
+    const botao = document.getElementById("btnAnalisarDiagnostico");
+    const resultado = document.getElementById("cardResultadoIA");
+
+    if (input && botao) {
+        input.addEventListener("change", () => {
+            const possuiFoto = Boolean(input.files && input.files[0]);
+            botao.disabled = !possuiFoto;
+            atualizarEtapaDiagnostico(possuiFoto ? 2 : 1);
+        });
+    }
+
+    if (resultado) {
+        new MutationObserver(() => {
+            if (resultado.style.display !== "none") atualizarEtapaDiagnostico(3);
+        }).observe(resultado, { attributes: true, attributeFilter: ["style", "class"] });
+    }
+});
+
+window.abrirFonteDiagnostico = abrirFonteDiagnostico;
+window.atualizarEtapaDiagnostico = atualizarEtapaDiagnostico;
