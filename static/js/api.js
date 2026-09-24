@@ -249,68 +249,40 @@ function gerarArvore(classe, frutos) {
 // Gera as fases: plantio, formação, desenvolvimento e produção
 // ========================================================
 
-function gerarPlantaCitros(tipo) {
-    const configuracoes = {
-        plantio: { escala: 0.54, folhas: 3, flores: 0, frutos: 0 },
-        formacao: { escala: 0.76, folhas: 16, flores: 6, frutos: 0 },
-        desenvolvimento: { escala: 0.92, folhas: 24, flores: 10, frutos: 0 },
-        producao: { escala: 1.08, folhas: 30, flores: 2, frutos: 12 }
+function obterImagemEstagioCitros(tipo) {
+    const imagens = {
+        plantio: "/static/images/citros-plantio.jpg",
+        formacao: "/static/images/citros-formacao.jpg",
+        desenvolvimento: "/static/images/citros-desenvolvimento.jpg",
+        producao: "/static/images/citros-producao.jpg"
     };
 
-    const c = configuracoes[tipo] || configuracoes.plantio;
-    const folhas = [
-        [63,43],[80,32],[98,39],[113,54],[119,72],[111,91],[95,103],[75,105],
-        [57,96],[43,83],[39,65],[49,50],[72,58],[91,54],[101,72],[88,84],
-        [67,81],[55,69],[78,70],[104,88],[53,105],[119,101],[34,94],[129,83],
-        [66,28],[91,24],[112,35],[41,57],[128,62],[78,93]
-    ];
-    const flores = [[55,54],[84,39],[108,60],[69,74],[98,87],[48,88],[119,78],[78,101],[91,65],[63,96]];
-    const frutos = [[55,51],[81,38],[105,52],[119,70],[99,75],[75,63],[48,77],[64,91],[91,96],[113,91],[77,105],[43,96]];
+    return imagens[tipo] || imagens.plantio;
+}
 
-    if (tipo === "plantio") {
-        return `
-            <svg class="citrus-tree-svg tree-${tipo}" viewBox="0 0 160 150" role="img" aria-label="Muda cítrica em fase de plantio">
-                <ellipse cx="80" cy="140" rx="35" ry="7" fill="rgba(82,45,24,.28)"/>
-                <path d="M77 139 C78 112 77 86 79 60" stroke="#78401f" stroke-width="7" stroke-linecap="round"/>
-                <path d="M79 91 C65 78 56 68 48 58" stroke="#78401f" stroke-width="4" stroke-linecap="round"/>
-                <path d="M79 80 C91 68 99 58 106 47" stroke="#78401f" stroke-width="4" stroke-linecap="round"/>
-                <path d="M49 58 C33 61 21 53 18 40 C34 35 52 40 61 54 C58 56 54 57 49 58Z" fill="url(#leafPlantio)"/>
-                <path d="M102 50 C116 48 127 37 129 24 C113 22 97 29 91 44 C94 47 97 49 102 50Z" fill="url(#leafPlantio)"/>
-                <path d="M80 65 C67 52 68 32 80 18 C93 31 94 51 80 65Z" fill="url(#leafPlantio)"/>
-                <path d="M25 42 Q43 48 58 55 M125 28 Q108 36 94 45 M80 23 L80 61" fill="none" stroke="rgba(210,244,192,.5)" stroke-width="1.4"/>
-                <defs><linearGradient id="leafPlantio" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#58b94d"/><stop offset="1" stop-color="#087333"/></linearGradient></defs>
-            </svg>`;
-    }
+function gerarPlantaCitros(tipo) {
+    const nomes = {
+        plantio: "Muda cítrica em fase de plantio",
+        formacao: "Laranjeira jovem em formação",
+        desenvolvimento: "Laranjeira em desenvolvimento e florescimento",
+        producao: "Laranjeira adulta em produção"
+    };
 
-    const folhasSvg = folhas.slice(0, c.folhas).map((p, i) =>
-        `<g transform="translate(${p[0]} ${p[1]}) rotate(${(i % 5 - 2) * 17})">
-            <path d="M-12 0 C-7-8 7-9 13 0 C7 8-7 8-12 0Z" fill="${i % 5 === 0 ? '#5dac3f' : i % 3 === 0 ? '#075f2b' : i % 2 === 0 ? '#16813a' : '#2d9440'}"/>
-            <path d="M-8 0 L9 0" stroke="rgba(204,238,179,.42)" stroke-width="1"/>
-        </g>`
-    ).join("");
-    const floresSvg = flores.slice(0, c.flores).map(p =>
-        `<g transform="translate(${p[0]} ${p[1]})"><circle r="5.5" fill="#fffdf4"/><circle r="2" fill="#ffd84a"/></g>`
-    ).join("");
-    const frutosSvg = frutos.slice(0, c.frutos).map(p =>
-        `<g transform="translate(${p[0]} ${p[1]})"><circle r="6.5" fill="url(#orangeFruit)"/><ellipse cx="2" cy="-6" rx="4" ry="2" fill="#2f8b2f" transform="rotate(-25)"/></g>`
-    ).join("");
+    const tipoSeguro = Object.prototype.hasOwnProperty.call(nomes, tipo)
+        ? tipo
+        : "plantio";
 
     return `
-        <svg class="citrus-tree-svg tree-${tipo}" style="--tree-scale:${c.escala}" viewBox="0 0 160 150" role="img" aria-label="Citro em fase de ${tipo}">
-            <defs>
-                <linearGradient id="trunk-${tipo}" x1="0" x2="1"><stop stop-color="#603116"/><stop offset=".5" stop-color="#9b5a2d"/><stop offset="1" stop-color="#5c2c15"/></linearGradient>
-                <radialGradient id="orangeFruit" cx="30%" cy="25%"><stop stop-color="#fff48c"/><stop offset=".28" stop-color="#ffc629"/><stop offset="1" stop-color="#e98200"/></radialGradient>
-                <linearGradient id="canopy-${tipo}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2f963d"/><stop offset=".55" stop-color="#087030"/><stop offset="1" stop-color="#034f27"/></linearGradient>
-            </defs>
-            <ellipse cx="80" cy="140" rx="43" ry="8" fill="rgba(82,45,24,.30)"/>
-            <path d="M78 140 C76 119 80 101 79 69" stroke="url(#trunk-${tipo})" stroke-width="11" stroke-linecap="round"/>
-            <path d="M80 105 C70 91 59 77 45 66 M80 99 C94 84 105 70 120 61 M80 89 C78 71 78 57 82 42 M65 85 L55 58 M96 81 L107 52" fill="none" stroke="#70401f" stroke-width="5.5" stroke-linecap="round"/>
-            <path d="M34 78 C25 58 37 39 55 34 C59 15 81 11 94 25 C112 19 132 33 129 52 C147 64 139 88 122 94 C114 112 91 112 79 101 C62 113 39 103 40 88 C34 86 31 82 34 78Z" fill="url(#canopy-${tipo})" opacity=".96"/>
-            <path d="M42 58 C55 35 80 29 98 38 C78 40 57 48 42 58Z" fill="rgba(117,183,68,.34)"/>
-            <g class="svg-foliage">${folhasSvg}</g>
-            <g class="svg-flowers">${floresSvg}</g>
-            <g class="svg-fruits">${frutosSvg}</g>
-        </svg>`;
+        <figure class="citrus-plant plant-${tipoSeguro}">
+            <span class="plant-shadow" aria-hidden="true"></span>
+            <img
+                src="${obterImagemEstagioCitros(tipoSeguro)}"
+                alt="${nomes[tipoSeguro]}"
+                loading="lazy"
+                decoding="async"
+            >
+        </figure>
+    `;
 }
 
 
@@ -1384,4 +1356,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ========================================================
 // LIMPAR HISTÓRICO
+// ========================================================
 
+async function limparHistorico() {
+    const usuario = obterUsuarioLogado();
+
+    if (!usuario) {
+        alert("Usuário não identificado. Faça login novamente.");
+        return;
+    }
+
+    const confirmar = confirm(
+        "Tem certeza que deseja apagar todos os registros do seu histórico?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+        const response = await fetch(
+            `${API_SIMULACOES_URL}?usuario_id=${encodeURIComponent(usuario.id)}`,
+            { method: "DELETE" }
+        );
+
+        const resultado = await response.json();
+
+        if (!response.ok) {
+            alert("Erro ao limpar histórico: " + (resultado.erro || "Erro desconhecido."));
+            return;
+        }
+
+        alert("Histórico apagado com sucesso!");
+        await carregarHistorico();
+    } catch (erro) {
+        console.error("Erro ao apagar histórico:", erro);
+        alert("Erro ao apagar os dados.");
+    }
+}
+
+window.limparHistorico = limparHistorico;
