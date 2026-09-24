@@ -8,9 +8,6 @@
     <!-- Ícones via FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- CSS completo do aplicativo (Flask) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
     <style>
         /* ==================== ESTILOS GLOBAIS ==================== */
         * {
@@ -2710,6 +2707,9 @@ body{
     .sim-step-number { width: 29px; height: 29px; }
 }
 </style>
+
+    <!-- Carregado por último para que o arquivo externo seja a fonte final dos estilos. -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20260924">
 </head>
 <body>
 
@@ -2895,11 +2895,14 @@ body{
                                     <div class="citrus-field"></div>
                                     <div class="citrus-soil"></div>
 
-                                    <div class="citrus-growth-row">
-                                        <figure class="citrus-plant plant-plantio"><span class="plant-shadow"></span><img src="/static/images/citros-plantio.jpg" alt="Muda cítrica em fase de plantio"></figure>
-                                        <figure class="citrus-plant plant-formacao"><span class="plant-shadow"></span><img src="/static/images/citros-formacao.jpg" alt="Laranjeira jovem em formação"></figure>
-                                        <figure class="citrus-plant plant-desenvolvimento"><span class="plant-shadow"></span><img src="/static/images/citros-desenvolvimento.jpg" alt="Laranjeira em desenvolvimento e florescimento"></figure>
-                                        <figure class="citrus-plant plant-producao"><span class="plant-shadow"></span><img src="/static/images/citros-producao.jpg" alt="Laranjeira adulta em produção"></figure>
+                                    <div class="citrus-current-tree">
+                                        <figure class="citrus-plant plant-formacao">
+                                            <span class="plant-shadow" aria-hidden="true"></span>
+                                            <img
+                                                src="{{ url_for('static', filename='images/laranjeira-formacao.png') }}"
+                                                alt="Laranjeira jovem em formação"
+                                            >
+                                        </figure>
                                     </div>
                                 </div>
 
@@ -3178,7 +3181,7 @@ body{
         </p>
 
         <figure class="canopy-reference">
-            <img src="/static/images/modelagem-copa-citros.jpg" alt="Diagrama de uma laranjeira indicando D1, D2, altura, primeiras ramificações e espaçamentos">
+            <img src="{{ url_for('static', filename='images/modelagem-copa-citros.png') }}" alt="Diagrama de uma laranjeira indicando D1, D2, altura, primeiras ramificações e espaçamentos">
             <figcaption>D1: copa no sentido da linha · D2: copa no sentido da entrelinha · H: altura total da planta.</figcaption>
         </figure>
 
