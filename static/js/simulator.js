@@ -90,7 +90,6 @@ const FONTES_COMERCIAIS = {
     ],
 
     Cu: [
-        { nome: "Oxicloreto de Cobre (50% Cu)", concentracao: 50 },
         { nome: "Sulfato de Cobre (25% Cu)", concentracao: 25 }
     ],
 
@@ -290,6 +289,15 @@ function numero(id) {
     return Number.isFinite(valor)
         ? valor
         : 0;
+}
+
+// Diferencia um resultado laboratorial ausente de um teor realmente igual a zero.
+function numeroOpcional(id) {
+    const elemento = document.getElementById(id);
+    if (!elemento || String(elemento.value).trim() === "") return null;
+
+    const valor = Number(String(elemento.value).replace(",", "."));
+    return Number.isFinite(valor) ? valor : null;
 }
 
 
@@ -544,219 +552,52 @@ function lerNumeroClima(id) {
 // ==========================================================
 
 function avaliarJanelaClimatica() {
+    const temperatura = lerNumeroClima("clima-temp");
+    const umidade = lerNumeroClima("clima-umidade");
+    const vento = lerNumeroClima("clima-vento");
+    const chuva = lerNumeroClima("clima-chuva");
 
-    const temperatura =
-        lerNumeroClima(
-            "clima-temp"
-        );
-
-
-    const umidade =
-        lerNumeroClima(
-            "clima-umidade"
-        );
-
-
-    const vento =
-        lerNumeroClima(
-            "clima-vento"
-        );
-
-
-    // ======================================================
-    // DADOS AINDA NÃO FORAM CARREGADOS
-    // ======================================================
-
-    if (
-        temperatura === null ||
-        umidade === null ||
-        vento === null
-    ) {
-
+    if ([temperatura, umidade, vento, chuva].some((valor) => valor === null)) {
         return {
-
-            nivel:
-                "amarelo",
-
-            recomendavel:
-                false,
-
-            titulo:
-                "AGUARDANDO DADOS CLIMÁTICOS",
-
-            resumo:
-                "Ainda não é possível recomendar a pulverização.",
-
-            mensagem:
-                "Aguarde a atualização dos dados meteorológicos da cidade."
+            nivel: "amarelo",
+            recomendavel: false,
+            titulo: "AGUARDANDO DADOS METEOROLÓGICOS",
+            resumo: "Ainda não é possível estimar a janela de aplicação.",
+            mensagem: "Aguarde a atualização da previsão da cidade e confirme as condições no próprio talhão."
         };
     }
 
+    const temperaturaIdeal = temperatura < 30;
+    const umidadeIdeal = umidade > 55;
+    const ventoIdeal = vento >= 3 && vento <= 10;
+    const chuvaFavoravel = chuva < 40;
 
-
-    // ======================================================
-    // VERIFICA AS FAIXAS IDEAIS
-    // ======================================================
-
-    const temperaturaIdeal =
-        temperatura < 30;
-
-
-    const umidadeIdeal =
-        umidade > 55;
-
-
-    const ventoIdeal =
-        vento >= 3 &&
-        vento <= 10;
-
-
-
-    // ======================================================
-    // STATUS VERDE
-    // TODAS AS CONDIÇÕES ESTÃO ADEQUADAS
-    // ======================================================
-
-    if (
-        temperaturaIdeal &&
-        umidadeIdeal &&
-        ventoIdeal
-    ) {
-
+    if (temperaturaIdeal && umidadeIdeal && ventoIdeal && chuvaFavoravel) {
         return {
-
-            nivel:
-                "verde",
-
-            recomendavel:
-                true,
-
-            titulo:
-                "APTO PARA PULVERIZAÇÃO",
-
-            resumo:
-                "Momento recomendável para a adubação foliar.",
-
-            mensagem:
-                `Temperatura de ${temperatura} °C, ` +
-                `umidade relativa de ${umidade}% e ` +
-                `vento de ${vento} km/h dentro das ` +
-                `faixas ideais.`
+            nivel: "verde",
+            recomendavel: true,
+            titulo: "CONDIÇÕES ESTIMADAS FAVORÁVEIS",
+            resumo: "A previsão indica uma possível janela para aplicação.",
+            mensagem: `Temperatura de ${temperatura} °C, umidade de ${umidade}%, vento de ${vento} km/h e chuva de ${chuva}%. Confirme os dados no talhão e siga o rótulo do produto.`
         };
     }
-
-
-
-    // ======================================================
-    // CONDIÇÕES CRÍTICAS
-    // ======================================================
-
-    const condicaoCritica =
-
-        temperatura >= 35 ||
-
-        umidade <= 40 ||
-
-        vento < 1 ||
-
-        vento > 15;
-
-
-
-    // ======================================================
-    // MONTA A LISTA DE PROBLEMAS ENCONTRADOS
-    // ======================================================
 
     const problemas = [];
+    if (!temperaturaIdeal) problemas.push(`temperatura de ${temperatura} °C (referência: abaixo de 30 °C)`);
+    if (!umidadeIdeal) problemas.push(`umidade de ${umidade}% (referência: acima de 55%)`);
+    if (!ventoIdeal) problemas.push(`vento de ${vento} km/h (referência: 3 a 10 km/h)`);
+    if (!chuvaFavoravel) problemas.push(`probabilidade de chuva de ${chuva}% nas próximas horas`);
 
-
-    if (!temperaturaIdeal) {
-
-        problemas.push(
-
-            `temperatura de ${temperatura} °C ` +
-            `(ideal abaixo de 30 °C)`
-
-        );
-    }
-
-
-    if (!umidadeIdeal) {
-
-        problemas.push(
-
-            `umidade de ${umidade}% ` +
-            `(ideal acima de 55%)`
-
-        );
-    }
-
-
-    if (!ventoIdeal) {
-
-        problemas.push(
-
-            `vento de ${vento} km/h ` +
-            `(ideal entre 3 e 10 km/h)`
-
-        );
-    }
-
-
-
-    // ======================================================
-    // STATUS VERMELHO
-    // CONDIÇÃO CLARAMENTE DESFAVORÁVEL
-    // ======================================================
-
-    if (condicaoCritica) {
-
-        return {
-
-            nivel:
-                "vermelho",
-
-            recomendavel:
-                false,
-
-            titulo:
-                "NÃO APTO PARA PULVERIZAÇÃO",
-
-            resumo:
-                "Não é recomendável realizar a adubação foliar agora.",
-
-            mensagem:
-                "Condição climática desfavorável: " +
-                problemas.join("; ") +
-                ". Aguarde uma melhora antes da aplicação."
-        };
-    }
-
-
-
-    // ======================================================
-    // STATUS AMARELO
-    // FORA DO IDEAL, MAS SEM CONDIÇÃO CRÍTICA
-    // ======================================================
+    const condicaoCritica = temperatura >= 35 || umidade <= 40 || vento < 1 || vento > 15 || chuva >= 70;
 
     return {
-
-        nivel:
-            "amarelo",
-
-        recomendavel:
-            false,
-
-        titulo:
-            "ATENÇÃO — AGUARDE MELHORA",
-
-        resumo:
-            "O momento ainda não é recomendável para a adubação foliar.",
-
-        mensagem:
-            "Condição fora da faixa ideal: " +
-            problemas.join("; ") +
-            ". Verifique novamente antes da aplicação."
+        nivel: condicaoCritica ? "vermelho" : "amarelo",
+        recomendavel: false,
+        titulo: condicaoCritica ? "CONDIÇÕES ESTIMADAS DESFAVORÁVEIS" : "CONDIÇÕES ESTIMADAS COM RESTRIÇÃO",
+        resumo: condicaoCritica
+            ? "A previsão não favorece a aplicação neste momento."
+            : "Confirme as condições diretamente no talhão antes da aplicação.",
+        mensagem: `${problemas.join("; ")}. A previsão da cidade é orientativa e não substitui medição local nem as instruções do rótulo.`
     };
 }
 
@@ -796,7 +637,7 @@ function avaliarPhAgua(ph) {
                 "acima do ideal",
 
             mensagem:
-                "pH acima de 6,5. Avalie a correção com um acidificante compatível antes de preparar a calda."
+                "pH da água acima de 6,5. É apenas uma referência geral: confirme a faixa do produto e avalie o pH da calda final antes de qualquer correção."
         };
     }
 
@@ -809,7 +650,7 @@ function avaliarPhAgua(ph) {
                 "abaixo do ideal",
 
             mensagem:
-                "pH abaixo de 5,5. Confirme a compatibilidade da fonte e evite acidificar ainda mais a calda."
+                "pH da água abaixo de 5,5. Confirme a compatibilidade da fonte, o rótulo e o pH da calda final; não acidifique automaticamente."
         };
     }
 
@@ -820,7 +661,7 @@ function avaliarPhAgua(ph) {
             "adequado",
 
         mensagem:
-            "pH dentro da faixa de referência de 5,5 a 6,5."
+            "pH da água dentro da referência geral de 5,5 a 6,5. Confirme também o intervalo indicado no rótulo e o pH da calda final."
     };
 }
 
@@ -1866,15 +1707,19 @@ function verificarEntrega(
 // ==========================================================
 
 function calcularVolumeCaldaReferencia(
-    areaTalhao
+    areaTalhao,
+    volumePorHectare = 2000
 ) {
 
     areaTalhao =
         Number(areaTalhao);
 
+    volumePorHectare = Number(volumePorHectare);
+
 
     if (
-        areaTalhao <= 0
+        areaTalhao <= 0 ||
+        volumePorHectare <= 0
     ) {
         return 0;
     }
@@ -1882,7 +1727,7 @@ function calcularVolumeCaldaReferencia(
 
     return (
         areaTalhao *
-        2000
+        volumePorHectare
     );
 }
 
@@ -1929,6 +1774,16 @@ function calcularMassaMicronutriente(
     )
     /
     1000000;
+}
+
+// Converte a massa de nutriente elementar na quantidade da fonte comercial.
+// Ex.: 0,8 kg de Mn com fonte a 26% = 3,077 kg do produto no talhão.
+function calcularMassaFonteComercial(massaNutriente, concentracaoFonte) {
+    massaNutriente = Number(massaNutriente);
+    concentracaoFonte = Number(concentracaoFonte);
+
+    if (massaNutriente <= 0 || concentracaoFonte <= 0 || concentracaoFonte > 100) return 0;
+    return (massaNutriente * 100) / concentracaoFonte;
 }
 
 
@@ -2039,6 +1894,7 @@ function mostrarResultados(
         volumeCaldaHa,
 
         massaMicronutriente,
+        massaProdutoTotal,
 
         doseProduto,
 
@@ -2062,10 +1918,7 @@ function mostrarResultados(
     let textoDose = "";
 
 
-    if (
-        ["N", "P", "K"]
-            .includes(elemento)
-    ) {
+    if (["N", "P", "K"].includes(elemento)) {
 
         textoDose = `
 
@@ -2073,7 +1926,7 @@ function mostrarResultados(
                 <i class="fa-solid fa-weight-scale"></i>
 
                 <strong>
-                    Dose da fonte comercial:
+                    Dose foliar da fonte comercial:
                 </strong>
 
                 ${formatarNumero(
@@ -2087,16 +1940,16 @@ function mostrarResultados(
                 <i class="fa-solid fa-check-double"></i>
 
                 <strong>
-                    Nutriente entregue:
+                    Nutriente elementar na aplicação foliar:
                 </strong>
 
                 ${formatarNumero(
                     nutrienteEntregue,
                     2
                 )} kg/ha
-
-                (${statusSelecionado})
             </li>
+
+            <li><i class="fa-solid fa-circle-info"></i><strong> Separação agronômica:</strong> esta dose foliar foi calculada pela concentração desejada da calda e não substitui a recomendação anual de NPK.</li>
 
         `;
     }
@@ -2117,13 +1970,20 @@ function mostrarResultados(
                 <i class="fa-solid fa-flask"></i>
 
                 <strong>
-                    Massa do micronutriente:
+                    Massa do nutriente elementar no talhão:
                 </strong>
 
                 ${formatarNumero(
                     massaMicronutriente,
                     3
                 )} kg
+            </li>
+
+            <li>
+                <i class="fa-solid fa-weight-hanging"></i>
+                <strong>Massa total da fonte comercial:</strong>
+                ${formatarNumero(massaProdutoTotal, 3)} kg
+                (${formatarNumero(doseProduto, 3)} kg/ha)
             </li>
 
         `;
@@ -2238,7 +2098,7 @@ function mostrarResultados(
 
                 <i class="fa-solid fa-seedling"></i>
 
-                Recomendação NPK
+                Planejamento anual de adubação NPK
 
             </div>
 
@@ -2282,6 +2142,8 @@ function mostrarResultados(
 
             </ul>
 
+            <p class="result-hint">Valores destinados ao planejamento nutricional do pomar. Não correspondem à dose de pulverização foliar.</p>
+
         </div>
 
 
@@ -2298,9 +2160,11 @@ function mostrarResultados(
 
 
             <div class="result-volume-grid">
-                <div class="result-volume-item"><span>Volume por hectare</span><strong>${formatarNumero(volumeCaldaHa,0)} L/ha</strong></div>
+                <div class="result-volume-item"><span>Volume calibrado informado</span><strong>${formatarNumero(volumeCaldaHa,0)} L/ha</strong></div>
                 <div class="result-volume-item"><span>Volume total do talhão</span><strong>${formatarNumero(volumeCalda,0)} L</strong></div>
             </div>
+
+            <p class="result-hint">O volume informado não é convertido automaticamente a partir do TRV. Confirme-o pela calibração do equipamento e orientação técnica.</p>
 
             <ul class="recom-list">
 
@@ -2322,6 +2186,8 @@ function mostrarResultados(
                 ${textoDose}
 
                 ${textoMicro}
+
+                <li><i class="fa-solid fa-tags"></i><strong> Garantia e nutrientes acompanhantes:</strong> confirme no rótulo a composição completa da fonte. MAP, nitrato de potássio e sulfato de magnésio fornecem mais de um nutriente.</li>
 
                 <li><i class="fa-solid fa-vial"></i><strong> Qualidade da água:</strong> ${avaliacaoPh.mensagem} CE: ${condutividade > 0 ? formatarNumero(condutividade,2) + " dS/m" : "não informada"}.</li>
                 <li><i class="fa-solid fa-leaf"></i><strong> Estágio foliar:</strong> ${estagioFoliar === "jovens" ? "folhas jovens" : "folhas maduras"}. Adjuvante: ${recomendacaoAdjuvante}.</li>
@@ -2435,6 +2301,36 @@ function validarDadosSimulacao(
         return false;
     }
 
+    if ([dados.nFoliar, dados.pResina, dados.kTrocavel].some((valor) => valor === null)) {
+        alert("Informe N foliar, P-resina e K trocável. Campo vazio não pode ser interpretado como deficiência.");
+        return false;
+    }
+
+    if (dados.nFoliar < 0 || dados.pResina < 0 || dados.kTrocavel < 0) {
+        alert("Os resultados das análises nutricionais não podem ser negativos.");
+        return false;
+    }
+
+    if (dados.concentracaoFonte <= 0 || dados.concentracaoFonte > 100) {
+        alert("Informe uma garantia da fonte comercial entre 0 e 100%.");
+        return false;
+    }
+
+    if (dados.concentracaoMgL <= 0) {
+        alert("Informe a concentração desejada do nutriente na calda em mg/L, conforme o rótulo ou orientação técnica.");
+        return false;
+    }
+
+    if (dados.volumeCaldaHa <= 0) {
+        alert("Informe o volume de calda obtido na calibração do equipamento.");
+        return false;
+    }
+
+    if (!dados.confirmacaoRotulo) {
+        alert("Confirme a indicação, a concentração e a compatibilidade no rótulo antes de calcular a aplicação foliar.");
+        return false;
+    }
+
 
     return true;
 }
@@ -2531,19 +2427,19 @@ async function salvarECalcular() {
 
 
     const nFoliar =
-        numero(
+        numeroOpcional(
             "simNFoliar"
         );
 
 
     const pResina =
-        numero(
+        numeroOpcional(
             "simPResina"
         );
 
 
     const kTrocavel =
-        numero(
+        numeroOpcional(
             "simKTrocavel"
         );
 
@@ -2582,6 +2478,8 @@ async function salvarECalcular() {
             "simConcentracaoMgL"
         );
 
+    const volumeCaldaHaInformado = numero("simVolumeCaldaHa");
+
     const bFoliar = numero("simBFoliar");
     const znFoliar = numero("simZnFoliar");
     const mnFoliar = numero("simMnFoliar");
@@ -2590,6 +2488,7 @@ async function salvarECalcular() {
     const condutividade = numero("simCondutividade");
     const estagioFoliar = document.getElementById("simEstagioFoliar")?.value || "maduras";
     const adjuvante = document.getElementById("simAdjuvante")?.value || "nao-informado";
+    const confirmacaoRotulo = Boolean(document.getElementById("simConfirmacaoRotulo")?.checked);
 
 
 
@@ -2603,6 +2502,23 @@ async function salvarECalcular() {
         );
 
         return;
+    }
+
+    if (objetivo === "Correção") {
+        const analisesPorElemento = {
+            N: nFoliar,
+            P: pResina,
+            K: kTrocavel,
+            B: numeroOpcional("simBFoliar"),
+            Zn: numeroOpcional("simZnFoliar"),
+            Mn: numeroOpcional("simMnFoliar"),
+            Cu: numeroOpcional("simCuFoliar")
+        };
+
+        if (Object.prototype.hasOwnProperty.call(analisesPorElemento, elemento) && analisesPorElemento[elemento] === null) {
+            alert(`Para correção de ${elemento}, informe primeiro o resultado correspondente da análise nutricional.`);
+            return;
+        }
     }
 
 
@@ -2621,7 +2537,14 @@ async function salvarECalcular() {
         espacamento,
         espacamentoPlantas,
 
-        produtividadeTon
+        produtividadeTon,
+        nFoliar,
+        pResina,
+        kTrocavel,
+        concentracaoFonte,
+        concentracaoMgL,
+        volumeCaldaHa: volumeCaldaHaInformado,
+        confirmacaoRotulo
     };
 
 
@@ -2713,10 +2636,11 @@ async function salvarECalcular() {
 
     const volumeCalda =
         calcularVolumeCaldaReferencia(
-            area
+            area,
+            volumeCaldaHaInformado
         );
 
-    const volumeCaldaHa = 2000;
+    const volumeCaldaHa = volumeCaldaHaInformado;
     const avaliacaoPh = avaliarPhAgua(phAgua);
     const recomendacaoAdjuvante = recomendarAdjuvante(estagioFoliar, adjuvante);
     const janelaClimatica = avaliarJanelaClimatica();
@@ -2724,28 +2648,28 @@ async function salvarECalcular() {
 
 
     // ======================================================
-    // MASSA DO MICRONUTRIENTE
+    // MASSA DO NUTRIENTE NA APLICAÇÃO FOLIAR
+    // A concentração desejada (mg/L) é independente da recomendação anual NPK.
     // ======================================================
 
     let massaMicronutriente = 0;
 
 
-    if (
-        ["Zn", "Mn", "B", "Cu", "Mg", "S"]
-            .includes(elemento)
-    ) {
+    massaMicronutriente = calcularMassaMicronutriente(
+        concentracaoMgL,
+        volumeCalda
+    );
 
-        massaMicronutriente =
-            calcularMassaMicronutriente(
-                concentracaoMgL,
-                volumeCalda
-            );
-    }
+    const massaProdutoTotal = calcularMassaFonteComercial(
+        massaMicronutriente,
+        concentracaoFonte
+    );
 
 
 
     // ======================================================
-    // DOSE DO PRODUTO PARA N, P OU K
+    // DOSE FOLIAR DA FONTE COMERCIAL
+    // Não utiliza os kg/ha da recomendação anual de NPK.
     // ======================================================
 
     const recomendadoElemento =
@@ -2763,31 +2687,9 @@ async function salvarECalcular() {
         "não avaliado";
 
 
-    if (
-        ["N", "P", "K"]
-            .includes(elemento)
-    ) {
-
-        doseProduto =
-            calcularDoseProduto(
-                recomendadoElemento,
-                concentracaoFonte
-            );
-
-
-        nutrienteEntregue =
-            calcularNutrienteEntregue(
-                doseProduto,
-                concentracaoFonte
-            );
-
-
-        statusSelecionado =
-            verificarEntrega(
-                recomendadoElemento,
-                nutrienteEntregue
-            );
-    }
+    doseProduto = area > 0 ? massaProdutoTotal / area : 0;
+    nutrienteEntregue = area > 0 ? massaMicronutriente / area : 0;
+    statusSelecionado = "aplicação foliar calculada separadamente do NPK anual";
 
 
 
@@ -2870,6 +2772,7 @@ async function salvarECalcular() {
         volumeCaldaHa,
 
         massaMicronutriente,
+        massaProdutoTotal,
 
         doseProduto,
 
@@ -3370,15 +3273,32 @@ document.addEventListener(
             ],
             3: [
                 "simFinalidade",
-                "simProdutividadeTon"
+                "simProdutividadeTon",
+                "simNFoliar",
+                "simPResina",
+                "simKTrocavel"
             ],
-            4: []
+            4: [
+                "simObjetivo",
+                "selectElemento",
+                "selectFonte",
+                "simConcentracao",
+                "simConcentracaoMgL",
+                "simVolumeCaldaHa"
+            ]
         };
 
         const campoAusente = (camposObrigatorios[numero] || [])
             .find((id) => !campoPreenchido(id));
 
-        if (!campoAusente) return true;
+        if (!campoAusente) {
+            if (numero === 4 && !document.getElementById("simConfirmacaoRotulo")?.checked) {
+                alert("Confirme a leitura do rótulo e a compatibilidade da aplicação para continuar.");
+                document.getElementById("simConfirmacaoRotulo")?.focus();
+                return false;
+            }
+            return true;
+        }
 
         const campo = document.getElementById(campoAusente);
 
