@@ -1,32 +1,14 @@
 import os
 import base64
-import math
-import secrets
 import requests
 from pathlib import Path
-from flask import Flask, request, jsonify, render_template, session
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
-app.config.update(
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SECURE", "false").lower() == "true"
-)
-origens_permitidas = [
-    origem.strip()
-    for origem in os.environ.get("ALLOWED_ORIGINS", "").split(",")
-    if origem.strip()
-]
-if origens_permitidas:
-    CORS(
-        app,
-        resources={r"/api/*": {"origins": origens_permitidas}},
-        supports_credentials=True
-    )
+CORS(app)
 
 @app.route('/')
 def pagina_inicial():
@@ -42,7 +24,7 @@ def pagina_inicial():
 #   $env:LITEROUTER_API_KEY="SUA_NOVA_CHAVE"
 #
 # O endpoint segue o formato OpenAI-compatible.
-LITEROUTER_API_KEY = os.environ.get("LITEROUTER_API_KEY", "")
+LITEROUTER_API_KEY = ("4ae8814f468474a76df162f553a330b32963c34b71b3b7c71604da44bcea868a")
 LITEROUTER_URL = "https://api.literouter.com/v1/chat/completions"
 
 # Modelo multimodal/vision. Se sua conta LiteRouter usar outro ID de modelo
@@ -55,12 +37,12 @@ TIPOS_PERMITIDOS = {"image/jpeg", "image/png", "image/webp"}
 
 
 DB_CONFIG = {
-    "host": os.environ.get("DB_HOST", ""),
-    "port": int(os.environ.get("DB_PORT", "3306")),
-    "user": os.environ.get("DB_USER", ""),
-    "password": os.environ.get("DB_PASSWORD", ""),
-    "database": os.environ.get("DB_NAME", "frutech_db"),
-    "ssl_disabled": os.environ.get("DB_SSL_DISABLED", "false").lower() == "true"
+    "host": "projetobru1-felipe25campaninisilva-1e7b.l.aivencloud.com",
+    "port": 14672,
+    "user": "avnadmin",
+    "password": "AVNS_jceMMFobSxeiRbYH2NK",
+    "database": "defaultdb",
+    "ssl_disabled": False
 }
 
 
@@ -157,14 +139,12 @@ def init_db():
                 altura_total DECIMAL(10,3) DEFAULT 0.000,
                 altura_caule DECIMAL(10,3) DEFAULT 0.000,
                 espacamento_linhas DECIMAL(10,3) DEFAULT 0.000,
-                espacamento_plantas DECIMAL(10,3) DEFAULT 0.000,
 
                 diametro_medio DECIMAL(10,3) DEFAULT 0.000,
                 altura_util DECIMAL(10,3) DEFAULT 0.000,
                 volume_copa DECIMAL(14,3) DEFAULT 0.000,
                 volume_copas_talhao DECIMAL(16,3) DEFAULT 0.000,
                 trv DECIMAL(16,3) DEFAULT 0.000,
-                trv_por_hectare DECIMAL(16,3) DEFAULT 0.000,
 
                 finalidade VARCHAR(30) DEFAULT NULL,
                 produtividade_ton DECIMAL(10,3) DEFAULT 0.000,
@@ -175,24 +155,11 @@ def init_db():
                 objetivo VARCHAR(50) NOT NULL,
                 elemento VARCHAR(20) NOT NULL,
                 fonte VARCHAR(150) NOT NULL,
-                produto_nome VARCHAR(120) DEFAULT NULL,
-                produto_fabricante VARCHAR(120) DEFAULT NULL,
-                produto_identificacao VARCHAR(120) DEFAULT NULL,
                 concentracao DECIMAL(10,3) DEFAULT 0.000,
                 concentracao_mg_l DECIMAL(12,3) DEFAULT 0.000,
 
                 volume DECIMAL(14,3) DEFAULT 0.000,
-                volume_por_hectare DECIMAL(14,3) DEFAULT 0.000,
                 massa_micronutriente DECIMAL(14,6) DEFAULT 0.000,
-                massa_fonte_total DECIMAL(14,6) DEFAULT 0.000,
-                dose_min_rotulo DECIMAL(14,6) DEFAULT 0.000,
-                dose_max_rotulo DECIMAL(14,6) DEFAULT 0.000,
-                dose_por_100l DECIMAL(14,6) DEFAULT 0.000,
-                validacao_dose VARCHAR(20) DEFAULT NULL,
-                confirmacao_cultura TINYINT(1) DEFAULT 0,
-                confirmacao_dose TINYINT(1) DEFAULT 0,
-                confirmacao_mistura TINYINT(1) DEFAULT 0,
-                confirmacao_calibracao TINYINT(1) DEFAULT 0,
 
                 n_recomendado DECIMAL(12,3) DEFAULT 0.000,
                 p2o5_recomendado DECIMAL(12,3) DEFAULT 0.000,
@@ -231,33 +198,18 @@ def init_db():
             "altura_total": "DECIMAL(10,3) DEFAULT 0.000",
             "altura_caule": "DECIMAL(10,3) DEFAULT 0.000",
             "espacamento_linhas": "DECIMAL(10,3) DEFAULT 0.000",
-            "espacamento_plantas": "DECIMAL(10,3) DEFAULT 0.000",
             "diametro_medio": "DECIMAL(10,3) DEFAULT 0.000",
             "altura_util": "DECIMAL(10,3) DEFAULT 0.000",
             "volume_copa": "DECIMAL(14,3) DEFAULT 0.000",
             "volume_copas_talhao": "DECIMAL(16,3) DEFAULT 0.000",
             "trv": "DECIMAL(16,3) DEFAULT 0.000",
-            "trv_por_hectare": "DECIMAL(16,3) DEFAULT 0.000",
             "finalidade": "VARCHAR(30) DEFAULT NULL",
             "produtividade_ton": "DECIMAL(10,3) DEFAULT 0.000",
             "n_foliar": "DECIMAL(10,3) DEFAULT 0.000",
             "p_resina": "DECIMAL(10,3) DEFAULT 0.000",
             "k_trocavel": "DECIMAL(10,3) DEFAULT 0.000",
             "concentracao_mg_l": "DECIMAL(12,3) DEFAULT 0.000",
-            "produto_nome": "VARCHAR(120) DEFAULT NULL",
-            "produto_fabricante": "VARCHAR(120) DEFAULT NULL",
-            "produto_identificacao": "VARCHAR(120) DEFAULT NULL",
-            "volume_por_hectare": "DECIMAL(14,3) DEFAULT 0.000",
             "massa_micronutriente": "DECIMAL(14,6) DEFAULT 0.000",
-            "massa_fonte_total": "DECIMAL(14,6) DEFAULT 0.000",
-            "dose_min_rotulo": "DECIMAL(14,6) DEFAULT 0.000",
-            "dose_max_rotulo": "DECIMAL(14,6) DEFAULT 0.000",
-            "dose_por_100l": "DECIMAL(14,6) DEFAULT 0.000",
-            "validacao_dose": "VARCHAR(20) DEFAULT NULL",
-            "confirmacao_cultura": "TINYINT(1) DEFAULT 0",
-            "confirmacao_dose": "TINYINT(1) DEFAULT 0",
-            "confirmacao_mistura": "TINYINT(1) DEFAULT 0",
-            "confirmacao_calibracao": "TINYINT(1) DEFAULT 0",
             "n_recomendado": "DECIMAL(12,3) DEFAULT 0.000",
             "p2o5_recomendado": "DECIMAL(12,3) DEFAULT 0.000",
             "k2o_recomendado": "DECIMAL(12,3) DEFAULT 0.000",
@@ -356,9 +308,8 @@ def registrar_usuario():
             }
         }), 201
 
-    except Exception:
-        app.logger.exception("Erro ao cadastrar usuário")
-        return jsonify({"erro": "Erro interno ao cadastrar usuário."}), 500
+    except Exception as e:
+        return jsonify({"erro": f"Erro interno ao cadastrar: {str(e)}"}), 500
 
 
 @app.route('/api/login', methods=['POST'])
@@ -387,9 +338,6 @@ def login_usuario():
         if not usuario or not check_password_hash(usuario['password'], password):
             return jsonify({"erro": "Usuário ou senha incorretos."}), 401
 
-        session.clear()
-        session["usuario_id"] = int(usuario["id"])
-
         return jsonify({
             "mensagem": "Login efetuado com sucesso!",
             "usuario": {
@@ -401,41 +349,17 @@ def login_usuario():
         }), 200
 
     except Exception as e:
-        app.logger.exception("Erro durante o login")
-        return jsonify({"erro": "Erro interno durante o login."}), 500
-
-
-@app.route('/api/logout', methods=['POST'])
-def logout_usuario():
-    session.clear()
-    return jsonify({"mensagem": "Sessão encerrada."}), 200
-
-
-def usuario_da_sessao(usuario_id_recebido=None):
-    """Retorna o usuário autenticado e impede acesso cruzado por alteração de ID."""
-    autenticado = session.get("usuario_id")
-    if autenticado is None:
-        return None
-    if usuario_id_recebido is not None:
-        try:
-            if int(usuario_id_recebido) != int(autenticado):
-                return None
-        except (TypeError, ValueError):
-            return None
-    return int(autenticado)
+        return jsonify({"erro": f"Erro no servidor: {str(e)}"}), 500
 
 
 @app.route('/api/usuario/localizacao', methods=['POST'])
 def salvar_localizacao_usuario():
     dados = request.get_json() or {}
+    username = str(dados.get('username', '')).strip().lower()
     cidade = str(dados.get('cidade', '')).strip()
     estado = str(dados.get('estado', '')).strip()
-    usuario_id = usuario_da_sessao()
 
-    if usuario_id is None:
-        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
-
-    if not cidade or not estado:
+    if not username or not cidade or not estado:
         return jsonify({"erro": "Dados de localização incompletos."}), 400
 
     try:
@@ -443,8 +367,8 @@ def salvar_localizacao_usuario():
         cursor = conn.cursor()
 
         cursor.execute(
-            "UPDATE usuarios SET cidade = %s, estado = %s WHERE id = %s",
-            (cidade[:100], estado[:10], usuario_id)
+            "UPDATE usuarios SET cidade = %s, estado = %s WHERE username = %s",
+            (cidade, estado, username)
         )
         conn.commit()
 
@@ -460,9 +384,8 @@ def salvar_localizacao_usuario():
             "mensagem": "Localização do usuário atualizada no MySQL local!"
         }), 200
 
-    except Exception:
-        app.logger.exception("Erro ao atualizar localização")
-        return jsonify({"erro": "Não foi possível atualizar a localização."}), 500
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 
 
 # =========================================================
@@ -798,9 +721,6 @@ def analisar_com_literouter(conteudo_imagem, mime_type):
 
 @app.route('/api/diagnostico', methods=['POST'])
 def analisar_imagem():
-    if usuario_da_sessao() is None:
-        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
-
     if not LITEROUTER_API_KEY:
         return jsonify({
             "erro": (
@@ -882,7 +802,8 @@ def analisar_imagem():
     except requests.exceptions.RequestException as e:
         print(f"ERRO DE CONEXÃO COM LITEROUTER: {e}")
         return jsonify({
-            "erro": "Erro de conexão com o serviço de diagnóstico."
+            "erro": "Erro de conexão com o LiteRouter.",
+            "detalhes": str(e)
         }), 502
 
     except Exception as e:
@@ -893,7 +814,8 @@ def analisar_imagem():
         print("!" * 70 + "\n")
 
         return jsonify({
-            "erro": "Não foi possível analisar a imagem."
+            "erro": "Não foi possível analisar a imagem.",
+            "detalhes": str(e)
         }), 500
 
 
@@ -911,123 +833,6 @@ def usuario_existe(usuario_id):
     return existe
 
 
-def numero_finito(dados, campo, minimo=None, maximo=None):
-    """Converte um campo numérico e rejeita NaN, infinito e faixas inválidas."""
-    try:
-        valor = float(dados.get(campo))
-    except (TypeError, ValueError):
-        raise ValueError(f"Campo numérico inválido: {campo}.")
-
-    if not math.isfinite(valor):
-        raise ValueError(f"Campo numérico inválido: {campo}.")
-    if minimo is not None and valor < minimo:
-        raise ValueError(f"O campo {campo} está abaixo do mínimo permitido.")
-    if maximo is not None and valor > maximo:
-        raise ValueError(f"O campo {campo} está acima do máximo permitido.")
-    return valor
-
-
-def texto_limitado(dados, campo, limite, obrigatorio=False):
-    valor = str(dados.get(campo, "") or "").strip()
-    if obrigatorio and not valor:
-        raise ValueError(f"Preencha o campo {campo}.")
-    if len(valor) > limite:
-        raise ValueError(f"O campo {campo} excede {limite} caracteres.")
-    return valor
-
-
-def validar_e_calcular_aplicacao(dados):
-    """Refaz no servidor os cálculos críticos enviados pelo navegador."""
-    area = numero_finito(dados, "area", 0.0001, 100000)
-    concentracao_fonte = numero_finito(dados, "concentracao", 0.0001, 100)
-    concentracao_mg_l = numero_finito(dados, "concentracao_mg_l", 0.0001, 1000000)
-    volume_ha = numero_finito(dados, "volume_por_hectare", 0.0001, 100000)
-    dose_min = numero_finito(dados, "dose_min_rotulo", 0, 100000)
-    dose_max = numero_finito(dados, "dose_max_rotulo", 0.0001, 100000)
-
-    if dose_min > dose_max:
-        raise ValueError("A dose mínima do rótulo não pode superar a dose máxima.")
-
-    confirmacoes = {
-        "confirmacao_cultura": dados.get("confirmacao_cultura") is True,
-        "confirmacao_dose": dados.get("confirmacao_dose") is True,
-        "confirmacao_mistura": dados.get("confirmacao_mistura") is True,
-        "confirmacao_calibracao": dados.get("confirmacao_calibracao") is True
-    }
-    if not all(confirmacoes.values()):
-        raise ValueError("Todas as verificações de segurança devem ser confirmadas.")
-
-    volume_total = volume_ha * area
-    massa_nutriente = (concentracao_mg_l * volume_total) / 1_000_000
-    massa_fonte = massa_nutriente / (concentracao_fonte / 100)
-    dose_ha = massa_fonte / area
-    dose_100l = (dose_ha / volume_ha) * 100
-
-    if dose_ha < dose_min or dose_ha > dose_max:
-        raise ValueError(
-            f"Dose calculada de {dose_ha:.3f} kg/ha fora do intervalo informado "
-            f"({dose_min:.3f} a {dose_max:.3f} kg/ha)."
-        )
-
-    faixa = max(dose_max - dose_min, 0.001)
-    margem = min(dose_ha - dose_min, dose_max - dose_ha)
-    status = "atencao" if margem / faixa < 0.1 else "conferido"
-
-    return {
-        "area": area,
-        "concentracao_fonte": concentracao_fonte,
-        "concentracao_mg_l": concentracao_mg_l,
-        "volume_ha": volume_ha,
-        "volume_total": volume_total,
-        "massa_nutriente": massa_nutriente,
-        "massa_fonte": massa_fonte,
-        "dose_ha": dose_ha,
-        "dose_100l": dose_100l,
-        "dose_min": dose_min,
-        "dose_max": dose_max,
-        "status": status,
-        **confirmacoes
-    }
-
-
-def validar_e_calcular_geometria(dados, area, arvores):
-    """Refaz a modelagem geométrica e o TRV a partir das medidas primárias."""
-    medida1 = numero_finito(dados, "medida1", 0.01, 100)
-    medida2 = numero_finito(dados, "medida2", 0.01, 100)
-    altura_total = numero_finito(dados, "altura_total", 0.01, 100)
-    altura_caule = numero_finito(dados, "altura_caule", 0, 100)
-    espacamento_linhas = numero_finito(dados, "espacamento_linhas", 0.01, 1000)
-    espacamento_plantas = numero_finito(dados, "espacamento_plantas", 0.01, 1000)
-
-    altura_util = altura_total - altura_caule
-    if altura_util <= 0:
-        raise ValueError("A altura total deve ser maior que a altura das primeiras ramificações.")
-
-    diametro_medio = (medida1 + medida2) / 2
-    volume_copa = (
-        (4 / 3) * math.pi *
-        (medida1 / 2) * (medida2 / 2) * (altura_util / 2)
-    )
-    volume_copas_talhao = volume_copa * arvores
-    trv_por_hectare = (altura_util * diametro_medio * 10_000) / espacamento_linhas
-    trv_total = trv_por_hectare * area
-
-    return {
-        "medida1": medida1,
-        "medida2": medida2,
-        "altura_total": altura_total,
-        "altura_caule": altura_caule,
-        "espacamento_linhas": espacamento_linhas,
-        "espacamento_plantas": espacamento_plantas,
-        "diametro_medio": diametro_medio,
-        "altura_util": altura_util,
-        "volume_copa": volume_copa,
-        "volume_copas_talhao": volume_copas_talhao,
-        "trv": trv_total,
-        "trv_por_hectare": trv_por_hectare
-    }
-
-
 @app.route('/api/simulacoes', methods=['POST'])
 def salvar_simulacao():
     dados = request.get_json() or {}
@@ -1041,23 +846,9 @@ def salvar_simulacao():
     except (TypeError, ValueError):
         return jsonify({"erro": "ID de usuário inválido."}), 400
 
-    if usuario_da_sessao(usuario_id) is None:
-        return jsonify({"erro": "Sessão inválida ou acesso não autorizado."}), 401
-
     try:
         if not usuario_existe(usuario_id):
             return jsonify({"erro": "Usuário não encontrado."}), 404
-
-        aplicacao = validar_e_calcular_aplicacao(dados)
-        arvores_validadas = int(numero_finito(dados, "arvores", 1, 10000000))
-        geometria = validar_e_calcular_geometria(
-            dados,
-            aplicacao["area"],
-            arvores_validadas
-        )
-        produto_nome = texto_limitado(dados, "produto_nome", 120, True)
-        produto_fabricante = texto_limitado(dados, "produto_fabricante", 120, True)
-        produto_identificacao = texto_limitado(dados, "produto_identificacao", 120, True)
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -1067,18 +858,11 @@ def salvar_simulacao():
             (
                 usuario_id, data_registro,
                 producao, area, arvores, idade,
-                medida1, medida2, altura_total, altura_caule,
-                espacamento_linhas, espacamento_plantas,
-                diametro_medio, altura_util, volume_copa, volume_copas_talhao,
-                trv, trv_por_hectare,
+                medida1, medida2, altura_total, altura_caule, espacamento_linhas,
+                diametro_medio, altura_util, volume_copa, volume_copas_talhao, trv,
                 finalidade, produtividade_ton, n_foliar, p_resina, k_trocavel,
-                objetivo, elemento, fonte,
-                produto_nome, produto_fabricante, produto_identificacao,
-                concentracao, concentracao_mg_l,
-                volume, volume_por_hectare, massa_micronutriente, massa_fonte_total,
-                dose_min_rotulo, dose_max_rotulo, dose_por_100l, validacao_dose,
-                confirmacao_cultura, confirmacao_dose,
-                confirmacao_mistura, confirmacao_calibracao,
+                objetivo, elemento, fonte, concentracao, concentracao_mg_l,
+                volume, massa_micronutriente,
                 n_recomendado, p2o5_recomendado, k2o_recomendado, dose_mistura,
                 n_entregue, p2o5_entregue, k2o_entregue,
                 status_n, status_p, status_k
@@ -1086,17 +870,10 @@ def salvar_simulacao():
             VALUES (
                 %s, %s,
                 %s, %s, %s, %s,
-                %s, %s, %s, %s,
-                %s, %s,
-                %s, %s, %s, %s,
-                %s, %s,
                 %s, %s, %s, %s, %s,
-                %s, %s, %s,
-                %s, %s, %s,
-                %s, %s,
-                %s, %s, %s, %s,
-                %s, %s, %s, %s,
-                %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s,
                 %s, %s,
                 %s, %s, %s, %s,
                 %s, %s, %s,
@@ -1108,23 +885,21 @@ def salvar_simulacao():
             usuario_id,
             str(dados.get('data', '')),
             int(dados.get('producao') or 0),
-            aplicacao["area"],
-            arvores_validadas,
+            float(dados.get('area') or 0.0),
+            int(dados.get('arvores') or 0),
             float(dados.get('idade') or 0.0),
 
-            geometria["medida1"],
-            geometria["medida2"],
-            geometria["altura_total"],
-            geometria["altura_caule"],
-            geometria["espacamento_linhas"],
-            geometria["espacamento_plantas"],
+            float(dados.get('medida1') or 0.0),
+            float(dados.get('medida2') or 0.0),
+            float(dados.get('altura_total') or 0.0),
+            float(dados.get('altura_caule') or 0.0),
+            float(dados.get('espacamento_linhas') or 0.0),
 
-            geometria["diametro_medio"],
-            geometria["altura_util"],
-            geometria["volume_copa"],
-            geometria["volume_copas_talhao"],
-            geometria["trv"],
-            geometria["trv_por_hectare"],
+            float(dados.get('diametro_medio') or 0.0),
+            float(dados.get('altura_util') or 0.0),
+            float(dados.get('volume_copa') or 0.0),
+            float(dados.get('volume_copas_talhao') or 0.0),
+            float(dados.get('trv') or 0.0),
 
             str(dados.get('finalidade', '') or ''),
             float(dados.get('produtividade_ton') or 0.0),
@@ -1135,29 +910,16 @@ def salvar_simulacao():
             str(dados.get('objetivo', '')),
             str(dados.get('elemento', '')),
             str(dados.get('fonte', '')),
-            produto_nome,
-            produto_fabricante,
-            produto_identificacao,
-            aplicacao["concentracao_fonte"],
-            aplicacao["concentracao_mg_l"],
+            float(dados.get('concentracao') or 0.0),
+            float(dados.get('concentracao_mg_l') or 0.0),
 
-            aplicacao["volume_total"],
-            aplicacao["volume_ha"],
-            aplicacao["massa_nutriente"],
-            aplicacao["massa_fonte"],
-            aplicacao["dose_min"],
-            aplicacao["dose_max"],
-            aplicacao["dose_100l"],
-            aplicacao["status"],
-            aplicacao["confirmacao_cultura"],
-            aplicacao["confirmacao_dose"],
-            aplicacao["confirmacao_mistura"],
-            aplicacao["confirmacao_calibracao"],
+            float(dados.get('volume') or 0.0),
+            float(dados.get('massa_micronutriente') or 0.0),
 
             float(dados.get('n_recomendado') or 0.0),
             float(dados.get('p2o5_recomendado') or 0.0),
             float(dados.get('k2o_recomendado') or 0.0),
-            aplicacao["dose_ha"],
+            float(dados.get('dose_mistura') or 0.0),
 
             float(dados.get('n_entregue') or 0.0),
             float(dados.get('p2o5_entregue') or 0.0),
@@ -1180,12 +942,8 @@ def salvar_simulacao():
             "id": novo_id
         }), 201
 
-    except ValueError as e:
-        return jsonify({"erro": str(e)}), 400
-
     except Exception as e:
-        app.logger.exception("Erro ao salvar simulação")
-        return jsonify({"erro": "Não foi possível salvar a simulação."}), 500
+        return jsonify({"erro": str(e)}), 500
 
 
 @app.route('/api/simulacoes', methods=['GET'])
@@ -1200,9 +958,6 @@ def listar_simulacoes():
     except (TypeError, ValueError):
         return jsonify({"erro": "ID de usuário inválido."}), 400
 
-    if usuario_da_sessao(usuario_id) is None:
-        return jsonify({"erro": "Sessão inválida ou acesso não autorizado."}), 401
-
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -1211,18 +966,11 @@ def listar_simulacoes():
             SELECT
                 id, usuario_id, data_registro,
                 producao, area, arvores, idade,
-                medida1, medida2, altura_total, altura_caule,
-                espacamento_linhas, espacamento_plantas,
-                diametro_medio, altura_util, volume_copa, volume_copas_talhao,
-                trv, trv_por_hectare,
+                medida1, medida2, altura_total, altura_caule, espacamento_linhas,
+                diametro_medio, altura_util, volume_copa, volume_copas_talhao, trv,
                 finalidade, produtividade_ton, n_foliar, p_resina, k_trocavel,
-                objetivo, elemento, fonte,
-                produto_nome, produto_fabricante, produto_identificacao,
-                concentracao, concentracao_mg_l,
-                volume, volume_por_hectare, massa_micronutriente, massa_fonte_total,
-                dose_min_rotulo, dose_max_rotulo, dose_por_100l, validacao_dose,
-                confirmacao_cultura, confirmacao_dose,
-                confirmacao_mistura, confirmacao_calibracao,
+                objetivo, elemento, fonte, concentracao, concentracao_mg_l,
+                volume, massa_micronutriente,
                 n_recomendado, p2o5_recomendado, k2o_recomendado, dose_mistura,
                 n_entregue, p2o5_entregue, k2o_entregue,
                 status_n, status_p, status_k,
@@ -1239,9 +987,8 @@ def listar_simulacoes():
 
         return jsonify(simulacoes), 200
 
-    except Exception:
-        app.logger.exception("Erro ao listar simulações")
-        return jsonify({"erro": "Não foi possível carregar o histórico."}), 500
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 
 
 @app.route('/api/simulacoes', methods=['DELETE'])
@@ -1258,9 +1005,6 @@ def excluir_simulacoes_selecionadas():
         usuario_id = int(usuario_id)
     except (TypeError, ValueError):
         return jsonify({"erro": "ID de usuário inválido."}), 400
-
-    if usuario_da_sessao(usuario_id) is None:
-        return jsonify({"erro": "Sessão inválida ou acesso não autorizado."}), 401
 
     if not isinstance(ids, list) or len(ids) == 0:
         return jsonify({
@@ -1332,7 +1076,8 @@ def excluir_simulacoes_selecionadas():
         print(e)
 
         return jsonify({
-            "erro": "Não foi possível excluir os registros selecionados."
+            "erro": "Não foi possível excluir os registros selecionados.",
+            "detalhes": str(e)
         }), 500
 
     finally:
