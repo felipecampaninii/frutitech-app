@@ -2696,6 +2696,42 @@ body{
     .sim-step-number { width: 29px; height: 29px; }
 }
 
+/* Controles técnicos adicionados à simulação segura. */
+.technical-confirmation {
+    display: grid;
+    margin: 14px 0;
+    padding: 13px 14px;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    border: 1px solid #bde5ce;
+    border-radius: 15px;
+    background: #f0fbf5;
+    color: #285d43 !important;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.45;
+    cursor: pointer;
+}
+.technical-confirmation input {
+    width: 19px;
+    height: 19px;
+    margin-top: 1px;
+    accent-color: #078346;
+}
+.diagnosis-technical-note {
+    margin: 12px 0;
+    padding: 11px 12px;
+    border: 1px solid #cce5d7;
+    border-radius: 13px;
+    background: #f5fbf7;
+    color: #486558;
+    font-size: 10px;
+    font-weight: 650;
+    line-height: 1.45;
+}
+.diagnosis-technical-note i { margin-right: 5px; color: #078346; }
+
 /* =========================================================
    FRU-TECH — REFINAMENTO VISUAL FINAL 24/09/2026
    Somente apresentação: preserva IDs, dados e cálculos.
