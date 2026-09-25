@@ -1245,7 +1245,7 @@ async function carregarHistorico() {
                 : "fa-seedling";
 
             return `
-                <article class="history-item" data-id="${id}">
+                <article class="history-item" data-id="${id}" data-stage="${estagioResumo.classe.replace('stage-', '')}" data-search="${escaparHTML(`talhão ${numeroTalhao} ${item.elemento || ''} ${item.fonte || ''}`.toLowerCase())}">
                     <div
                         class="history-summary"
                         role="button"
@@ -1290,15 +1290,26 @@ async function carregarHistorico() {
                             <div class="history-data-item"><span>Produção Esperada:</span><strong>${formatarCampoHistorico(item.producao, " cx")}</strong></div>
                             <div class="history-data-item"><span>Nº de Árvores:</span><strong>${formatarCampoHistorico(item.arvores, " un")}</strong></div>
                             <div class="history-data-item"><span>Idade do Pomar:</span><strong>${formatarCampoHistorico(item.idade, " anos")}</strong></div>
-                            <div class="history-data-item"><span>Volume de Calda:</span><strong>${formatarCampoHistorico(item.volume, " L/ha")}</strong></div>
+                            <div class="history-data-item"><span>Volume calibrado:</span><strong>${formatarCampoHistorico(item.volume_por_hectare, " L/ha")}</strong></div>
+                            <div class="history-data-item"><span>Volume total:</span><strong>${formatarCampoHistorico(item.volume, " L")}</strong></div>
                             <div class="history-data-item"><span>Concentração:</span><strong>${formatarCampoHistorico(item.concentracao, " %")}</strong></div>
+                            <div class="history-data-item"><span>Dose calculada:</span><strong>${formatarCampoHistorico(item.dose_mistura, " kg/ha")}</strong></div>
+                            <div class="history-data-item"><span>Dose por 100 L:</span><strong>${formatarCampoHistorico(item.dose_por_100l, " kg")}</strong></div>
                         </div>
+
+                        ${item.produto_nome ? `
+                        <div class="history-product-trace">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            <div><strong>${escaparHTML(item.produto_nome)}</strong><span>${escaparHTML(item.produto_fabricante || "Fabricante não informado")} · ${escaparHTML(item.produto_identificacao || "Sem identificação")}</span><small>Dose conferida: ${escaparHTML(item.validacao_dose || "-")}</small></div>
+                        </div>` : ""}
 
                         ${gerarDesenvolvimentoPomar(item)}
                     </div>
                 </article>
             `;
         }).join("");
+
+        filtrarHistoricoVisual();
 
     } catch (erro) {
         console.error("Erro ao carregar histórico:", erro);
@@ -1395,6 +1406,30 @@ async function limparHistorico() {
         console.error("Erro ao apagar histórico:", erro);
         alert("Erro ao apagar os dados.");
     }
+}
+
+function filtrarHistoricoVisual() {
+    const busca = (document.getElementById("historySearchInput")?.value || "").trim().toLowerCase();
+    const fase = document.getElementById("historyStageFilter")?.value || "";
+    let visiveis = 0;
+
+    document.querySelectorAll("#containerHistorico .history-item").forEach((card) => {
+        const correspondeBusca = !busca || (card.dataset.search || "").includes(busca);
+        const correspondeFase = !fase || card.dataset.stage === fase;
+        const mostrar = correspondeBusca && correspondeFase;
+        card.hidden = !mostrar;
+        if (mostrar) visiveis += 1;
+    });
+
+    let vazio = document.getElementById("historyFilterEmpty");
+    if (!vazio) {
+        vazio = document.createElement("p");
+        vazio.id = "historyFilterEmpty";
+        vazio.className = "history-empty history-filter-empty";
+        vazio.textContent = "Nenhum registro corresponde aos filtros selecionados.";
+        document.getElementById("containerHistorico")?.appendChild(vazio);
+    }
+    vazio.hidden = visiveis > 0 || document.querySelectorAll("#containerHistorico .history-item").length === 0;
 }
 
 window.limparHistorico = limparHistorico;
