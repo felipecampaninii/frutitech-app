@@ -2928,7 +2928,7 @@ body{
                     <!-- Clima: IDs originais preservados -->
                     <article class="card home-weather-card">
                         <div class="card-header">
-                            <i class="fa-solid fa-sun" style="color:#f5b400"></i>
+                            <i id="clima-icone" class="fa-solid fa-sun weather-icon" style="color:#f5b400"></i>
                             <span class="card-title">Condições Climáticas</span>
                         </div>
 
@@ -2949,7 +2949,7 @@ body{
                             <div class="home-weather-details">
                                 <div><i class="fa-solid fa-droplet"></i> Umidade: <strong id="clima-umidade">--%</strong></div>
                                 <div><i class="fa-solid fa-wind"></i> Vento: <strong id="clima-vento">-- km/h</strong></div>
-                                <div><i class="fa-solid fa-cloud-rain"></i> Chuva: <strong id="clima-chuva">--%</strong></div>
+                                <div><i class="fa-solid fa-cloud-rain"></i> Chuva (próx. 4h): <strong id="clima-chuva">--%</strong></div>
                             </div>
                         </div>
 
@@ -3019,6 +3019,8 @@ body{
                         <div><i class="fa-regular fa-leaf"></i><strong>Fundo neutro</strong><span>Use um fundo liso e sem objetos.</span></div>
                         <div><i class="fa-solid fa-expand"></i><strong>Imagem nítida</strong><span>Mantenha a folha em foco.</span></div>
                     </div>
+
+                    <p class="diagnosis-technical-note"><i class="fa-solid fa-circle-info"></i> O diagnóstico por imagem é preliminar. Sintomas nutricionais podem se confundir com doenças, pragas ou estresses; confirme com inspeção técnica e análise laboratorial.</p>
 
                     <button id="btnAnalisarDiagnostico" class="btn-green btn-calc diagnosis-analyze-btn" onclick="enviarParaIA()" disabled>
                         <i class="fa-solid fa-wand-magic-sparkles"></i> ANALISAR COM IA
@@ -3646,7 +3648,7 @@ body{
         <div class="form-group">
 
             <label>
-                Concentração Desejada na Calda (mg/L)
+                Concentração Desejada do Nutriente na Calda (mg/L)
             </label>
 
             <input
@@ -3657,6 +3659,14 @@ body{
                 min="0"
             >
 
+            <p class="agro-help">Use somente a concentração autorizada no rótulo ou definida por profissional habilitado. Este valor representa o nutriente, não a massa total do produto.</p>
+
+        </div>
+
+        <div class="form-group">
+            <label>Volume de Calda Calibrado (L/ha)</label>
+            <input type="number" id="simVolumeCaldaHa" value="2000" step="10" min="1" placeholder="Ex: 2000">
+            <p class="agro-help">2.000 L/ha é apenas uma referência inicial para pomar adulto. Ajuste conforme a calibração do pulverizador, o porte da copa e a orientação técnica.</p>
         </div>
 
         <div class="agro-subsection">
@@ -3666,6 +3676,10 @@ body{
                 <div class="form-group"><label>Condutividade Elétrica (dS/m)</label><input type="number" id="simCondutividade" step="0.01" min="0" placeholder="Ex: 0,50"></div>
             </div>
             <div class="form-group"><label>Adjuvante / Espalhante</label><select id="simAdjuvante"><option value="nao-informado">Selecionar conforme rótulo e orientação técnica</option><option value="nao-ionico">Espalhante não iônico</option><option value="organossiliconado">Organossiliconado</option><option value="oleo-mineral">Óleo mineral</option></select><p class="agro-help">A indicação final depende da compatibilidade com a fonte escolhida. Evite recomendar óleo automaticamente com sais que possam aumentar o risco de fitotoxicidade.</p></div>
+            <label class="technical-confirmation">
+                <input type="checkbox" id="simConfirmacaoRotulo">
+                <span>Confirmei no rótulo que a fonte é indicada para citros, que a concentração desejada é permitida e que a mistura é compatível.</span>
+            </label>
             <div id="statusPulverizacao" class="spray-status" role="status" aria-live="polite">
                 <span class="spray-dot"></span>
                 <span class="spray-status-icon" aria-hidden="true">✓</span>
@@ -3699,7 +3713,7 @@ body{
 
                 <i class="fa-solid fa-droplet"></i>
 
-                Volume de calda calculado automaticamente
+                Volume de calda de referência
 
             </div>
 
@@ -3713,9 +3727,9 @@ body{
                 "
             >
 
-                O volume de calda não precisa mais ser informado
-                manualmente. O simulador realizará o cálculo conforme
-                os dados do talhão e a lógica definida na metodologia.
+                O volume informado é usado no cálculo da quantidade total de calda.
+                Ele não é convertido automaticamente pelo TRV e deve vir da calibração
+                do equipamento ou de orientação técnica.
 
             </p>
 
