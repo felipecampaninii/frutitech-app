@@ -859,6 +859,176 @@
     --ft-border:#d8e7df;
 }
 
+/* =========================================================
+   FRU-TECH 2026 — REFINAMENTO VISUAL E VALIDAÇÃO AGRONÔMICA
+   ========================================================= */
+:root {
+    --ft-green-950:#073f26;
+    --ft-green-900:#075b34;
+    --ft-green-800:#08783f;
+    --ft-green-700:#0a8f4d;
+    --ft-green-100:#dcf7e8;
+    --ft-green-50:#f1fbf5;
+    --ft-navy:#102a4f;
+    --ft-muted:#667085;
+    --ft-line:#d7e5dc;
+    --ft-warning:#a35b08;
+    --ft-danger:#b42318;
+}
+
+#page-inicio,
+#page-diagnostico,
+#page-simulador,
+#page-historico {
+    color:var(--ft-navy);
+    background:linear-gradient(180deg,#f7fffa 0%,#e8faef 55%,#d9f6e5 100%);
+}
+
+.sim-header {
+    background-image:linear-gradient(100deg,rgba(3,105,57,.96),rgba(13,139,76,.75)),url('../images/fundo-citros-blocos.jpg') !important;
+    background-size:cover !important;
+    background-position:center !important;
+    color:#fff !important;
+}
+
+.sim-header .sim-title,
+.sim-header .sim-subtitle { color:#fff !important; }
+.sim-header .sim-title { max-width:520px; line-height:1.04; letter-spacing:-.035em; }
+.sim-header .sim-subtitle { max-width:520px; opacity:.92; }
+
+#page-simulador .card,
+#page-diagnostico .card,
+#page-historico .history-item,
+#page-historico .history-intro-card {
+    border:1px solid rgba(8,120,63,.12) !important;
+    box-shadow:0 12px 34px rgba(7,63,38,.09) !important;
+}
+
+#page-simulador .form-group { margin-bottom:14px; }
+#page-simulador label { color:var(--ft-green-950); font-weight:750; }
+#page-simulador input,
+#page-simulador select {
+    min-height:52px;
+    border:1.5px solid #c9dbd0;
+    background:#f8fcf9;
+    color:var(--ft-navy);
+    border-radius:14px;
+}
+#page-simulador input:focus,
+#page-simulador select:focus {
+    border-color:var(--ft-green-700);
+    box-shadow:0 0 0 4px rgba(10,143,77,.11);
+}
+
+.product-traceability {
+    margin:14px 0;
+    padding:15px;
+    border:1px solid #cfe8d8;
+    border-radius:18px;
+    background:linear-gradient(145deg,#f7fdf9,#eef9f2);
+}
+.product-traceability .agro-subtitle { font-size:14px; }
+.label-limit-help { margin:-3px 0 12px; }
+
+.dose-audit-preview,
+.result-safety-level {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 14px;
+    margin:12px 0 16px;
+    border:1px solid #cddbd3;
+    border-radius:16px;
+    background:#f6f8f7;
+    color:#53615a;
+}
+.dose-audit-preview > i,
+.result-safety-level > i { font-size:25px; color:var(--ft-green-700); }
+.dose-audit-preview strong,
+.dose-audit-preview span,
+.result-safety-level strong,
+.result-safety-level span { display:block; }
+.dose-audit-preview strong,.result-safety-level strong { color:var(--ft-navy); font-size:13px; }
+.dose-audit-preview span,.result-safety-level span { margin-top:2px; font-size:11px; line-height:1.4; }
+.dose-audit-preview.is-ok,.result-safety-level.conferido { border-color:#66cf91; background:#e9faef; }
+.dose-audit-preview.is-warning,.result-safety-level.atencao { border-color:#f0b85c; background:#fff8e8; }
+.dose-audit-preview.is-blocked,.result-safety-level.bloqueado { border-color:#ef9a93; background:#fff1f0; }
+.dose-audit-preview.is-blocked > i,.result-safety-level.bloqueado > i { color:var(--ft-danger); }
+
+.application-validation-panel {
+    margin:15px 0;
+    padding:14px;
+    border:1px solid #bfe3cc;
+    border-radius:18px;
+    background:#f2fbf5;
+}
+.application-validation-panel legend { padding:0 7px; color:var(--ft-green-900); font-weight:850; font-size:14px; }
+.application-validation-panel > p { color:var(--ft-muted); font-size:10px; line-height:1.45; margin:0 0 10px; }
+.application-validation-panel .technical-confirmation {
+    display:grid;
+    grid-template-columns:23px 1fr;
+    gap:10px;
+    align-items:start;
+    margin:8px 0;
+    padding:10px;
+    border-radius:12px;
+    background:#fff;
+}
+.application-validation-panel input[type="checkbox"] { width:20px;height:20px;min-height:20px;accent-color:var(--ft-green-700); }
+.application-validation-panel span { font-size:11px;line-height:1.45;color:#24563b; }
+
+.product-result-summary {
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    margin:8px 0 12px;
+    padding:11px 13px;
+    border-left:4px solid var(--ft-green-700);
+    border-radius:10px;
+    background:#f3faf6;
+}
+.product-result-summary strong { color:var(--ft-green-950); }
+.product-result-summary span { color:var(--ft-muted);font-size:10px; }
+
+.history-filter-bar {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 160px;
+    gap:10px;
+    margin:14px 0;
+}
+.history-search { position:relative;display:flex;align-items:center; }
+.history-search i { position:absolute;left:15px;color:#6b778c; }
+.history-search input,
+.history-filter-bar select {
+    width:100%;height:48px;border:1px solid #cddfd4;border-radius:15px;background:#fff;color:var(--ft-navy);font:inherit;
+}
+.history-search input { padding:0 14px 0 43px; }
+.history-filter-bar select { padding:0 12px; }
+.history-filter-empty { margin:16px 0;padding:18px;border-radius:16px;background:#fff; }
+
+#page-diagnostico .upload-box {
+    background:linear-gradient(145deg,#fbfffc,#edf9f1) !important;
+    border-color:#8fc9a4 !important;
+}
+#page-diagnostico .diagnosis-photo-tips {
+    border-radius:16px;
+    background:#f2f8f4;
+}
+
+@media (min-width:680px) {
+    #page-simulador .sim-step-panel > .card { max-width:760px;margin-left:auto;margin-right:auto; }
+    #page-simulador .compact-application-grid,
+    #page-simulador .label-limits-grid { grid-template-columns:1fr 1fr; }
+}
+
+@media (max-width:560px) {
+    .history-filter-bar { grid-template-columns:1fr; }
+    .field-grid { grid-template-columns:1fr; }
+    #page-simulador .card { padding:18px 15px; }
+    .product-traceability { padding:13px; }
+    .application-validation-panel { padding:12px; }
+}
+
 html,body{
     width:100%;
     min-height:100%;
@@ -3611,3 +3781,28 @@ textarea {
     #page-inicio .home-stat strong { font-size: 13px; }
     #page-inicio .home-weather-main { grid-template-columns: 1fr 1fr; gap: 10px; }
 }
+
+/* Garantia de precedência dos ajustes finais. */
+#page-inicio,#page-diagnostico,#page-simulador,#page-historico {
+    background:linear-gradient(180deg,#f7fffa 0%,#e8faef 55%,#d9f6e5 100%);
+}
+#page-simulador .product-traceability,
+#page-simulador .application-validation-panel { display:block; }
+#page-historico .history-filter-bar { display:grid; }
+.history-product-trace {
+    display:flex;
+    gap:11px;
+    align-items:flex-start;
+    margin:12px 0;
+    padding:12px;
+    border:1px solid #cde8d6;
+    border-radius:14px;
+    background:#f2fbf5;
+    color:#075b34;
+}
+.history-product-trace > i { margin-top:2px;font-size:18px; }
+.history-product-trace strong,
+.history-product-trace span,
+.history-product-trace small { display:block; }
+.history-product-trace span,
+.history-product-trace small { margin-top:3px;color:#667085;font-size:10px;line-height:1.35; }
