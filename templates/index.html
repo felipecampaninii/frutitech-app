@@ -3622,6 +3622,16 @@ body{
 
         </div>
 
+        <div class="agro-subsection product-traceability">
+            <div class="agro-subtitle"><i class="fa-solid fa-clipboard-check"></i> Identificação e limites do produto</div>
+            <p class="agro-help">Registre os dados do produto realmente utilizado. A fonte acima identifica o nutriente; estes campos permitem rastrear o rótulo ou a ficha técnica consultada.</p>
+            <div class="field-grid">
+                <div class="form-group"><label>Nome comercial do produto</label><input type="text" id="simProdutoNome" maxlength="80" placeholder="Produto e formulação"></div>
+                <div class="form-group"><label>Fabricante</label><input type="text" id="simProdutoFabricante" maxlength="80" placeholder="Nome do fabricante"></div>
+            </div>
+            <div class="form-group"><label>Registro, ficha técnica ou identificação</label><input type="text" id="simProdutoRegistro" maxlength="80" placeholder="Número ou documento consultado"></div>
+        </div>
+
 
         <!-- CONCENTRAÇÃO DA FONTE -->
 
@@ -3669,6 +3679,17 @@ body{
             <p class="agro-help">2.000 L/ha é apenas uma referência inicial para pomar adulto. Ajuste conforme a calibração do pulverizador, o porte da copa e a orientação técnica.</p>
         </div>
 
+        <div class="field-grid label-limits-grid">
+            <div class="form-group"><label>Dose mínima do rótulo (kg/ha)</label><input type="number" id="simDoseMinRotulo" step="0.001" min="0" placeholder="Ex.: 2,0"></div>
+            <div class="form-group"><label>Dose máxima do rótulo (kg/ha)</label><input type="number" id="simDoseMaxRotulo" step="0.001" min="0" placeholder="Ex.: 8,0"></div>
+        </div>
+        <p class="agro-help label-limit-help">Informe os limites na mesma unidade do rótulo. Esta versão calcula fontes sólidas em kg/ha; produtos líquidos exigem densidade e não devem ser convertidos automaticamente.</p>
+
+        <div id="doseAuditPreview" class="dose-audit-preview" role="status" aria-live="polite">
+            <i class="fa-solid fa-scale-balanced"></i>
+            <div><strong>Conferência automática da dose</strong><span>Preencha concentração, volume e limites do rótulo.</span></div>
+        </div>
+
         <div class="agro-subsection">
             <div class="agro-subtitle"><i class="fa-solid fa-glass-water-droplet"></i> Parâmetros do Tanque e da Calda</div>
             <div class="calda-parameters-stack">
@@ -3676,10 +3697,14 @@ body{
                 <div class="form-group"><label>Condutividade Elétrica (dS/m)</label><input type="number" id="simCondutividade" step="0.01" min="0" placeholder="Ex: 0,50"></div>
             </div>
             <div class="form-group"><label>Adjuvante / Espalhante</label><select id="simAdjuvante"><option value="nao-informado">Selecionar conforme rótulo e orientação técnica</option><option value="nao-ionico">Espalhante não iônico</option><option value="organossiliconado">Organossiliconado</option><option value="oleo-mineral">Óleo mineral</option></select><p class="agro-help">A indicação final depende da compatibilidade com a fonte escolhida. Evite recomendar óleo automaticamente com sais que possam aumentar o risco de fitotoxicidade.</p></div>
-            <label class="technical-confirmation">
-                <input type="checkbox" id="simConfirmacaoRotulo">
-                <span>Confirmei no rótulo que a fonte é indicada para citros, que a concentração desejada é permitida e que a mistura é compatível.</span>
-            </label>
+            <fieldset class="application-validation-panel">
+                <legend><i class="fa-solid fa-shield-halved"></i> Validação da aplicação</legend>
+                <p>Registre cada verificação realizada. Isto não substitui receituário ou avaliação profissional.</p>
+                <label class="technical-confirmation"><input type="checkbox" id="simConfirmacaoRotulo"><span>Li o rótulo ou ficha técnica e confirmei que o produto é indicado para citros.</span></label>
+                <label class="technical-confirmation"><input type="checkbox" id="simConfirmacaoDose"><span>Confirmei que a concentração e a dose por hectare estão dentro dos limites permitidos.</span></label>
+                <label class="technical-confirmation"><input type="checkbox" id="simConfirmacaoMistura"><span>Confirmei a compatibilidade da fonte com o adjuvante e os demais componentes da calda.</span></label>
+                <label class="technical-confirmation"><input type="checkbox" id="simConfirmacaoCalibracao"><span>O volume de calda foi obtido por calibração do equipamento ou orientação técnica.</span></label>
+            </fieldset>
             <div id="statusPulverizacao" class="spray-status" role="status" aria-live="polite">
                 <span class="spray-dot"></span>
                 <span class="spray-status-icon" aria-hidden="true">✓</span>
@@ -3815,8 +3840,8 @@ body{
                         Evitar chuva:
                     </strong>
 
-                    Evite chuva nas próximas 24 horas
-                    e mantenha a aplicação longe de excesso de água.
+                    Respeite o período sem chuva definido no rótulo e confirme
+                    a previsão imediatamente antes da aplicação.
 
                 </li>
 
@@ -3829,8 +3854,8 @@ body{
                         Uso de EPI:
                     </strong>
 
-                    Máscara, luvas e proteção ocular
-                    são recomendados para o operador.
+                    Utilize todos os EPIs indicados no rótulo, na FDS e no
+                    receituário, com equipamentos íntegros e adequados ao operador.
 
                 </li>
 
@@ -3843,8 +3868,8 @@ body{
                         Intervalo:
                     </strong>
 
-                    Repetir conforme o monitoramento foliar
-                    e o boletim técnico do pomar.
+                    Não repetir automaticamente. Reavaliar o talhão e seguir
+                    o intervalo do rótulo ou a orientação do responsável técnico.
 
                 </li>
 
@@ -3854,11 +3879,11 @@ body{
                     <i class="fa-solid fa-book"></i>
 
                     <strong>
-                        Boletim 100:
+                        Segurança da calda:
                     </strong>
 
-                    Manter a calda bem homogeneizada
-                    e respeitar a concentração recomendada.
+                    Respeitar a ordem de mistura, realizar teste de jarra quando
+                    necessário e manter a calda homogeneizada.
 
                 </li>
 
@@ -3906,6 +3931,17 @@ body{
                         <p>Cada simulação registrada passa a mostrar o estágio do pomar, o foco nutricional e um painel visual de acompanhamento.</p>
                     </div>
                 </article>
+
+                <div class="history-filter-bar" aria-label="Filtros do histórico">
+                    <label class="history-search"><i class="fa-solid fa-magnifying-glass"></i><input id="historySearchInput" type="search" placeholder="Buscar talhão, elemento ou fonte" oninput="filtrarHistoricoVisual()"></label>
+                    <select id="historyStageFilter" aria-label="Filtrar por fase" onchange="filtrarHistoricoVisual()">
+                        <option value="">Todas as fases</option>
+                        <option value="plantio">Plantio</option>
+                        <option value="formacao">Formação</option>
+                        <option value="desenvolvimento">Desenvolvimento</option>
+                        <option value="producao">Produção</option>
+                    </select>
+                </div>
 
                 <div class="history-actions">
                     <button id="btnAtivarExclusao" class="btn-history-delete" type="button"
