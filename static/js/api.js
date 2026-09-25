@@ -1290,18 +1290,9 @@ async function carregarHistorico() {
                             <div class="history-data-item"><span>Produção Esperada:</span><strong>${formatarCampoHistorico(item.producao, " cx")}</strong></div>
                             <div class="history-data-item"><span>Nº de Árvores:</span><strong>${formatarCampoHistorico(item.arvores, " un")}</strong></div>
                             <div class="history-data-item"><span>Idade do Pomar:</span><strong>${formatarCampoHistorico(item.idade, " anos")}</strong></div>
-                            <div class="history-data-item"><span>Volume calibrado:</span><strong>${formatarCampoHistorico(item.volume_por_hectare, " L/ha")}</strong></div>
-                            <div class="history-data-item"><span>Volume total:</span><strong>${formatarCampoHistorico(item.volume, " L")}</strong></div>
+                            <div class="history-data-item"><span>Volume de Calda:</span><strong>${formatarCampoHistorico(item.volume, " L/ha")}</strong></div>
                             <div class="history-data-item"><span>Concentração:</span><strong>${formatarCampoHistorico(item.concentracao, " %")}</strong></div>
-                            <div class="history-data-item"><span>Dose calculada:</span><strong>${formatarCampoHistorico(item.dose_mistura, " kg/ha")}</strong></div>
-                            <div class="history-data-item"><span>Dose por 100 L:</span><strong>${formatarCampoHistorico(item.dose_por_100l, " kg")}</strong></div>
                         </div>
-
-                        ${item.produto_nome ? `
-                        <div class="history-product-trace">
-                            <i class="fa-solid fa-clipboard-check"></i>
-                            <div><strong>${escaparHTML(item.produto_nome)}</strong><span>${escaparHTML(item.produto_fabricante || "Fabricante não informado")} · ${escaparHTML(item.produto_identificacao || "Sem identificação")}</span><small>Dose conferida: ${escaparHTML(item.validacao_dose || "-")}</small></div>
-                        </div>` : ""}
 
                         ${gerarDesenvolvimentoPomar(item)}
                     </div>
