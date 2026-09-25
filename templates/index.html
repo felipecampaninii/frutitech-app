@@ -2730,11 +2730,7 @@ body{
         <!-- MENU LATERAL SLIDE-OUT COM OPÇÃO SAIR DA CONTA -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <img
-                    class="frutech-image-logo frutech-image-logo--sidebar"
-                    src="{{ url_for('static', filename='images/logo-frutech.png') }}"
-                    alt="Fru-tech"
-                >
+                <span class="frutech-dark-logo frutech-dark-logo--sidebar" role="img" aria-label="Fru-tech"></span>
                 <i class="fa-solid fa-xmark close-sidebar" onclick="toggleSidebar()"></i>
             </div>
             <ul class="sidebar-menu">
@@ -2756,11 +2752,7 @@ body{
         <section id="page-login" class="page active page-login">
             <div class="auth-wrapper">
                 <div class="auth-brand">
-                    <img
-                        class="frutech-image-logo frutech-image-logo--auth"
-                        src="{{ url_for('static', filename='images/logo-frutech.png') }}"
-                        alt="Fru-tech"
-                    >
+                    <span class="frutech-dark-logo frutech-dark-logo--auth" role="img" aria-label="Fru-tech"></span>
                     <p>Gestão Agronômica e Diagnóstico IA</p>
                 </div>
 
@@ -2847,7 +2839,7 @@ body{
                 src="{{ url_for('static', filename='images/logo-frutech.png') }}"
                 alt="Fru-tech"
             >
-            <i class="fa-regular fa-bell icon-btn" onclick="openNotifications()" title="Notificações"></i>
+            <span class="header-spacer" aria-hidden="true"></span>
         </header>
 
         <!-- Área Central com Rolagem -->
@@ -2921,6 +2913,10 @@ body{
                                     <i class="fa-solid fa-road"></i>
                                     <div><span>Área</span><strong>-- ha</strong></div>
                                 </div>
+                                <div class="home-stat home-stat-foliar">
+                                    <i class="fa-solid fa-leaf"></i>
+                                    <div><span>Manejo foliar</span><strong>Aguardando simulação</strong></div>
+                                </div>
                             </div>
                         </div>
                     </article>
@@ -2983,9 +2979,9 @@ body{
 
             <!-- ================= TELA 2: DIAGNÓSTICO COM IA ================= -->
             <section id="page-diagnostico" class="page">
-                <div class="diagnosis-heading">
-                    <h2><i class="fa-solid fa-seedling"></i> Diagnóstico foliar</h2>
-                    <p>Identifique sinais de doenças e deficiências nutricionais.</p>
+                <div class="sim-header diagnosis-hero">
+                    <h2 class="sim-title">Diagnóstico foliar</h2>
+                    <p class="sim-subtitle">Identifique sinais de doenças e deficiências nutricionais.</p>
                 </div>
 
                 <article class="card diagnosis-card">
