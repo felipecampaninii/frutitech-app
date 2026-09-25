@@ -887,8 +887,8 @@ function obterRecomendacaoNPK(item) {
     const k = primeiroValorValido(item, ["dose_k", "doseK", "potassio", "k_recomendado"]);
     if (n !== null || p !== null || k !== null) {
         const dose = (rotulo, valor) => valor === null
-            ? `<span class="npk-value npk-pending">${rotulo} Não salvo</span>`
-            : `<span class="npk-value">${rotulo} ${formatarValorReal(valor)}</span>`;
+            ? `<span class="npk-value npk-pending">${rotulo}: análise não informada</span>`
+            : `<span class="npk-value">${rotulo} ${formatarValorReal(valor)} kg/ha</span>`;
 
         return `${dose("N", n)} <span class="npk-separator">·</span> ${dose("P", p)} <span class="npk-separator">·</span> ${dose("K", k)}`;
     }
