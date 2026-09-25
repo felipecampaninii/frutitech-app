@@ -1786,6 +1786,41 @@ function calcularMassaFonteComercial(massaNutriente, concentracaoFonte) {
     return (massaNutriente * 100) / concentracaoFonte;
 }
 
+// Converte a dose calculada para a leitura usual de preparo por 100 litros
+// e a confronta com os limites informados pelo próprio usuário a partir do rótulo.
+function auditarDoseAplicacao(doseKgHa, volumeLHa, doseMinKgHa, doseMaxKgHa) {
+    const dose = Number(doseKgHa);
+    const volume = Number(volumeLHa);
+    const minimo = Number(doseMinKgHa);
+    const maximo = Number(doseMaxKgHa);
+    const por100L = volume > 0 ? (dose / volume) * 100 : 0;
+
+    if (![dose, volume, minimo, maximo].every(Number.isFinite) || dose <= 0 || volume <= 0 || minimo < 0 || maximo <= 0) {
+        return { status: "incompleto", aprovado: false, por100L, mensagem: "Preencha os limites do rótulo para conferir a dose." };
+    }
+
+    if (minimo > maximo) {
+        return { status: "bloqueado", aprovado: false, por100L, mensagem: "A dose mínima não pode ser maior que a dose máxima." };
+    }
+
+    if (dose < minimo || dose > maximo) {
+        return { status: "bloqueado", aprovado: false, por100L, mensagem: `Dose calculada de ${formatarNumero(dose, 3)} kg/ha fora do intervalo informado (${formatarNumero(minimo, 3)} a ${formatarNumero(maximo, 3)} kg/ha).` };
+    }
+
+    const margem = Math.min(dose - minimo, maximo - dose);
+    const faixa = Math.max(maximo - minimo, 0.001);
+    const proximoLimite = margem / faixa < 0.1;
+
+    return {
+        status: proximoLimite ? "atencao" : "conferido",
+        aprovado: true,
+        por100L,
+        mensagem: proximoLimite
+            ? "Dose dentro do intervalo, porém próxima de um dos limites informados."
+            : "Dose dentro do intervalo informado a partir do rótulo."
+    };
+}
+
 
 
 // ==========================================================
@@ -1909,7 +1944,13 @@ function mostrarResultados(
         condutividade,
         recomendacaoAdjuvante,
         estagioFoliar,
-        janelaClimatica
+        janelaClimatica,
+        auditoriaDose,
+        produtoNome,
+        produtoFabricante,
+        produtoRegistro,
+        doseMinRotulo,
+        doseMaxRotulo
 
     } = resultados;
 
@@ -2164,6 +2205,16 @@ function mostrarResultados(
                 <div class="result-volume-item"><span>Volume total do talhão</span><strong>${formatarNumero(volumeCalda,0)} L</strong></div>
             </div>
 
+            <div class="result-safety-level ${auditoriaDose.status}">
+                <i class="fa-solid ${auditoriaDose.aprovado ? "fa-shield-circle-check" : "fa-triangle-exclamation"}"></i>
+                <div><strong>${auditoriaDose.aprovado ? "DOSE CONFERIDA" : "APLICAÇÃO BLOQUEADA"}</strong><span>${auditoriaDose.mensagem}</span></div>
+            </div>
+
+            <div class="product-result-summary">
+                <strong>${produtoNome}</strong>
+                <span>${produtoFabricante} · identificação ${produtoRegistro}</span>
+            </div>
+
             <p class="result-hint">O volume informado não é convertido automaticamente a partir do TRV. Confirme-o pela calibração do equipamento e orientação técnica.</p>
 
             <ul class="recom-list">
@@ -2186,6 +2237,9 @@ function mostrarResultados(
                 ${textoDose}
 
                 ${textoMicro}
+
+                <li><i class="fa-solid fa-scale-balanced"></i><strong> Dose por 100 L:</strong> ${formatarNumero(auditoriaDose.por100L, 3)} kg/100 L</li>
+                <li><i class="fa-solid fa-book-open"></i><strong> Intervalo informado do rótulo:</strong> ${formatarNumero(doseMinRotulo, 3)} a ${formatarNumero(doseMaxRotulo, 3)} kg/ha</li>
 
                 <li><i class="fa-solid fa-tags"></i><strong> Garantia e nutrientes acompanhantes:</strong> confirme no rótulo a composição completa da fonte. MAP, nitrato de potássio e sulfato de magnésio fornecem mais de um nutriente.</li>
 
@@ -2326,8 +2380,18 @@ function validarDadosSimulacao(
         return false;
     }
 
-    if (!dados.confirmacaoRotulo) {
-        alert("Confirme a indicação, a concentração e a compatibilidade no rótulo antes de calcular a aplicação foliar.");
+    if (!dados.produtoNome || !dados.produtoFabricante || !dados.produtoRegistro) {
+        alert("Identifique o produto, o fabricante e o documento técnico consultado.");
+        return false;
+    }
+
+    if (dados.doseMinRotulo < 0 || dados.doseMaxRotulo <= 0 || dados.doseMinRotulo > dados.doseMaxRotulo) {
+        alert("Informe um intervalo válido de dose do rótulo em kg/ha.");
+        return false;
+    }
+
+    if (![dados.confirmacaoRotulo, dados.confirmacaoDose, dados.confirmacaoMistura, dados.confirmacaoCalibracao].every(Boolean)) {
+        alert("Conclua todas as verificações da aplicação antes de calcular e salvar.");
         return false;
     }
 
@@ -2489,6 +2553,14 @@ async function salvarECalcular() {
     const estagioFoliar = document.getElementById("simEstagioFoliar")?.value || "maduras";
     const adjuvante = document.getElementById("simAdjuvante")?.value || "nao-informado";
     const confirmacaoRotulo = Boolean(document.getElementById("simConfirmacaoRotulo")?.checked);
+    const confirmacaoDose = Boolean(document.getElementById("simConfirmacaoDose")?.checked);
+    const confirmacaoMistura = Boolean(document.getElementById("simConfirmacaoMistura")?.checked);
+    const confirmacaoCalibracao = Boolean(document.getElementById("simConfirmacaoCalibracao")?.checked);
+    const produtoNome = document.getElementById("simProdutoNome")?.value.trim() || "";
+    const produtoFabricante = document.getElementById("simProdutoFabricante")?.value.trim() || "";
+    const produtoRegistro = document.getElementById("simProdutoRegistro")?.value.trim() || "";
+    const doseMinRotulo = numero("simDoseMinRotulo");
+    const doseMaxRotulo = numero("simDoseMaxRotulo");
 
 
 
@@ -2544,7 +2616,15 @@ async function salvarECalcular() {
         concentracaoFonte,
         concentracaoMgL,
         volumeCaldaHa: volumeCaldaHaInformado,
-        confirmacaoRotulo
+        confirmacaoRotulo,
+        confirmacaoDose,
+        confirmacaoMistura,
+        confirmacaoCalibracao,
+        produtoNome,
+        produtoFabricante,
+        produtoRegistro,
+        doseMinRotulo,
+        doseMaxRotulo
     };
 
 
@@ -2691,6 +2771,20 @@ async function salvarECalcular() {
     nutrienteEntregue = area > 0 ? massaMicronutriente / area : 0;
     statusSelecionado = "aplicação foliar calculada separadamente do NPK anual";
 
+    const auditoriaDose = auditarDoseAplicacao(
+        doseProduto,
+        volumeCaldaHa,
+        doseMinRotulo,
+        doseMaxRotulo
+    );
+
+    if (!auditoriaDose.aprovado) {
+        atualizarPreviaAuditoriaDose(auditoriaDose);
+        alert(auditoriaDose.mensagem + " A recomendação não será salva até a correção.");
+        document.getElementById("simDoseMinRotulo")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+    }
+
 
 
     // ======================================================
@@ -2787,7 +2881,13 @@ async function salvarECalcular() {
         condutividade,
         recomendacaoAdjuvante,
         estagioFoliar,
-        janelaClimatica
+        janelaClimatica,
+        auditoriaDose,
+        produtoNome,
+        produtoFabricante,
+        produtoRegistro,
+        doseMinRotulo,
+        doseMaxRotulo
     });
 
 
@@ -2926,6 +3026,17 @@ async function salvarECalcular() {
         estagio_foliar: estagioFoliar,
         adjuvante: adjuvante,
         status_pulverizacao: janelaClimatica.titulo,
+        produto_nome: produtoNome,
+        produto_fabricante: produtoFabricante,
+        produto_identificacao: produtoRegistro,
+        dose_min_rotulo: doseMinRotulo,
+        dose_max_rotulo: doseMaxRotulo,
+        dose_por_100l: auditoriaDose.por100L,
+        validacao_dose: auditoriaDose.status,
+        confirmacao_cultura: confirmacaoRotulo,
+        confirmacao_dose: confirmacaoDose,
+        confirmacao_mistura: confirmacaoMistura,
+        confirmacao_calibracao: confirmacaoCalibracao,
 
 
         // VOLUME / MICRO
@@ -3099,9 +3210,35 @@ async function salvarECalcular() {
 // EVENTOS DA PÁGINA
 // ==========================================================
 
+function atualizarPreviaAuditoriaDose(auditoriaForcada = null) {
+    const painel = document.getElementById("doseAuditPreview");
+    if (!painel) return;
+
+    const concentracaoMgL = numero("simConcentracaoMgL");
+    const volumeLHa = numero("simVolumeCaldaHa");
+    const garantia = numero("simConcentracao");
+    const minimo = numero("simDoseMinRotulo");
+    const maximo = numero("simDoseMaxRotulo");
+    const nutrienteKgHa = (concentracaoMgL * volumeLHa) / 1000000;
+    const doseKgHa = garantia > 0 ? nutrienteKgHa / (garantia / 100) : 0;
+    const auditoria = auditoriaForcada || auditarDoseAplicacao(doseKgHa, volumeLHa, minimo, maximo);
+
+    painel.classList.remove("is-ok", "is-warning", "is-blocked");
+    painel.classList.add(auditoria.status === "conferido" ? "is-ok" : auditoria.status === "atencao" ? "is-warning" : auditoria.status === "bloqueado" ? "is-blocked" : "");
+    painel.innerHTML = `
+        <i class="fa-solid ${auditoria.aprovado ? "fa-shield-circle-check" : "fa-scale-balanced"}"></i>
+        <div><strong>${doseKgHa > 0 ? `${formatarNumero(doseKgHa, 3)} kg/ha · ${formatarNumero(auditoria.por100L, 3)} kg/100 L` : "Conferência automática da dose"}</strong><span>${auditoria.mensagem}</span></div>
+    `;
+}
+
 document.addEventListener(
     "DOMContentLoaded",
     function () {
+
+        ["simConcentracaoMgL", "simVolumeCaldaHa", "simConcentracao", "simDoseMinRotulo", "simDoseMaxRotulo"].forEach((id) => {
+            document.getElementById(id)?.addEventListener("input", () => atualizarPreviaAuditoriaDose());
+        });
+        atualizarPreviaAuditoriaDose();
 
         // ==================================================
         // ALTERAÇÃO DA FONTE
@@ -3284,7 +3421,12 @@ document.addEventListener(
                 "selectFonte",
                 "simConcentracao",
                 "simConcentracaoMgL",
-                "simVolumeCaldaHa"
+                "simVolumeCaldaHa",
+                "simProdutoNome",
+                "simProdutoFabricante",
+                "simProdutoRegistro",
+                "simDoseMinRotulo",
+                "simDoseMaxRotulo"
             ]
         };
 
@@ -3292,10 +3434,14 @@ document.addEventListener(
             .find((id) => !campoPreenchido(id));
 
         if (!campoAusente) {
-            if (numero === 4 && !document.getElementById("simConfirmacaoRotulo")?.checked) {
-                alert("Confirme a leitura do rótulo e a compatibilidade da aplicação para continuar.");
-                document.getElementById("simConfirmacaoRotulo")?.focus();
-                return false;
+            if (numero === 4) {
+                const confirmacoes = ["simConfirmacaoRotulo", "simConfirmacaoDose", "simConfirmacaoMistura", "simConfirmacaoCalibracao"];
+                const ausente = confirmacoes.find((id) => !document.getElementById(id)?.checked);
+                if (ausente) {
+                    alert("Conclua todas as verificações da aplicação para continuar.");
+                    document.getElementById(ausente)?.focus();
+                    return false;
+                }
             }
             return true;
         }
