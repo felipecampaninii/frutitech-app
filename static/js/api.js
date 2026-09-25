@@ -914,7 +914,18 @@ function atualizarUltimoTalhaoHome(item, numeroTalhao = null) {
     const identificacaoSalva = primeiroValorValido(item, ["nome_talhao", "talhao", "identificacao"]);
     const numeroRegistro = numeroTalhao || primeiroValorValido(item, ["numero_talhao", "id"], 1);
     const identificacao = identificacaoSalva || `Talhão ${numeroRegistro}`;
-    const npk = obterRecomendacaoNPK(item);
+    const estagioFoliarSalvo = String(primeiroValorValido(item, ["estagio_foliar", "estagioFoliar"], ""));
+    const estagioFoliar = estagioFoliarSalvo === "jovens"
+        ? "Folhas jovens"
+        : estagioFoliarSalvo === "maduras"
+            ? "Folhas maduras"
+            : "";
+    const objetivoAplicacao = primeiroValorValido(item, ["objetivo"], null);
+    const elementoAplicacao = primeiroValorValido(item, ["elemento"], null);
+    const resumoFoliar = [estagioFoliar, objetivoAplicacao, elementoAplicacao]
+        .filter(Boolean)
+        .map(escaparHTML)
+        .join(" · ") || "Não informado";
 
     container.innerHTML = `
         <div class="home-lot-head">
@@ -931,7 +942,7 @@ function atualizarUltimoTalhaoHome(item, numeroTalhao = null) {
             <div class="home-stat"><i class="fa-solid fa-seedling"></i><div><span>Idade</span><strong>${formatarValorReal(idade, 0)} ${idade === 1 ? "ano" : "anos"}</strong></div></div>
             <div class="home-stat"><i class="fa-solid fa-tree"></i><div><span>Árvores</span><strong>${formatarValorReal(arvores, 0)}</strong></div></div>
             <div class="home-stat"><i class="fa-solid fa-road"></i><div><span>Área</span><strong>${formatarValorReal(area)} ha</strong></div></div>
-            <div class="home-stat home-stat-npk"><i class="fa-solid fa-flask-vial"></i><div><span>Recomendação NPK</span><strong>${npk}</strong></div></div>
+            <div class="home-stat home-stat-foliar"><i class="fa-solid fa-leaf"></i><div><span>Manejo foliar</span><strong>${resumoFoliar}</strong></div></div>
         </div>`;
 }
 
