@@ -59,8 +59,8 @@ function definirTexto(id, valor) {
 // - Velocidade do vento ideal: entre 3 e 10 km/h
 // ==========================================================
 
-function avaliarCondicoesPulverizacao(temperatura, umidade, vento) {
-    const valores = [temperatura, umidade, vento].map(Number);
+function avaliarCondicoesPulverizacao(temperatura, umidade, vento, chuva = 0) {
+    const valores = [temperatura, umidade, vento, chuva].map(Number);
 
     if (valores.some((valor) => !Number.isFinite(valor))) {
         return {
@@ -75,25 +75,28 @@ function avaliarCondicoesPulverizacao(temperatura, umidade, vento) {
     const temperaturaIdeal = temperatura < 30;
     const umidadeIdeal = umidade > 55;
     const ventoIdeal = vento >= 3 && vento <= 10;
+    const chuvaFavoravel = chuva < 40;
 
     const condicaoCritica =
         temperatura >= 35 ||
         umidade <= 40 ||
         vento < 1 ||
-        vento > 15;
+        vento > 15 ||
+        chuva >= 70;
 
     const motivos = [];
 
     if (!temperaturaIdeal) motivos.push(`temperatura de ${Math.round(temperatura)} °C`);
     if (!umidadeIdeal) motivos.push(`umidade de ${Math.round(umidade)}%`);
     if (!ventoIdeal) motivos.push(`vento de ${Math.round(vento)} km/h`);
+    if (!chuvaFavoravel) motivos.push(`chuva de ${Math.round(chuva)}% nas próximas horas`);
 
-    if (temperaturaIdeal && umidadeIdeal && ventoIdeal) {
+    if (temperaturaIdeal && umidadeIdeal && ventoIdeal && chuvaFavoravel) {
         return {
             nivel: "apto",
-            titulo: "APTO PARA PULVERIZAÇÃO",
-            resumo: "Momento recomendável para adubação foliar.",
-            detalhe: "Temperatura, umidade e vento estão dentro da faixa indicada.",
+            titulo: "CONDIÇÕES ESTIMADAS FAVORÁVEIS",
+            resumo: "A previsão indica uma possível janela para aplicação.",
+            detalhe: "Confirme as condições no talhão e siga o rótulo do produto.",
             icone: "fa-check"
         };
     }
@@ -101,18 +104,18 @@ function avaliarCondicoesPulverizacao(temperatura, umidade, vento) {
     if (condicaoCritica) {
         return {
             nivel: "nao-apto",
-            titulo: "NÃO APTO PARA PULVERIZAÇÃO",
-            resumo: "Adie a aplicação e aguarde condições mais seguras.",
-            detalhe: `Condição desfavorável: ${motivos.join(", ")}.`,
+            titulo: "CONDIÇÕES ESTIMADAS DESFAVORÁVEIS",
+            resumo: "A previsão não favorece a aplicação neste momento.",
+            detalhe: `Condição desfavorável: ${motivos.join(", ")}. Confirme no talhão.`,
             icone: "fa-xmark"
         };
     }
 
     return {
         nivel: "atencao",
-        titulo: "APLICAÇÃO COM ATENÇÃO",
-        resumo: "As condições estão próximas, mas fora da faixa ideal.",
-        detalhe: `Verifique novamente antes da aplicação: ${motivos.join(", ")}.`,
+        titulo: "CONDIÇÕES ESTIMADAS COM RESTRIÇÃO",
+        resumo: "A previsão apresenta condição fora da faixa geral.",
+        detalhe: `Verifique no talhão antes da aplicação: ${motivos.join(", ")}.`,
         icone: "fa-triangle-exclamation"
     };
 }
@@ -156,7 +159,8 @@ function atualizarIndicadoresPulverizacao(dadosClimaticos) {
     const avaliacao = avaliarCondicoesPulverizacao(
         dadosClimaticos.temperatura,
         dadosClimaticos.umidade,
-        dadosClimaticos.vento
+        dadosClimaticos.vento,
+        dadosClimaticos.chuva
     );
 
     aplicarStatusPulverizacao(
@@ -180,11 +184,15 @@ function obterChuvaDoHorarioAtual(dados) {
     if (!Array.isArray(horarios) || !Array.isArray(probabilidades)) return 0;
 
     const indiceExato = horarios.indexOf(horaAtual);
-    if (indiceExato >= 0) return Number(probabilidades[indiceExato]) || 0;
+    if (indiceExato >= 0) {
+        return Math.max(...probabilidades.slice(indiceExato, indiceExato + 5).map(Number).filter(Number.isFinite), 0);
+    }
 
     const prefixoHora = String(horaAtual || "").slice(0, 13);
     const indiceAproximado = horarios.findIndex((hora) => String(hora).startsWith(prefixoHora));
-    return indiceAproximado >= 0 ? Number(probabilidades[indiceAproximado]) || 0 : 0;
+    return indiceAproximado >= 0
+        ? Math.max(...probabilidades.slice(indiceAproximado, indiceAproximado + 5).map(Number).filter(Number.isFinite), 0)
+        : 0;
 }
 
 async function buscarClimaAPI(cidade, estado) {
@@ -212,7 +220,7 @@ async function buscarClimaAPI(cidade, estado) {
             hourly: "precipitation_probability",
             wind_speed_unit: "kmh",
             timezone: "America/Sao_Paulo",
-            forecast_days: "1"
+            forecast_days: "2"
         });
 
         const respostaClima = await fetch(`https://api.open-meteo.com/v1/forecast?${parametros}`);
