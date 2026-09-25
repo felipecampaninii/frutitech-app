@@ -3033,10 +3033,6 @@ async function salvarECalcular() {
         dose_max_rotulo: doseMaxRotulo,
         dose_por_100l: auditoriaDose.por100L,
         validacao_dose: auditoriaDose.status,
-        confirmacao_cultura: confirmacaoRotulo,
-        confirmacao_dose: confirmacaoDose,
-        confirmacao_mistura: confirmacaoMistura,
-        confirmacao_calibracao: confirmacaoCalibracao,
 
 
         // VOLUME / MICRO
