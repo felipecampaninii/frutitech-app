@@ -2536,7 +2536,6 @@ body{
     color: #102453 !important;
 }
 
-+
 /* =========================================================
    LOGO OFICIAL FRU-TECH EM IMAGEM
    ========================================================= */
@@ -3789,3 +3788,89 @@ textarea {
 #page-simulador .product-traceability,
 #page-simulador .application-validation-panel { display:block; }
 #page-historico .history-filter-bar { display:grid; }
+
+/* =========================================================
+   AJUSTES VISUAIS — CABEÇALHOS, LOGO E RESUMO DA HOME
+   ========================================================= */
+.frutech-dark-logo {
+    display:block;
+    flex:0 0 auto;
+    background:linear-gradient(180deg,#35a75d 0%,#08713d 45%,#064d2e 100%);
+    -webkit-mask:url('/static/images/logo-frutech.png') center / contain no-repeat;
+    mask:url('/static/images/logo-frutech.png') center / contain no-repeat;
+}
+.frutech-dark-logo--sidebar { width:210px;height:72px; }
+.frutech-dark-logo--auth { width:min(255px,88%);height:96px;margin:0 auto 8px; }
+.sidebar-header .frutech-dark-logo,
+.auth-brand .frutech-dark-logo {
+    padding:0;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+}
+.auth-brand { padding-top:2px; }
+.header-spacer { width:28px;height:28px;justify-self:end; }
+
+#page-diagnostico,
+#page-simulador,
+#page-historico {
+    padding:0 14px 100px !important;
+}
+#page-diagnostico > .sim-header,
+#page-simulador > .sim-header,
+#page-historico > .sim-header {
+    width:auto;
+    min-height:170px;
+    margin:0 -14px 20px !important;
+    padding:34px 28px 30px;
+    border-radius:0 0 30px 30px !important;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:flex-start;
+}
+#page-diagnostico > .sim-header .sim-title,
+#page-simulador > .sim-header .sim-title,
+#page-historico > .sim-header .sim-title {
+    margin:0;
+    color:#fff !important;
+    font-size:31px;
+    line-height:1.08;
+    text-align:left;
+    text-shadow:0 2px 12px rgba(0,0,0,.18);
+}
+#page-diagnostico > .sim-header .sim-subtitle,
+#page-simulador > .sim-header .sim-subtitle,
+#page-historico > .sim-header .sim-subtitle {
+    margin:12px 0 0;
+    color:rgba(255,255,255,.92) !important;
+    font-size:14px;
+    line-height:1.45;
+    text-align:left;
+}
+.diagnosis-hero { background-position:center 50% !important; }
+
+#page-inicio .home-stat-foliar {
+    grid-column:1 / -1 !important;
+    min-height:64px;
+    border-right:0 !important;
+    border-top:1px solid #dbe9e0;
+    background:linear-gradient(90deg,#f0faf4,#f8fdf9);
+}
+#page-inicio .home-stat-foliar > div { min-width:0; }
+#page-inicio .home-stat-foliar strong {
+    white-space:normal;
+    overflow-wrap:anywhere;
+    color:#075b34;
+}
+
+@media (max-width:420px) {
+    .frutech-dark-logo--sidebar { width:190px;height:66px; }
+    .frutech-dark-logo--auth { width:min(230px,86%);height:86px; }
+    #page-diagnostico > .sim-header,
+    #page-simulador > .sim-header,
+    #page-historico > .sim-header { min-height:150px;padding:28px 22px 25px; }
+    #page-diagnostico > .sim-header .sim-title,
+    #page-simulador > .sim-header .sim-title,
+    #page-historico > .sim-header .sim-title { font-size:28px; }
+}
