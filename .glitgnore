@@ -1,4 +1,18 @@
+# Ambiente virtual e caches Python
+.venv/
+venv/
 __pycache__/
-*.pyc
+*.py[cod]
+
+# Segredos e configurações locais
 .env
+.env.*
+!.env.example
+
+# Configuração local de editores
 .vscode/
+.idea/
+
+# Arquivos temporários do sistema operacional
+.DS_Store
+Thumbs.db
