@@ -395,9 +395,9 @@ async function executarLogin(e) {
         } else {
 
     mostrarMensagemApp(
-        "Usuário ou senha incorretos.",
-        "error"
-    );
+                data.erro || "Usuário ou senha incorretos.",
+                "error"
+            );
 }
 
 
