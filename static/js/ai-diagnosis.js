@@ -61,6 +61,7 @@ async function enviarParaIA() {
         return;
     }
 
+
     const arquivo = inputFoto.files[0];
 
     // Garante que o usuário realmente selecionou uma imagem.
@@ -194,3 +195,169 @@ async function enviarParaIA() {
     }
 }
 
+// =========================================================
+// GERAÇÃO DO PDF DO DIAGNÓSTICO NUTRICIONAL
+// =========================================================
+function gerarPDFDiagnostico() {
+
+    const respostaBox = document.getElementById('respostaIA');
+    const inputFoto = document.getElementById('inputFoto');
+
+    if (!respostaBox || !respostaBox.innerText.trim()) {
+        mostrarMensagemApp(
+            'Não há diagnóstico para gerar o PDF.',
+            'warning'
+        );
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    const diagnostico = respostaBox.innerText.trim();
+    const data = new Date().toLocaleDateString('pt-BR');
+
+    // Título do documento
+    pdf.setFontSize(18);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Fru-Tech', 20, 20);
+
+    pdf.setFontSize(14);
+    pdf.text(
+        'Diagnóstico de Deficiência Nutricional',
+        20,
+        32
+    );
+
+    pdf.setFont(undefined, 'normal');
+
+    // Data
+    pdf.setFontSize(10);
+    pdf.text(`Data: ${data}`, 20, 42);
+
+    pdf.line(20, 48, 190, 48);
+
+    // ---------------------------------------------------------
+    // FOTO DA PLANTA
+    // ---------------------------------------------------------
+
+    if (inputFoto && inputFoto.files && inputFoto.files[0]) {
+
+        const arquivo = inputFoto.files[0];
+        const leitor = new FileReader();
+
+        leitor.onload = function (evento) {
+
+            const imagem = evento.target.result;
+
+            // Adiciona a foto ao PDF
+            pdf.addImage(
+                imagem,
+                'JPEG',
+                20,
+                55,
+                80,
+                60
+            );
+
+            // -------------------------------------------------
+            // DIAGNÓSTICO
+            // -------------------------------------------------
+
+            pdf.setFontSize(11);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('Diagnóstico:', 20, 130);
+
+            pdf.setFont(undefined, 'normal');
+
+            const linhas = pdf.splitTextToSize(
+                diagnostico,
+                170
+            );
+
+            let y = 140;
+
+            linhas.forEach((linha) => {
+
+                if (y > 275) {
+                    pdf.addPage();
+                    y = 20;
+                }
+
+                pdf.text(linha, 20, y);
+                y += 7;
+            });
+
+            pdf.save('diagnostico-nutricional-frutech.pdf');
+        };
+
+        leitor.readAsDataURL(arquivo);
+
+    } else {
+
+        // Caso não exista foto, gera o PDF normalmente
+        pdf.setFontSize(11);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Diagnóstico:', 20, 60);
+
+        pdf.setFont(undefined, 'normal');
+
+        const linhas = pdf.splitTextToSize(
+            diagnostico,
+            170
+        );
+
+        let y = 70;
+
+        linhas.forEach((linha) => {
+
+            if (y > 275) {
+                pdf.addPage();
+                y = 20;
+            }
+
+            pdf.text(linha, 20, y);
+            y += 7;
+        });
+
+        pdf.save('diagnostico-nutricional-frutech.pdf');
+    }
+}
+
+// =========================================================
+// INICIAR UM NOVO DIAGNÓSTICO
+// =========================================================
+function novoDiagnostico() {
+
+    // Localiza os elementos utilizados no diagnóstico
+    const inputFoto = document.getElementById('inputFoto');
+    const imgPreview = document.getElementById('imgPreview');
+    const previewContainer = document.getElementById('previewContainer');
+    const respostaBox = document.getElementById('respostaIA');
+    const cardResultado = document.getElementById('cardResultadoIA');
+
+    // Limpa a imagem selecionada
+    if (inputFoto) {
+        inputFoto.value = '';
+    }
+
+    // Limpa a imagem exibida na pré-visualização
+    if (imgPreview) {
+        imgPreview.src = '';
+    }
+
+    // Esconde a pré-visualização
+    if (previewContainer) {
+        previewContainer.style.display = 'none';
+    }
+
+    // Limpa o diagnóstico anterior
+    if (respostaBox) {
+        respostaBox.innerHTML = '';
+    }
+
+    // Esconde o resultado anterior
+    if (cardResultado) {
+        cardResultado.style.display = 'none';
+    }
+}
