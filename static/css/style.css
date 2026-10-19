@@ -3939,3 +3939,33 @@ textarea {
         font-size: 14px;
     }
 }
+
+.app-message-container {
+    position: absolute;
+    z-index: 1000;
+    top: 14px;
+    right: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.app-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #1a1a1a;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.28);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.app-message.error i { color: #b91c1c; }
+.app-message.success i { color: #08713d; }
+.app-message.warning i { color: #b45309; }
+.app-message.info i { color: #2563eb; }
