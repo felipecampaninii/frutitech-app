@@ -204,7 +204,7 @@ function atualizarConcentracaoFonte() {
 
     const option =
         fonteSelect.options[
-            fonteSelect.selectedIndex
+        fonteSelect.selectedIndex
         ];
 
 
@@ -482,8 +482,8 @@ function calcularTRV(
         largura *
         areaM2
     )
-    /
-    espacamentoLinhas;
+        /
+        espacamentoLinhas;
 }
 
 function calcularTRVPorHectare(altura, largura, espacamentoLinhas) {
@@ -785,7 +785,7 @@ function atualizarIndicadorClimatico(
 
     const configuracao =
         configuracoes[
-            clima.nivel
+        clima.nivel
         ];
 
 
@@ -1454,19 +1454,19 @@ function calcularRecomendacaoNPK(
 
     let n =
         linha.N[
-            faixaN(nFoliar)
+        faixaN(nFoliar)
         ];
 
 
     let p =
         linha.P[
-            faixaP(pResina)
+        faixaP(pResina)
         ];
 
 
     let k =
         linha.K[
-            faixaK(kTrocavel)
+        faixaK(kTrocavel)
         ];
 
 
@@ -1542,8 +1542,8 @@ function calcularDoseProduto(
         quantidadeRecomendada *
         100
     )
-    /
-    concentracaoFonte;
+        /
+        concentracaoFonte;
 }
 
 
@@ -1597,8 +1597,8 @@ function calcularDoseMistura(
         somaRecomendados *
         100
     )
-    /
-    somaFormula;
+        /
+        somaFormula;
 }
 
 
@@ -1772,8 +1772,8 @@ function calcularMassaMicronutriente(
         concentracaoMgL *
         volumeTotal
     )
-    /
-    1000000;
+        /
+        1000000;
 }
 
 // Converte a massa de nutriente elementar na quantidade da fonte comercial.
@@ -1971,9 +1971,9 @@ function mostrarResultados(
                 </strong>
 
                 ${formatarNumero(
-                    doseProduto,
-                    2
-                )} kg/ha
+            doseProduto,
+            2
+        )} kg/ha
             </li>
 
 
@@ -1985,9 +1985,9 @@ function mostrarResultados(
                 </strong>
 
                 ${formatarNumero(
-                    nutrienteEntregue,
-                    2
-                )} kg/ha
+            nutrienteEntregue,
+            2
+        )} kg/ha
             </li>
 
             <li><i class="fa-solid fa-circle-info"></i><strong> Separação agronômica:</strong> esta dose foliar foi calculada pela concentração desejada da calda e não substitui a recomendação anual de NPK.</li>
@@ -2015,9 +2015,9 @@ function mostrarResultados(
                 </strong>
 
                 ${formatarNumero(
-                    massaMicronutriente,
-                    3
-                )} kg
+            massaMicronutriente,
+            3
+        )} kg
             </li>
 
             <li>
@@ -2060,8 +2060,8 @@ function mostrarResultados(
                     </strong>
 
                     ${formatarNumero(
-                        diametroMedio
-                    )} m
+        diametroMedio
+    )} m
 
                 </li>
 
@@ -2075,8 +2075,8 @@ function mostrarResultados(
                     </strong>
 
                     ${formatarNumero(
-                        alturaUtil
-                    )} m
+        alturaUtil
+    )} m
 
                 </li>
 
@@ -2090,8 +2090,8 @@ function mostrarResultados(
                     </strong>
 
                     ${formatarNumero(
-                        volumeCopa
-                    )} m³/árvore
+        volumeCopa
+    )} m³/árvore
 
                 </li>
 
@@ -2105,8 +2105,8 @@ function mostrarResultados(
                     </strong>
 
                     ${formatarNumero(
-                        volumeCopasTalhao
-                    )} m³
+        volumeCopasTalhao
+    )} m³
 
                 </li>
 
@@ -2120,8 +2120,8 @@ function mostrarResultados(
                     </strong>
 
                     ${formatarNumero(
-                        trv
-                    )} m³
+        trv
+    )} m³
 
                 </li>
 
@@ -2151,9 +2151,9 @@ function mostrarResultados(
                     <strong>N:</strong>
 
                     ${formatarNumero(
-                        recomendacao.N,
-                        0
-                    )} kg/ha
+        recomendacao.N,
+        0
+    )} kg/ha
 
                 </li>
 
@@ -2163,9 +2163,9 @@ function mostrarResultados(
                     <strong>P₂O₅:</strong>
 
                     ${formatarNumero(
-                        recomendacao.P,
-                        0
-                    )} kg/ha
+        recomendacao.P,
+        0
+    )} kg/ha
 
                 </li>
 
@@ -2175,9 +2175,9 @@ function mostrarResultados(
                     <strong>K₂O:</strong>
 
                     ${formatarNumero(
-                        recomendacao.K,
-                        0
-                    )} kg/ha
+        recomendacao.K,
+        0
+    )} kg/ha
 
                 </li>
 
@@ -2201,8 +2201,8 @@ function mostrarResultados(
 
 
             <div class="result-volume-grid">
-                <div class="result-volume-item"><span>Volume calibrado informado</span><strong>${formatarNumero(volumeCaldaHa,0)} L/ha</strong></div>
-                <div class="result-volume-item"><span>Volume total do talhão</span><strong>${formatarNumero(volumeCalda,0)} L</strong></div>
+                <div class="result-volume-item"><span>Volume calibrado informado</span><strong>${formatarNumero(volumeCaldaHa, 0)} L/ha</strong></div>
+                <div class="result-volume-item"><span>Volume total do talhão</span><strong>${formatarNumero(volumeCalda, 0)} L</strong></div>
             </div>
 
             <div class="result-safety-level ${auditoriaDose.status}">
@@ -2227,9 +2227,9 @@ function mostrarResultados(
                     </strong>
 
                     ${formatarNumero(
-                        concentracaoFonte,
-                        2
-                    )}%
+        concentracaoFonte,
+        2
+    )}%
 
                 </li>
 
@@ -2243,7 +2243,7 @@ function mostrarResultados(
 
                 <li><i class="fa-solid fa-tags"></i><strong> Garantia e nutrientes acompanhantes:</strong> confirme no rótulo a composição completa da fonte. MAP, nitrato de potássio e sulfato de magnésio fornecem mais de um nutriente.</li>
 
-                <li><i class="fa-solid fa-vial"></i><strong> Qualidade da água:</strong> ${avaliacaoPh.mensagem} CE: ${condutividade > 0 ? formatarNumero(condutividade,2) + " dS/m" : "não informada"}.</li>
+                <li><i class="fa-solid fa-vial"></i><strong> Qualidade da água:</strong> ${avaliacaoPh.mensagem} CE: ${condutividade > 0 ? formatarNumero(condutividade, 2) + " dS/m" : "não informada"}.</li>
                 <li><i class="fa-solid fa-leaf"></i><strong> Estágio foliar:</strong> ${estagioFoliar === "jovens" ? "folhas jovens" : "folhas maduras"}. Adjuvante: ${recomendacaoAdjuvante}.</li>
                 <li><i class="fa-solid fa-wind"></i><strong> ${janelaClimatica.titulo}:</strong> ${janelaClimatica.mensagem}</li>
 
@@ -2252,6 +2252,11 @@ function mostrarResultados(
         </div>
 
     `;
+
+    container.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 }
 
 
@@ -2316,7 +2321,7 @@ function validarDadosSimulacao(
     if (
         dados.alturaCaule < 0 ||
         dados.alturaCaule >=
-            dados.alturaTotal
+        dados.alturaTotal
     ) {
 
         alert(
@@ -2405,7 +2410,57 @@ function validarDadosSimulacao(
 // FUNÇÃO PRINCIPAL
 // CALCULA + EXIBE + SALVA
 // ==========================================================
+function atualizarTotalArvores() {
+    const area = numero("simArea");
+    const espacamento = numero("simEspacamento");
+    const espacamentoPlantas = numero("simEspacamentoPlantas");
 
+    const densidade =
+        (espacamento > 0 && espacamentoPlantas > 0)
+            ? 10000 / (espacamento * espacamentoPlantas)
+            : 0;
+
+    const campoDensidade = document.getElementById("simDensidade");
+
+    if (campoDensidade) {
+        campoDensidade.value = densidade > 0
+            ? Math.round(densidade)
+            : "";
+    }
+    const arvores = densidade * area;
+    const producaoPorPlanta =
+        Number(document.getElementById("simProducao")?.value || 0);
+
+    const producaoTotal = arvores * producaoPorPlanta;
+    const produtividadeTonPorHa =
+        (densidade * producaoPorPlanta * 40.8) / 1000;
+
+    const campoProducaoTotal =
+        document.getElementById("simProducaoTotal");
+
+    if (campoProducaoTotal) {
+        campoProducaoTotal.value = producaoTotal > 0
+            ? Math.round(producaoTotal)
+            : "";
+    }
+
+    const campoProdutividadeTon =
+        document.getElementById("simProdutividadeTon");
+
+    if (campoProdutividadeTon) {
+        campoProdutividadeTon.value = produtividadeTonPorHa > 0
+            ? produtividadeTonPorHa.toFixed(2)
+            : "";
+    }
+
+    const campoArvores = document.getElementById("simArvores");
+
+    if (campoArvores) {
+        campoArvores.value = arvores > 0
+            ? Math.round(arvores)
+            : "";
+    }
+}
 async function salvarECalcular() {
 
     const usuarioId =
@@ -2432,19 +2487,28 @@ async function salvarECalcular() {
     const producao =
         numero("simProducao");
 
-
     const area =
         numero("simArea");
 
+    const espacamento =
+        numero("simEspacamento");
+
+    const espacamentoPlantas =
+        numero("simEspacamentoPlantas");
+
+    const densidadePlantas =
+        (espacamento > 0 && espacamentoPlantas > 0)
+            ? 10000 / (espacamento * espacamentoPlantas)
+            : 0;
 
     const arvores =
-        numero("simArvores");
-
+        densidadePlantas * area;
 
     const idade =
         numero("simIdade");
 
-
+    const producaoTotal =
+        arvores * producao;
 
     // ======================================================
     // GEOMETRIA DA COPA
@@ -2453,24 +2517,17 @@ async function salvarECalcular() {
     const medida1 =
         numero("simMedida1");
 
-
     const medida2 =
         numero("simMedida2");
 
-
     const alturaTotal =
         numero("simAltura");
-
 
     const alturaCaule =
         numero("simAlturaCaule");
 
 
-    const espacamento =
-        numero("simEspacamento");
 
-    const espacamentoPlantas =
-        numero("simEspacamentoPlantas");
 
 
 
@@ -2844,7 +2901,6 @@ async function salvarECalcular() {
     }
 
 
-
     // ======================================================
     // EXIBE O RESULTADO ANTES DE SALVAR
     // ======================================================
@@ -3147,23 +3203,7 @@ async function salvarECalcular() {
         ) {
 
             alert(
-                "Simulação calculada e salva com sucesso!"
-            );
-
-
-            // Aguarda um pouco para permitir
-            // visualização do resultado antes
-            // de abrir o histórico.
-
-            setTimeout(
-                function () {
-
-                    navigate(
-                        "historico"
-                    );
-
-                },
-                400
+                "Simulação calculada e salva com sucesso! O resultado permanece nesta etapa."
             );
 
 
@@ -3201,6 +3241,33 @@ async function salvarECalcular() {
 }
 
 
+// ==========================================================
+// CÁLCULO DE VOLUME TOTAL DE APLICAÇÃO NA BOMBA
+// ==========================================================
+
+function calcularVolumeBomba(sufixo = "") {
+    const tamanhoBomba = numero(`tamanhoBomba${sufixo}`);
+    const qtdProduto = numero(`qtdProduto${sufixo}`);
+    const tamanhoBombaBula = numero(`tamanhoBombaBula${sufixo}`);
+    
+    const boxResultado = document.getElementById(`boxResultadoVolume${sufixo}`);
+    const spanResultado = document.getElementById(`resultadoVolumeTotal${sufixo}`);
+
+    if (!boxResultado || !spanResultado) return;
+
+    if (tamanhoBomba > 0 && qtdProduto > 0 && tamanhoBombaBula > 0) {
+        
+        // Regra de Três: (Quantidade de Produto / Bomba da Bula) * Sua Bomba
+        const resultado = (qtdProduto / tamanhoBombaBula) * tamanhoBomba;
+
+        spanResultado.textContent = formatarNumero(resultado, 0);
+        
+        boxResultado.style.display = "block";
+    } else {
+        boxResultado.style.display = "none";
+    }
+}
+
 
 // ==========================================================
 // EVENTOS DA PÁGINA
@@ -3220,7 +3287,12 @@ function atualizarPreviaAuditoriaDose(auditoriaForcada = null) {
     const auditoria = auditoriaForcada || auditarDoseAplicacao(doseKgHa, volumeLHa, minimo, maximo);
 
     painel.classList.remove("is-ok", "is-warning", "is-blocked");
-    painel.classList.add(auditoria.status === "conferido" ? "is-ok" : auditoria.status === "atencao" ? "is-warning" : auditoria.status === "bloqueado" ? "is-blocked" : "");
+    const classeStatus = {
+        conferido: "is-ok",
+        atencao: "is-warning",
+        bloqueado: "is-blocked"
+    }[auditoria.status];
+    if (classeStatus) painel.classList.add(classeStatus);
     painel.innerHTML = `
         <i class="fa-solid ${auditoria.aprovado ? "fa-shield-circle-check" : "fa-scale-balanced"}"></i>
         <div><strong>${doseKgHa > 0 ? `${formatarNumero(doseKgHa, 3)} kg/ha · ${formatarNumero(auditoria.por100L, 3)} kg/100 L` : "Conferência automática da dose"}</strong><span>${auditoria.mensagem}</span></div>
@@ -3313,6 +3385,34 @@ document.addEventListener(
     }
 );
 
+function iniciarCalculoAutomaticoBomba() {
+    const sufixos = ["", "Aplicacao"];
+
+    sufixos.forEach((sufixo) => {
+        const camposBomba = [
+            `tamanhoBomba${sufixo}`,
+            `qtdProduto${sufixo}`,
+            `tamanhoBombaBula${sufixo}`
+        ];
+
+        camposBomba.forEach((id) => {
+            const campo = document.getElementById(id);
+            if (campo) {
+                campo.addEventListener("input", () => calcularVolumeBomba(sufixo));
+                campo.addEventListener("change", () => calcularVolumeBomba(sufixo));
+            }
+        });
+
+        calcularVolumeBomba(sufixo);
+    });
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", iniciarCalculoAutomaticoBomba, { once: true });
+} else {
+    iniciarCalculoAutomaticoBomba();
+}
+
 
 // ==========================================================
 // NAVEGAÇÃO VISUAL DO SIMULADOR EM QUATRO ETAPAS
@@ -3392,17 +3492,18 @@ document.addEventListener(
             1: [
                 "simProducao",
                 "simArea",
+                "simEspacamento",
+                "simEspacamentoPlantas",
                 "simArvores",
                 "simIdade",
                 "simEstagioFoliar"
             ],
+
             2: [
                 "simMedida1",
                 "simMedida2",
                 "simAltura",
                 "simAlturaCaule",
-                "simEspacamento",
-                "simEspacamentoPlantas"
             ],
             3: [
                 "simFinalidade",
@@ -3459,6 +3560,15 @@ document.addEventListener(
         if (!pagina || pagina.dataset.etapasConfiguradas === "true") return;
 
         pagina.dataset.etapasConfiguradas = "true";
+        ["simArea", "simEspacamento", "simEspacamentoPlantas", "simProducao"].forEach((id) => {
+            const campo = document.getElementById(id);
+
+            if (campo) {
+                campo.addEventListener("input", atualizarTotalArvores);
+            }
+        });
+
+        atualizarTotalArvores();
 
         pagina.addEventListener("click", (evento) => {
             const botaoAvancar = evento.target.closest("[data-sim-next]");
