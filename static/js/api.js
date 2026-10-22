@@ -961,6 +961,8 @@ function mostrarMensagemApp(mensagem, tipo = "info", duracao = 3500) {
         return;
     }
 
+    const tiposValidos = ['success', 'error', 'warning', 'info'];
+    tipo = tiposValidos.includes(tipo) ? tipo : 'info';
     const aviso = document.createElement("div");
     aviso.className = `app-message ${tipo}`;
 

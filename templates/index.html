@@ -4560,6 +4560,7 @@
                         <!-- O laudo retornado pela IA será renderizado aqui -->
                     </div>
 
+                    <div class="diagnosis-result-actions">
                     <!-- Botão para gerar o PDF do diagnóstico nutricional -->
                     <button type="button" onclick="gerarPDFDiagnostico()" class="btn-green btn-calc">
                         <i class="fa-solid fa-file-pdf"></i>
@@ -4571,6 +4572,7 @@
                         <i class="fa-solid fa-rotate"></i>
                         Realizar novo diagnóstico
                     </button>
+                    </div>
                 </article>
             </section>
 
@@ -5661,13 +5663,13 @@
     </div>
 
     <!-- IMPORTAÇÃO DOS MÓDULOS JAVASCRIPT DA PASTA JS -->
-    <script src="/static/js/api.js"></script>
-    <script src="/static/js/navigation.js"></script>
-    <script src="/static/js/simulator.js"></script>
+    <script src="/static/js/api.js?v=20261021"></script>
+    <script src="/static/js/navigation.js?v=20261021"></script>
+    <script src="/static/js/simulator.js?v=20261021"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="/static/js/ai-diagnosis.js"></script>
-    <script src="/static/js/weather.js"></script>
-    <script src="/static/js/auth.js?v=20261002"></script>
+    <script src="/static/js/ai-diagnosis.js?v=20261021"></script>
+    <script src="/static/js/weather.js?v=20261021"></script>
+    <script src="/static/js/auth.js?v=20261021"></script>
 
     <script>
         /* =========================================================
@@ -5895,6 +5897,17 @@ document.addEventListener('DOMContentLoaded', function () {
     calcularEstruturaPomar();
 });
 
+</script>
+<script>
+(function () {
+    function avisarAndroid() {
+        if (window.FruTechAndroid && typeof window.FruTechAndroid.paginaPronta === 'function') {
+            window.FruTechAndroid.paginaPronta();
+        }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', avisarAndroid);
+    else avisarAndroid();
+})();
 </script>
 </body>
 

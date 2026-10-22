@@ -361,7 +361,7 @@ async function executarLogin(e) {
                 mostrarMensagemApp(
                     `Olá, ${usuario.username}! ` +
                     `Selecione a Cidade e Estado do seu pomar.`
-                , "error");
+                , "warning");
 
                 navigate('configuracoes');
 
@@ -442,7 +442,7 @@ window.salvarNovaLocalizacao =
 
             mostrarMensagemApp(
                 "Selecione o estado e digite a cidade!"
-            , "error");
+            , "warning");
 
             return;
         }
@@ -537,7 +537,7 @@ window.salvarNovaLocalizacao =
 
         mostrarMensagemApp(
             `Localização salva para o seu perfil: ${cidade} - ${estado}`
-        , "error");
+        , "success");
 
 
         navigate('inicio');

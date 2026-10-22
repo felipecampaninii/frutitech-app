@@ -27,7 +27,7 @@ function exibirPreview(input) {
 function formatarMarkdown(texto) {
     if (!texto) return '';
 
-    return texto
+    return texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
         // Remove separadores Markdown que eventualmente venham da IA.
         .replace(/\\?---+/g, '')
         .replace(/\\?\*\*\*+/g, '')
@@ -198,6 +198,22 @@ async function enviarParaIA() {
 // =========================================================
 // GERAÇÃO DO PDF DO DIAGNÓSTICO NUTRICIONAL
 // =========================================================
+function salvarPDFFrutech(pdf) {
+    const nome = 'diagnostico-frutech.pdf';
+    try {
+        if (window.FruTechAndroid && typeof window.FruTechAndroid.salvarPDF === 'function') {
+            const base64 = pdf.output('datauristring').split(',')[1];
+            window.FruTechAndroid.salvarPDF(nome, base64);
+            return;
+        }
+        pdf.save(nome);
+        if (typeof mostrarMensagemApp === 'function') mostrarMensagemApp('PDF gerado para download.', 'success');
+    } catch (erro) {
+        console.error('Erro ao gerar PDF:', erro);
+        if (typeof mostrarMensagemApp === 'function') mostrarMensagemApp('Não foi possível salvar o PDF.', 'error');
+    }
+}
+
 function gerarPDFDiagnostico() {
 
     const respostaBox = document.getElementById('respostaIA');
@@ -253,7 +269,7 @@ function gerarPDFDiagnostico() {
             // Adiciona a foto ao PDF
             pdf.addImage(
                 imagem,
-                'JPEG',
+                arquivo.type === 'image/png' ? 'PNG' : arquivo.type === 'image/webp' ? 'WEBP' : 'JPEG',
                 20,
                 55,
                 80,
@@ -288,9 +304,10 @@ function gerarPDFDiagnostico() {
                 y += 7;
             });
 
-            pdf.save('diagnostico-nutricional-frutech.pdf');
+            salvarPDFFrutech(pdf);
         };
 
+        leitor.onerror = () => mostrarMensagemApp('Não foi possível ler a foto para o PDF.', 'error');
         leitor.readAsDataURL(arquivo);
 
     } else {
@@ -320,7 +337,7 @@ function gerarPDFDiagnostico() {
             y += 7;
         });
 
-        pdf.save('diagnostico-nutricional-frutech.pdf');
+        salvarPDFFrutech(pdf);
     }
 }
 

@@ -3969,3 +3969,13 @@ textarea {
 .app-message.success i { color: #08713d; }
 .app-message.warning i { color: #b45309; }
 .app-message.info i { color: #2563eb; }
+
+/* Ajustes do protótipo Android/WebView */
+.diagnosis-result-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.diagnosis-result-actions .btn-green { margin: 0 !important; width: 100%; min-height: 48px; }
+.app-message-container { position: fixed; z-index: 99999; top: max(14px, env(safe-area-inset-top)); left: 12px; right: 12px; }
+.app-message { flex-shrink: 0; }
+.app-message.success { border-left: 4px solid #08713d; }
+.app-message.error { border-left: 4px solid #b91c1c; }
+.app-message.warning { border-left: 4px solid #b45309; }
+.app-message.info { border-left: 4px solid #2563eb; }

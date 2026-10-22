@@ -278,13 +278,13 @@ async function salvarNovaLocalizacao() {
     const cidade = document.getElementById("cfg-cidade")?.value.trim();
 
     if (!estado || !cidade) {
-        alert("Por favor, selecione o estado e digite a cidade.");
+        mostrarMensagemApp("Por favor, selecione o estado e digite a cidade.", "warning");
         return;
     }
 
     localStorage.setItem("frutech_localizacao", JSON.stringify({ cidade, estado }));
     await buscarClimaAPI(cidade, estado);
-    alert(`Localização alterada para ${cidade} - ${estado} com sucesso!`);
+    mostrarMensagemApp(`Localização alterada para ${cidade} - ${estado} com sucesso!`, "success");
 
     if (typeof window.navigate === "function") window.navigate("inicio");
 }
