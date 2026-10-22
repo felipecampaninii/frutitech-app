@@ -38,11 +38,11 @@ TIPOS_PERMITIDOS = {"image/jpeg", "image/png", "image/webp"}
 
 
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST"),
-    "port": int(os.getenv("DB_PORT", "14672")),
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"),
-    "database": os.getenv("DB_NAME", "defaultdb"),
+    "host": "projetobru1-felipe25campaninisilva-1e7b.l.aivencloud.com",
+    "port": 14672,
+    "user": "avnadmin",
+    "password": "AVNS_jceMMFobSxeiRbYH2NK",
+    "database": "defaultdb",
     "ssl_disabled": False
 }
 
