@@ -3979,3 +3979,23 @@ textarea {
 .app-message.error { border-left: 4px solid #b91c1c; }
 .app-message.warning { border-left: 4px solid #b45309; }
 .app-message.info { border-left: 4px solid #2563eb; }
+
+/* RESPONSIVIDADE TABLET E DESKTOP — preserva o celular */
+@media (min-width: 601px) {
+ html,body {width:100%;min-height:100%;}
+ body {display:flex;justify-content:center;align-items:flex-start;min-height:100vh;background:#e6f6ed;}
+ .app-container {width:100%;max-width:none;height:100dvh;max-height:none;border-radius:0;box-shadow:none;}
+ .header {padding-left:max(30px,calc((100vw - 1200px)/2));padding-right:max(30px,calc((100vw - 1200px)/2));}
+ .content-scroll {width:100%;min-width:0;padding-bottom:96px;}
+ .content-scroll > .page {width:min(calc(100% - 48px),1160px);margin-left:auto;margin-right:auto;}
+ #page-diagnostico > .sim-header,#page-simulador > .sim-header,#page-historico > .sim-header {min-height:175px;padding-left:34px;padding-right:34px;}
+ .bottom-nav {flex:0 0 auto;width:100%;padding-left:max(20px,calc((100vw - 760px)/2));padding-right:max(20px,calc((100vw - 760px)/2));}
+ .page-login {width:min(calc(100% - 48px),680px)!important;margin-inline:auto;}
+ .page-login .auth-wrapper {max-width:540px;margin-inline:auto;}
+ .card,.history-item,.input-sim,input,select,textarea {max-width:100%;}
+}
+@media (min-width:1024px) {
+ .content-scroll > .page {width:min(calc(100% - 80px),1200px);}
+ #page-inicio .home-body {padding-left:22px;padding-right:22px;}
+ .header {min-height:80px;}
+}
